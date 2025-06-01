@@ -1,0 +1,13 @@
+.header_container{
+    background-color: var(--mainFirst);
+    height: 15vh;
+    display: flex;
+    /* align-items: center; */
+    
+}
+.header_head_container{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}

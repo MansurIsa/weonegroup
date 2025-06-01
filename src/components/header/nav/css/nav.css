@@ -1,0 +1,14 @@
+.nav_list {
+    display: flex;
+    align-items: center;
+    gap: 33px;
+}
+
+.nav_list li a {
+    color: var(--white);
+    font-weight: 400;
+    font-size: 1.6rem;
+    line-height: 100%;
+    letter-spacing: 0%;
+
+}
