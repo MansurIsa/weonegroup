@@ -1,0 +1,90 @@
+.home_banner_bg_img {
+    width: 100%;
+    height: 85vh;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+}
+
+.home_banner_bg_img h1 {
+    color: var(--white);
+    font-weight: 400;
+    font-size: 4rem;
+    line-height: 100%;
+    letter-spacing: 0%;
+}
+
+.home_banner_bg_img p {
+    font-weight: 400;
+    font-size: 2.4rem;
+    line-height: 100%;
+    letter-spacing: 0%;
+    color: var(--white);
+    margin-top: 16px;
+    margin-bottom: 24px;
+}
+
+.home_banner_yellow {
+    height: 100%;
+    background-color: var(--yellow);
+    width: 45%;
+    opacity: 85%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    padding-left: 50px;
+}
+
+.home_banner_bg_img button {
+    background-color: var(--mainFirst);
+    border-radius: 12px;
+    padding: 18px 30px;
+    color: var(--white);
+    font-weight: 400;
+    font-size: 1.8rem;
+    line-height: 100%;
+    letter-spacing: 0%;
+    border: none;
+
+}
+
+.swiper-pagination-bullet {
+  position: relative;
+  width: 22px;
+  height: 8px;
+  border-radius: 8px;
+  transition: all 0.3s ease-in-out;
+  background-color: var(--white);
+  opacity: 1 !important;
+}
+
+.swiper-pagination-bullet-active {
+  width: 40px;
+  height: 8px;
+  border-radius: 8px;
+  background-color: var(--yellow);
+}
+.swiper-button-prev,
+.swiper-button-next {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background-color: var(--white);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  border: 1px solid var(--yellow);
+  cursor: pointer !important;
+
+  transition: all 0.3s ease-in-out;
+}
+.swiper-button-prev:hover {
+  background-color: var(--yellow);
+  color: var(--gray3);
+}
+.swiper-button-next:hover {
+  background-color: var(--yellow);
+  color: var(--gray3);
+}

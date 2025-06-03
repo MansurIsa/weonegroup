@@ -31,4 +31,11 @@ ul li {
 
 button {
     cursor: pointer;
+    border: none;
+}
+main{
+    background-color: var(--gray);
+}
+input,textarea{
+    outline: none;
 }
