@@ -7,6 +7,7 @@ import SectionHeader from '../../components/main/sectionHeader/SectionHeader'
 import HomeSecondSection from '../../components/main/homeSecondSection/HomeSecondSection'
 import ContactForm from '../../components/main/contact/ContactForm'
 
+
 const Home = () => {
   return (
     <MainLayout>
@@ -22,6 +23,7 @@ const Home = () => {
         <SectionHeader sectionHeader="Müraciət formu"/>
         <ContactForm/>
       </section>
+      
     </MainLayout>
   )
 }

@@ -1,0 +1,42 @@
+.about_banner_container {
+    height: 85vh;
+    display: flex;
+    align-items: center;
+    background-color: var(--white);
+}
+
+.about_banner_left {
+    width: 50%;
+    padding-left: 120px;
+}
+
+.about_banner_left h1 {
+    color: var(--black);
+    font-weight: 400;
+    font-size: 3.6rem;
+    line-height: 100%;
+    letter-spacing: 0%;
+}
+
+.about_banner_left p {
+    font-weight: 400;
+    font-size: 2rem;
+    line-height: 100%;
+    letter-spacing: 0%;
+    color: var(--black);
+    margin-top: 24px;
+    margin-bottom: 32px;
+
+}
+
+.about_banner_left button {
+    font-weight: 400;
+    font-size: 1.8rem;
+    line-height: 100%;
+    letter-spacing: 0%;
+    color: var(--white);
+    background-color: var(--mainFirst);
+    border-radius: 12px;
+    padding: 18px 59px;
+
+}
