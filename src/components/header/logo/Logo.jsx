@@ -5,7 +5,7 @@ import LogoImg from "../../../assets/images/logo.png";
 
 const Logo = () => {
     return (
-        <Link to={''}>
+        <Link to={'/'}>
           <img src={LogoImg} alt="" />
         </Link>
     )

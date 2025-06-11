@@ -12,3 +12,11 @@
     align-items: center;
     justify-content: center;
 }
+.burger_icon{
+    display: none;
+}
+@media screen and (max-width: 840px){
+    .burger_icon{
+        display: block ;
+    }
+}

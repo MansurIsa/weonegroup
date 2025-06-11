@@ -1,0 +1,126 @@
+.cart_container {
+    padding-top: 64px;
+}
+
+.cart_container h1 {
+    font-weight: 400;
+    font-size: 3.2rem;
+    line-height: 100%;
+    letter-spacing: 0%;
+    color: var(--mainFirst);
+    margin-bottom: 48px;
+}
+
+.cart_left_first_container {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+}
+
+.cart_left_first_container img {
+    width: 160px;
+    border-radius: 12px;
+}
+
+.cart_left_first_container h2 {
+    font-weight: 400;
+    font-size: 1.6rem;
+    line-height: 20px;
+    letter-spacing: 0%;
+    color: var(--mainFirst);
+}
+
+.cart_left_first_container p {
+    font-weight: 400;
+    font-size: 1.6rem;
+    line-height: 20px;
+    letter-spacing: 0%;
+    color: var(--gray2);
+    margin-top: 6px;
+}
+
+.cart_left_container {
+    padding: 24px;
+    border-radius: 12px;
+    background-color: var(--white);
+   
+    width: 70%;
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+.cart_left_products_container{
+ display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.cart_left_first_price {
+    font-weight: 400;
+    font-size: 1.4rem;
+    line-height: 20px;
+    letter-spacing: 0%;
+    color: var(--mainFirst);
+
+}
+
+.inc_dec {
+    display: flex;
+    align-items: center;
+    gap: 29px;
+    border: 1px solid var(--gray2);
+    padding: 16px 20px;
+    border-radius: 4px;
+}
+
+.inc_dec button {
+    background: none;
+    font-size: 2rem;
+}
+
+.cart_right_container {
+    background-color: var(--white);
+    padding: 25px;
+    border-radius: 12px;
+    width: 30%;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.cart_right_container p {
+    font-weight: 400;
+    font-size: 1.6rem;
+    line-height: 150%;
+    letter-spacing: 0%;
+    text-transform: capitalize;
+    color: var(--gray11);
+    display: flex;
+    align-items: center;
+    gap: 52px;
+
+}
+.cart_right_container button{
+     font-weight: 400;
+    font-size: 1.8rem;
+    line-height: 100%;
+    letter-spacing: 0%;
+    color: var(--white);
+    padding: 14px 25px;
+    background-color: var(--mainFirst);
+    border-radius: 12px;
+    margin-top: 12px;
+   
+}
+.cart_left_right_container{
+    display: flex;
+    align-items: flex-start;
+    gap: 58px;
+    padding-bottom: 100px;
+}
+
+input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  accent-color: var(--yellow); 
+  cursor: pointer;
+}

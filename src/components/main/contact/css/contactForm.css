@@ -67,3 +67,38 @@
     /* margin-left: auto; */
 
 }
+
+@media screen and (max-width: 1100px) {
+
+    .firstname_lastname_form,
+    .email_phone_textarea_form {
+        gap: 36px;
+    }
+}
+
+@media screen and (max-width: 1010px) {
+
+    .firstname_lastname_form,
+    .email_phone_textarea_form {
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .firstname_lastname_form div,
+    .email_phone_form div,
+    .textarea_label_form {
+        width: 100% !important;
+    }
+
+    .email_phone_form {
+        width: 100%;
+    }
+
+    .firstname_lastname_form div,
+    .email_phone_form div,
+    .textarea_label_form {
+
+        min-width: 100%;
+    }
+
+}

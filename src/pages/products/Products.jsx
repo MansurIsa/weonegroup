@@ -1,10 +1,22 @@
 import React from 'react'
 import "./css/products.css"
+import MainLayout from '../../layouts/mainLayout/MainLayout'
+import OtherBanner from '../../components/banner/otherBanner/OtherBanner'
+import FilterProducts from '../../components/main/filterProducts/FilterProducts'
 
 
 const Products = () => {
   return (
-    <div>Products</div>
+    <MainLayout>
+      <OtherBanner bannerTitle="Məhsullar"/>
+      <section>
+        <div className="project_container products_page">
+          <h2>Kateqoriyalar</h2>
+          <FilterProducts/>
+        </div>
+        
+      </section>
+    </MainLayout>
   )
 }
 

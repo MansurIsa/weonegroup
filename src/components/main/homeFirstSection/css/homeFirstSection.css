@@ -1,9 +1,9 @@
 .home_first_section_container {
-    padding-top: 200px;
+    padding-top: 200px !important;
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(578px, 1fr));
     gap: 44px;
-    padding-bottom: 200px;
+    padding-bottom: 200px !important;
 }
 
 .home_first_section_container img {
@@ -47,4 +47,20 @@
     padding: 18px 40px;
     background-color: var(--mainFirst);
     border-radius: 12px;
+}
+
+@media screen and (max-width: 620px){
+.home_first_section_container {
+    grid-template-columns: repeat(auto-fill, minmax(348px, 1fr));
+}
+
+.home_first_section_container img {
+    min-width: 348px;
+    max-width: 348px;
+}
+
+.home_first_section_container div {
+    min-width: 348px;
+   
+}
 }
