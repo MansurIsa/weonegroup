@@ -2,13 +2,13 @@ import React from 'react'
 import "./css/headerIcons.css"
 import { Link } from 'react-router-dom'
 
-const HeaderIcons = () => {
+const HeaderIcons = ({toggleMenu}) => {
     return (
         <div className='header_icons_container'>
-            {/* <svg className='burger_icon' width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <svg onClick={toggleMenu} className='burger_icon' width="30" height="30" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M3 6.00098H21H3ZM3 12.001H21H3ZM3 18.001H21H3Z" fill="#fff" />
                 <path d="M3 6.00098H21M3 12.001H21M3 18.001H21" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
-            </svg> */}
+            </svg>
             <Link to={'/cart'}>
                 <svg width="18" height="19" viewBox="0 0 18 19" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M1.58008 1.5H3.20608C3.77308 1.5 4.05608 1.5 4.28208 1.624C4.37525 1.67529 4.45965 1.74112 4.53208 1.819C4.70708 2.008 4.77608 2.283 4.91308 2.833L5.09508 3.56C5.19608 3.964 5.24708 4.166 5.32508 4.336C5.45841 4.62609 5.65926 4.88005 5.91082 5.07664C6.16239 5.27323 6.45736 5.40674 6.77108 5.466C6.95508 5.5 7.16308 5.5 7.58008 5.5" stroke="#32312F" stroke-width="1.5" stroke-linecap="round" />

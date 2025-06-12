@@ -4,13 +4,13 @@ import Logo from './logo/Logo';
 import Nav from './nav/Nav';
 import HeaderIcons from './headerIcons/HeaderIcons';
 
-const Header = () => {
+const Header = ({toggleMenu }) => {
   return (
     <header className='header_container'>
         <div className="header_head_container project_container">
             <Logo/>
             <Nav/>
-            <HeaderIcons/>
+            <HeaderIcons toggleMenu={toggleMenu}/>
         </div>
     </header>
   )

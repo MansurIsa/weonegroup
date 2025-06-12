@@ -113,7 +113,8 @@
     margin-bottom: 24px;
 
 }
-.about_cooperation_left button{
+
+.about_cooperation_left button {
     font-weight: 400;
     font-size: 1.8rem;
     line-height: 100%;
@@ -127,8 +128,45 @@
 .about_cooperation_right {
     clip-path: circle(55.9% at 50% 51%);
 }
-.about_cooperation_container{
+
+.about_cooperation_container {
     display: flex;
     align-items: center;
     justify-content: space-between;
+}
+
+
+@media screen and (max-width: 992px) {
+    .about_cooperation_container {
+        flex-direction: column;
+
+
+    }
+
+    .about_cooperation {
+        height: auto;
+    }
+
+    .about_cooperation_right {
+        clip-path: polygon(0 0, 100% 0%, 100% 100%, 0% 100%);
+        width: 100% !important;
+
+
+    }
+    .about_cooperation_left{
+        padding-bottom: 30px;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    .about_superiors_container {
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    }
+
+    .about_superiors_card {
+        min-width: 300px;
+
+
+    }
+
 }

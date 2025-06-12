@@ -5,3 +5,9 @@
 .map_container{
     margin: 150px 0;
 }
+
+@media screen and (max-width: 650px) {
+    .map_container iframe{
+    height: 355px;
+}
+}
