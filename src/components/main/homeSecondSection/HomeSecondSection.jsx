@@ -1,9 +1,18 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import HomeSecondSectionCard from './HomeSecondSectionCard'
 import "./css/homeFirstSecond.css"
+import { useDispatch, useSelector } from 'react-redux'
+import { getCategoryList } from '../../../actions/productsAction/productsAction'
 
 const HomeSecondSection = () => {
+     const dispatch=useDispatch()
+
+    useEffect(()=>{
+        dispatch(getCategoryList())
+    },[dispatch])
+
+    const {categoryList}=useSelector(state=>state.products)
     return (
         <div className='home_second_section project_container'>
             <Link to={''}>Hamısına bax
@@ -13,9 +22,14 @@ const HomeSecondSection = () => {
                 </svg>
             </Link>
             <div className="home_second_section_container">
+                {
+                    categoryList?.map((data,i)=>{
+                        return <HomeSecondSectionCard key={i} data={data}/>
+                    })
+                }
+                {/* <HomeSecondSectionCard/>
                 <HomeSecondSectionCard/>
-                <HomeSecondSectionCard/>
-                <HomeSecondSectionCard/>
+                <HomeSecondSectionCard/> */}
             </div>
         </div>
     )

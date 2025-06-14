@@ -1,10 +1,10 @@
 import React from 'react'
 
-const AboutCounterCard = () => {
+const AboutCounterCard = ({data}) => {
   return (
     <div className='about_counter_card'>
-        <span>2000+</span>
-        <p>Məhsul</p>
+        <span>{data?.value}</span>
+        <p>{data?.name}</p>
     </div>
   )
 }

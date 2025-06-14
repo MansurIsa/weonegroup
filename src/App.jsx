@@ -7,6 +7,7 @@ import Contact from './pages/contact/Contact';
 import Services from './pages/services/Services';
 import Cart from './pages/cart/Cart';
 import Login from './pages/login/Login';
+import { Toaster } from 'react-hot-toast';
 
 const routes = [
   { path: "/", element: <Home />, isProtected: false },
@@ -27,6 +28,7 @@ const App = () => {
           return <Route key={i} path={route.path} element={route.element} />;
         })}
       </Routes>
+      <Toaster position="top-right" />
     </div>
   )
 }

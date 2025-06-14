@@ -47,7 +47,6 @@
 }
 
 .filter_products_categories button {
-    font-family: Poppins;
     font-weight: 500;
     font-size: 1.6rem;
     line-height: 24px;
@@ -139,6 +138,67 @@
 .filter_products_parent_container {
     padding-bottom: 82px;
 }
+
+.brand_dropdown_container {
+  position: relative;
+}
+
+.brand_dropdown_container > button {
+  background-color: #f1f1f1;
+  border: 1px solid #ccc;
+  padding: 8px 16px;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.brand_dropdown {
+  position: absolute;
+  top: 40px;
+  left: 0;
+  background-color: white;
+  border: 1px solid #ddd;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  width: 180px;
+  z-index: 100;
+  border-radius: 4px;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.brand_item {
+  padding: 10px 15px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.brand_item:hover {
+  background-color: #f9f9f9;
+}
+
+
+
+
+
+
+
+.filter_products_categories button.active_category {
+  color: var(--yellow);
+  font-weight: 500;
+}
+
+.no_products_found {
+  width: 100%;
+  text-align: center;
+  padding: 50px 20px;
+  color: #888;
+  font-size: 18px;
+  font-weight: 500;
+  background-color: #f9f9f9;
+  border: 1px dashed #ccc;
+  border-radius: 12px;
+  margin-top: 30px;
+}
+
 
 @media screen and (max-width: 650px) {
     .filter_products_serach_btn {

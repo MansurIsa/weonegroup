@@ -1,17 +1,41 @@
-import React from 'react'
-import { Link } from 'react-router-dom'
+import React, { useEffect } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import { getSettingsList } from '../../../actions/homeAction/homeAction'
 
 const FooterRight = () => {
+  const dispatch = useDispatch()
+
+  useEffect(() => {
+    dispatch(getSettingsList())
+  }, [dispatch])
+
+  const { settingsList } = useSelector(state => state.home)
+
+  const address = settingsList[0]?.address
+  const contactNumber = settingsList[0]?.contact_number
+
   return (
     <div className='footer_right_container'>
-        <div>
-            <p>Adres</p>
-            <Link to={''}>1002-10, Siheung 1(il)-dong, Geumcheon-gu, Seoul</Link>
-        </div>
-        <div>
-            <p>Əlaqə nömrəsi</p>
-             <Link to={''}>+82-2-905-7586</Link>
-        </div>
+      <div>
+        <p>Adres</p>
+        {address && (
+          <a 
+            href={`https://www.google.com/maps/search/?q=${encodeURIComponent(address)}`} 
+            target='_blank' 
+            rel='noopener noreferrer'
+          >
+            {address}
+          </a>
+        )}
+      </div>
+      <div>
+        <p>Əlaqə nömrəsi</p>
+        {contactNumber && (
+          <a href={`tel:${contactNumber}`}>
+            {contactNumber}
+          </a>
+        )}
+      </div>
     </div>
   )
 }

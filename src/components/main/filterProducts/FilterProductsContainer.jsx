@@ -1,13 +1,14 @@
 import React from 'react'
 import FilterProductCard from './FilterProductCard'
 
-const FilterProductsContainer = () => {
+const FilterProductsContainer = ({ productsList }) => {
   return (
     <div className='filter_products_container'>
-        <FilterProductCard/>
-        <FilterProductCard/>
-        <FilterProductCard/>
-        <FilterProductCard/>
+      {
+          productsList?.map((data, i) => (
+            <FilterProductCard data={data} key={i} />
+          ))
+      }
     </div>
   )
 }

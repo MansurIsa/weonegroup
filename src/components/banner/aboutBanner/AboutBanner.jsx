@@ -1,16 +1,30 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import "./css/aboutBanner.css"
 import Img from "../../../assets/images/aboutBanner.jpg"
+import { useDispatch, useSelector } from 'react-redux'
+import { getSettingsList } from '../../../actions/homeAction/homeAction'
+import { useNavigate } from 'react-router-dom'
 
 const AboutBanner = () => {
+     const dispatch=useDispatch()
+  useEffect(()=>{
+    dispatch(getSettingsList())
+  },[dispatch])
+
+  const {settingsList}=useSelector(state=>state.home)
+  const navigate=useNavigate()
+
+  const directContact=()=>{
+    navigate("/contact")
+  }
   return (
     <div className='about_banner_container'>
         <div className='about_banner_left'>
-            <h1>Performansa Sadiq Brend</h1>
-            <p>Biz, WEONE məhsullarının Azərbaycandakı rəsmi distribyutoru olaraq, avtomobil ehtiyat hissələri sahəsində yüksək keyfiyyət və güvən təklif edirik. Məqsədimiz, müştərilərimizə uzunmüddətli və dayanıqlı xidmət təqdim etməkdir.</p>
-            <button>İndi Alın</button>
+            <h1>{settingsList[0]?.about_title}</h1>
+            <p>{settingsList[0]?.about_content}</p>
+            <button onClick={directContact}>İndi Alın</button>
         </div>
-        <div style={{background: `url(${Img})`, backgroundSize: "cover", backgroundRepeat: "no-repeat", backgroundPosition: "left", height: "100%", width: "50%"}} className="about_banner_right">
+        <div style={{background: `url(${settingsList[0]?.about_image})`, backgroundSize: "cover", backgroundRepeat: "no-repeat", backgroundPosition: "left", height: "100%", width: "50%"}} className="about_banner_right">
 
         </div>
     </div>
