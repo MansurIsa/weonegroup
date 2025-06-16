@@ -8,6 +8,8 @@ import Services from './pages/services/Services';
 import Cart from './pages/cart/Cart';
 import Login from './pages/login/Login';
 import { Toaster } from 'react-hot-toast';
+import Dashboard from './pages/dashboard/Dashboard';
+import Loader from './components/loader/Loader';
 
 const routes = [
   { path: "/", element: <Home />, isProtected: false },
@@ -17,6 +19,8 @@ const routes = [
   { path: "/services", element: <Services />, isProtected: false },
   { path: "/cart", element: <Cart />, isProtected: false },
   { path: "/login", element: <Login />, isProtected: false },
+
+  { path: "/dashboard", element: <Dashboard />, isProtected: true },
  
 ];
 
@@ -29,6 +33,7 @@ const App = () => {
         })}
       </Routes>
       <Toaster position="top-right" />
+      {/* <Loader/> */}
     </div>
   )
 }
