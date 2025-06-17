@@ -1,42 +1,111 @@
-import React, { useEffect, useRef } from "react";
-import gsap from "gsap";
+import React, { useEffect, useRef } from 'react';
+import gsap from 'gsap';
+import "./css/loader.css";
+import { useSelector } from 'react-redux';
 
 const Loader = () => {
+  const { isLoading } = useSelector((state) => state.loader);
+
   const carRef = useRef(null);
+  const wheelRefs = {
+    front: useRef(null),
+    back: useRef(null),
+  };
+  const smoke1 = useRef(null);
+  const smoke2 = useRef(null);
+  const loadingTextRef = useRef(null);
 
   useEffect(() => {
-    const car = carRef.current;
+    if (!isLoading) return;
 
-    gsap.to(car, {
-      rotation: 360,
-      duration: 5,
-      ease: "linear",
+    // Maşın yuxarı-aşağı hərəkəti
+    gsap.to(carRef.current, {
+      y: -10,
       repeat: -1,
-      transformOrigin: "400px 300px", // mərkəz nöqtəsi
+      yoyo: true,
+      duration: 0.5,
+      ease: 'power1.inOut',
     });
-  }, []);
+
+    // Təkərlər fırlanır
+    gsap.to([wheelRefs.front.current, wheelRefs.back.current], {
+      rotate: 360,
+      transformOrigin: 'center',
+      repeat: -1,
+      duration: 1,
+      ease: 'linear',
+    });
+
+    // Tüstü
+    const createSmokeAnim = (smokeRef, delay = 0) => {
+      gsap.fromTo(
+        smokeRef.current,
+        {
+          opacity: 0.6,
+          y: 0,
+          scale: 0.5,
+        },
+        {
+          opacity: 0,
+          y: -60,
+          scale: 1.2,
+          repeat: -1,
+          duration: 2,
+          delay,
+          ease: 'power1.out',
+        }
+      );
+    };
+
+    createSmokeAnim(smoke1, 0);
+    createSmokeAnim(smoke2, 1);
+
+    // Loading text
+    gsap.to(loadingTextRef.current, {
+      scale: 1.1,
+      opacity: 0.7,
+      repeat: -1,
+      yoyo: true,
+      duration: 1,
+      ease: 'sine.inOut',
+    });
+  }, [isLoading]); // yalnız isLoading true olduqda effekt işə düşsün
+
+  if (!isLoading) return null;
 
   return (
-    <svg
-      viewBox="0 0 800 600"
-      style={{ width: "100vw", height: "100vh", backgroundColor: "#3F51B5" }}
-    >
-      {/* Dairə mərkəzi */}
-      <circle cx="400" cy="300" r="130" stroke="#fff" strokeWidth="2" fill="none" />
+    <div className='loader_container'>
+      <svg
+        ref={carRef}
+        width="400"
+        height="200"
+        viewBox="0 0 400 200"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <circle ref={smoke1} cx="110" cy="160" r="10" fill="#999" opacity="0.6" />
+        <circle ref={smoke2} cx="110" cy="160" r="8" fill="#ccc" opacity="0.5" />
+        <rect x="70" y="90" width="260" height="60" rx="20" fill="#ff595e" />
+        <path d="M100 90 C120 50, 280 50, 300 90 Z" fill="#ffca3a" stroke="#000" strokeWidth="2" />
+        <rect x="130" y="60" width="40" height="30" rx="5" fill="#8ecae6" />
+        <rect x="190" y="60" width="40" height="30" rx="5" fill="#8ecae6" />
+        <circle cx="330" cy="115" r="8" fill="#f1fa8c" />
+        <circle ref={wheelRefs.front} cx="120" cy="160" r="20" fill="#333" stroke="#ccc" strokeWidth="4" />
+        <circle ref={wheelRefs.back} cx="280" cy="160" r="20" fill="#333" stroke="#ccc" strokeWidth="4" />
+      </svg>
 
-      {/* Car qrupu */}
-      <g ref={carRef} fill="#fff" transform="translate(400,300)">
-        {/* Maşını yuxarı radius qədər yerləşdiririk */}
-        <g transform="translate(0, -130)">
-          <path
-            d="M45.6,16.9l0-11.4c0-3-1.5-5.5-4.5-5.5L3.5,0C0.5,0,0,1.5,0,4.5l0,13.4c0,3,0.5,4.5,3.5,4.5l37.6,0
-              C44.1,22.4,45.6,19.9,45.6,16.9z M31.9,21.4l-23.3,0l2.2-2.6l14.1,0L31.9,21.4z M34.2,21c-3.8-1-7.3-3.1-7.3-3.1l0-13.4l7.3-3.1
-              C34.2,1.4,37.1,11.9,34.2,21z M6.9,1.5c0-0.9,2.3,3.1,2.3,3.1l0,13.4c0,0-0.7,1.5-2.3,3.1C5.8,19.3,5.1,5.8,6.9,1.5z M24.9,3.9
-              l-14.1,0L8.6,1.3l23.3,0L24.9,3.9z"
-          />
-        </g>
-      </g>
-    </svg>
+      <h2
+        ref={loadingTextRef}
+        style={{
+          marginTop: '30px',
+          fontFamily: 'Arial, sans-serif',
+          fontWeight: 'bold',
+          fontSize: '28px',
+          letterSpacing: '3px',
+        }}
+      >
+        Loading...
+      </h2>
+    </div>
   );
 };
 

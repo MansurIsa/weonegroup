@@ -23,7 +23,7 @@ const HomeSecondSection = () => {
             </Link>
             <div className="home_second_section_container">
                 {
-                    categoryList?.map((data,i)=>{
+                    categoryList?.slice(0, 3)?.map((data,i)=>{
                         return <HomeSecondSectionCard key={i} data={data}/>
                     })
                 }

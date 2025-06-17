@@ -33,7 +33,7 @@ const App = () => {
         })}
       </Routes>
       <Toaster position="top-right" />
-      {/* <Loader/> */}
+      <Loader/>
     </div>
   )
 }

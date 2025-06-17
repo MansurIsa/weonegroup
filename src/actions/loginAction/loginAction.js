@@ -1,18 +1,24 @@
 import axios from "axios";
-import { baseUrl } from "../../mainApi/MainApi";
 import toast from "react-hot-toast";
+import { baseUrl } from "../../mainApi/MainApi";
+import { startLoading, stopLoading } from "../../redux/slices/loaderSlice";
 
-// navigate parametri əlavə olunur
-export const postLogin = (data, navigate) => async () => {
+export const postLogin = (data, navigate) => async (dispatch) => {
   try {
+    dispatch(startLoading()); 
+
+    // 1. Login istəyi atılır
     const loginResp = await axios.post(`${baseUrl}token/`, data);
 
+    // 2. Access token varsa
     if (loginResp.data.access) {
       const accessToken = loginResp.data.access;
       toast.success("Daxil olundu ✅");
-      localStorage.setItem("accessToken", accessToken)
 
-      // access token-lə user məlumatlarını götür
+      // 3. Token localStorage-a yazılır
+      localStorage.setItem("accessToken", accessToken);
+
+      // 4. Token ilə user məlumatları çəkilir
       const userResp = await axios.get(`${baseUrl}user/`, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
@@ -22,6 +28,7 @@ export const postLogin = (data, navigate) => async () => {
       const user = userResp.data;
       console.log("İstifadəçi:", user);
 
+      // 5. Rolu görə yönləndir
       if (user.is_staff || user.is_superuser) {
         navigate("/dashboard");
       } else {
@@ -29,9 +36,9 @@ export const postLogin = (data, navigate) => async () => {
       }
     }
   } catch (err) {
-    console.log(err);
+    console.error("Login error:", err);
     toast.error("Xəta baş verdi. Zəhmət olmasa yenidən yoxlayın ❌");
-    console.log(data);
-    
+  } finally {
+    dispatch(stopLoading()); 
   }
 };

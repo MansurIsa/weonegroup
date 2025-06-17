@@ -1,50 +1,48 @@
 import axios from "axios";
 import { baseUrl } from "../../mainApi/MainApi";
 import { getBannerListFunc, getSettingsListFunc, getSocialListFunc } from "../../redux/slices/homeSlices";
+import { startLoading, stopLoading } from "../../redux/slices/loaderSlice";
 
 export const getSettingsList = () => async (dispatch) => {
-//   dispatch(isLoading());
+  dispatch(startLoading());
   return await axios.get(`${baseUrl}settings/`)
     .then((resp) => {
         console.log(resp.data);
-        
-    //   dispatch(stopLoading());
       dispatch(getSettingsListFunc(resp.data));
     })
     .catch((err) => {
       console.log(err);
-    //   dispatch(stopLoading());
-    });
+    }).finally(() => {
+      dispatch(stopLoading());
+    });;
 };
 
 
 export const getBannerList = () => async (dispatch) => {
-//   dispatch(isLoading());
+  dispatch(startLoading());
   return await axios.get(`${baseUrl}banner-list/`)
     .then((resp) => {
         console.log(resp.data);
-        
-    //   dispatch(stopLoading());
       dispatch(getBannerListFunc(resp.data));
     })
     .catch((err) => {
       console.log(err);
-    //   dispatch(stopLoading());
-    });
+    }).finally(() => {
+      dispatch(stopLoading());
+    });;
 };
 
 
 export const getSocialList = () => async (dispatch) => {
-//   dispatch(isLoading());
+  dispatch(startLoading());
   return await axios.get(`${baseUrl}socialmedia-list/`)
     .then((resp) => {
         console.log(resp.data);
-        
-    //   dispatch(stopLoading());
-      dispatch(getSocialListFunc(resp.data));
+        dispatch(getSocialListFunc(resp.data));
     })
     .catch((err) => {
       console.log(err);
-    //   dispatch(stopLoading());
-    });
+    }).finally(() => {
+      dispatch(stopLoading());
+    });;
 };
