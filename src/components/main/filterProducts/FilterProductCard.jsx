@@ -1,13 +1,29 @@
-import React from 'react'
+import React, { useEffect } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
+import { addProductToCart } from '../../../actions/productsAction/productsAction'
+import { getUserObj } from '../../../actions/loginAction/loginAction'
 
 const FilterProductCard = ({data}) => {
 
     const accessToken=localStorage.getItem("accessToken")
     const navigate=useNavigate()
+    const dispatch=useDispatch()
 
-    const addToCart=(id)=>{
+    useEffect(() => {
+        dispatch(getUserObj())
+    }, [dispatch])
+
+    const { userObj } = useSelector(state => state.login)
+
+    const addToCart=(data)=>{
         if(accessToken){
+            console.log(data);
+            dispatch(addProductToCart({
+                quantity: 1,
+                user: userObj?.id,
+                product: data?.id
+            },navigate))
             
         }else{
             navigate("/login")
@@ -24,7 +40,7 @@ const FilterProductCard = ({data}) => {
                         accessToken?  <span>{data?.price} AZN</span>: null
                     }
                  
-                    <button onClick={()=>addToCart(data?.id)}>Səbətə əlavə et</button>
+                    <button onClick={()=>addToCart(data)}>Səbətə əlavə et</button>
                 </div>
             </div>
 

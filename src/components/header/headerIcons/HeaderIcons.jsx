@@ -1,8 +1,25 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import "./css/headerIcons.css"
 import { Link } from 'react-router-dom'
+import { useDispatch, useSelector } from 'react-redux'
+import { getUserObj } from '../../../actions/loginAction/loginAction'
+import { IoMdLogOut } from 'react-icons/io'
+import { logoutFunc } from '../../../redux/slices/loginSlices'
 
-const HeaderIcons = ({toggleMenu}) => {
+const HeaderIcons = ({ toggleMenu }) => {
+
+    const dispatch = useDispatch()
+
+    useEffect(() => {
+        dispatch(getUserObj())
+    }, [dispatch])
+
+    const { userObj } = useSelector(state => state.login)
+
+    const handleLogOut=()=>{
+        localStorage.removeItem("accessToken")
+        dispatch(logoutFunc()); 
+    }
     return (
         <div className='header_icons_container'>
             <svg onClick={toggleMenu} className='burger_icon' width="30" height="30" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -19,12 +36,20 @@ const HeaderIcons = ({toggleMenu}) => {
                 </svg>
 
             </Link>
-            <Link to={'/login'}>
-                <svg width="17" height="20" viewBox="0 0 17 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path fill-rule="evenodd" clip-rule="evenodd" d="M16.09 16.1973C16.09 19.4933 11.57 19.8743 8.171 19.8743L7.92776 19.8741C5.7622 19.8688 0.25 19.7321 0.25 16.1773C0.25 12.9486 4.58835 12.5171 7.96148 12.5008L8.41423 12.5005C10.5796 12.5058 16.09 12.6425 16.09 16.1973ZM8.171 14.0003C3.91 14.0003 1.75 14.7323 1.75 16.1773C1.75 17.6353 3.91 18.3743 8.171 18.3743C12.431 18.3743 14.59 17.6423 14.59 16.1973C14.59 14.7393 12.431 14.0003 8.171 14.0003ZM8.171 0.00390625C11.099 0.00390625 13.48 2.38591 13.48 5.31391C13.48 8.24191 11.099 10.6229 8.171 10.6229H8.139C5.217 10.6139 2.85 8.23091 2.85997 5.31091C2.85997 2.38591 5.242 0.00390625 8.171 0.00390625ZM8.171 1.43191C6.03 1.43191 4.28798 3.17291 4.28798 5.31391C4.281 7.44791 6.01 9.18791 8.142 9.19591L8.171 9.90991V9.19591C10.311 9.19591 12.052 7.45391 12.052 5.31391C12.052 3.17291 10.311 1.43191 8.171 1.43191Z" fill="#32312F" />
-                </svg>
+            {
+                userObj?.id ?
+                    <div className='user_info_container'>
+                        <p>{userObj?.username}</p>
+                        <IoMdLogOut onClick={handleLogOut} style={{cursor: "pointer"}}/>
+                    </div> :
+                    <Link to={'/login'}>
+                        <svg width="17" height="20" viewBox="0 0 17 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path fill-rule="evenodd" clip-rule="evenodd" d="M16.09 16.1973C16.09 19.4933 11.57 19.8743 8.171 19.8743L7.92776 19.8741C5.7622 19.8688 0.25 19.7321 0.25 16.1773C0.25 12.9486 4.58835 12.5171 7.96148 12.5008L8.41423 12.5005C10.5796 12.5058 16.09 12.6425 16.09 16.1973ZM8.171 14.0003C3.91 14.0003 1.75 14.7323 1.75 16.1773C1.75 17.6353 3.91 18.3743 8.171 18.3743C12.431 18.3743 14.59 17.6423 14.59 16.1973C14.59 14.7393 12.431 14.0003 8.171 14.0003ZM8.171 0.00390625C11.099 0.00390625 13.48 2.38591 13.48 5.31391C13.48 8.24191 11.099 10.6229 8.171 10.6229H8.139C5.217 10.6139 2.85 8.23091 2.85997 5.31091C2.85997 2.38591 5.242 0.00390625 8.171 0.00390625ZM8.171 1.43191C6.03 1.43191 4.28798 3.17291 4.28798 5.31391C4.281 7.44791 6.01 9.18791 8.142 9.19591L8.171 9.90991V9.19591C10.311 9.19591 12.052 7.45391 12.052 5.31391C12.052 3.17291 10.311 1.43191 8.171 1.43191Z" fill="#32312F" />
+                        </svg>
 
-            </Link>
+                    </Link>
+            }
+
         </div>
     )
 }

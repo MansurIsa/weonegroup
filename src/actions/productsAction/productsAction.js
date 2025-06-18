@@ -2,6 +2,7 @@ import axios from "axios";
 import { baseUrl } from "../../mainApi/MainApi";
 import { getBrandListFunc, getCategoryListFunc, getProductsListFunc } from "../../redux/slices/productsSlices";
 import { startLoading, stopLoading } from "../../redux/slices/loaderSlice";
+import toast from "react-hot-toast";
 
 export const getProductsList = () => async (dispatch) => {
   dispatch(startLoading());
@@ -41,6 +42,27 @@ export const getBrandList = () => async (dispatch) => {
     })
     .catch((err) => {
       console.log(err);
+    }).finally(() => {
+      dispatch(stopLoading());
+    });;
+};
+
+
+export const addProductToCart = (data,navigate) => async (dispatch) => {
+  dispatch(startLoading());
+  return await axios.post(`${baseUrl}basketitem-create/`,data,{
+    headers: {
+          Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+        }
+  })
+    .then((resp) => {
+        console.log(resp);
+        toast.success("Məhsul səbətə əlavə edildi");
+        navigate("/cart")
+    })
+    .catch((err) => {
+      console.log(err);
+       toast.error("Xəta baş verdi. Zəhmət olmasa yenidən yoxlayın ❌");
     }).finally(() => {
       dispatch(stopLoading());
     });;

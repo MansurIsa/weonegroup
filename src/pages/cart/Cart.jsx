@@ -2,8 +2,9 @@ import React, { useEffect, useState } from 'react';
 import MainLayout from '../../layouts/mainLayout/MainLayout';
 import './css/cart.css';
 import { useDispatch, useSelector } from 'react-redux';
-import { basketClear, getBasketItemList } from '../../actions/basketAction/basketAction';
+import { basketClear, basketItemDelete, basketItemUpdate, getBasketItemList } from '../../actions/basketAction/basketAction';
 import { Link } from 'react-router-dom';
+import { AiOutlineDelete } from 'react-icons/ai';
 
 const Cart = () => {
   const dispatch = useDispatch();
@@ -65,6 +66,33 @@ const Cart = () => {
     window.location.reload()
   };
 
+  const incCartEl = (item) => {
+  const updatedQuantity = item.quantity + 1;
+
+  dispatch(basketItemUpdate(item.id, {
+    product: item.product.id,
+    user: item.user,
+    quantity: updatedQuantity
+  }));
+};
+
+const decCartEl = (item) => {
+  if (item.quantity <= 1) return; // 0-a düşməyə icazə vermə
+
+  const updatedQuantity = item.quantity - 1;
+
+  dispatch(basketItemUpdate(item.id, {
+    product: item.product.id,
+    user: item.user,
+    quantity: updatedQuantity
+  }));
+};
+
+
+const deleteBasketItem=(id)=>{
+  dispatch(basketItemDelete(id))
+}
+
 
   return (
     <MainLayout>
@@ -96,10 +124,11 @@ const Cart = () => {
                       </div>
                       <span className="cart_left_first_price">{item.product.price} AZN</span>
                       <div className="inc_dec">
-                        <button>-</button>
+                        <button onClick={()=>decCartEl(item)}>-</button>
                         <span>{item.quantity}</span>
-                        <button>+</button>
+                        <button onClick={()=>incCartEl(item)}>+</button>
                       </div>
+                      <AiOutlineDelete onClick={()=>deleteBasketItem(item?.id)} className='delete_basket_item'/>
                     </div>
                   ))}
                 </div>

@@ -12,7 +12,10 @@
     letter-spacing: 0%;
 
 }
-
+.nav_list li a.active-link {
+  color: var(--yellow);
+  font-weight: 500;
+}
 @media screen and (max-width: 840px){
     nav{
         display: none;

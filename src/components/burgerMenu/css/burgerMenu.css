@@ -20,6 +20,10 @@
     display: block;
     padding: 15px 0;
 }
+.burger_list li a.active-link {
+  color: var(--yellow);
+  font-weight: 600;
+}
 .burger_menu_container{
     padding: 20px;
     background-color: var(--mainFirst);
