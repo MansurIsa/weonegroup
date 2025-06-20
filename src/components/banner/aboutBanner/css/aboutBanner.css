@@ -40,13 +40,18 @@
     padding: 18px 59px;
 
 }
-
+ .about_banner_right{
+      
+        background-size: cover !important;
+        background-repeat: no-repeat !important;
+        
+    }
 @media screen and (max-width: 992px) {
     .about_banner_container{
         flex-direction: column-reverse;
         justify-content: flex-start;
         gap: 30px;
-        height: 60vh;
+        height: 70vh;
         padding-top: 40px;
         padding-bottom: 40px;
     }
@@ -56,6 +61,8 @@
     .about_banner_right{
         width: 80% !important;
         height: 400px !important;
+        background-size: cover !important;
+        background-repeat: no-repeat !important;
         /* background-size: contain !important; */
         
     }

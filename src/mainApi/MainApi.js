@@ -1,1 +1,1 @@
-export const baseUrl="https://weonegroup.pythonanywhere.com/api/"
+export const baseUrl="https://admin.weonegroup-co.com/api/"

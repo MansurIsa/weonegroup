@@ -20,13 +20,18 @@ const FilterProducts = () => {
     const { productsList, categoryList, brandList } = useSelector(state => state.products)
 
     // ✅ Filtered products by category, brand and search
-    const filteredProducts = productsList?.filter(product => {
-        const matchesCategory = activeCategory === "Hamısı" || product.category.name === activeCategory
-        const matchesBrand = activeBrand === "Hamısı" || product.brand.name === activeBrand
-        const matchesSearch = product.name.toLowerCase().includes(searchQuery.toLowerCase())
+   const filteredProducts = productsList?.filter(product => {
+    const matchesCategory = activeCategory === "Hamısı" || product.category.name === activeCategory
+    const matchesBrand = activeBrand === "Hamısı" || product.brand.name === activeBrand
+    const matchesSearch =
+        product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        product.articles?.some(article =>
+            article.name.toLowerCase().includes(searchQuery.toLowerCase())
+        )
 
-        return matchesCategory && matchesBrand && matchesSearch
-    })
+    return matchesCategory && matchesBrand && matchesSearch
+})
+
 
     return (
         <div className='filter_products_parent_container'>

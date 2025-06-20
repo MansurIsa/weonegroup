@@ -10,6 +10,7 @@ import Login from './pages/login/Login';
 import { Toaster } from 'react-hot-toast';
 import Dashboard from './pages/dashboard/Dashboard';
 import Loader from './components/loader/Loader';
+import ScrollToTop from './components/scrollToTop/ScrollToTop';
 
 const routes = [
   { path: "/", element: <Home />, isProtected: false },
@@ -34,6 +35,7 @@ const App = () => {
       </Routes>
       <Toaster position="top-right" />
       <Loader/>
+      <ScrollToTop/>
     </div>
   )
 }

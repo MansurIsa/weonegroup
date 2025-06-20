@@ -127,6 +127,7 @@
 
 .about_cooperation_right {
     clip-path: circle(55.9% at 50% 51%);
+    background-size: cover !important;
 }
 
 .about_cooperation_container {
@@ -155,6 +156,7 @@
     }
     .about_cooperation_left{
         padding-bottom: 30px;
+        
     }
 }
 
