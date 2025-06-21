@@ -11,6 +11,12 @@ import { Toaster } from 'react-hot-toast';
 import Dashboard from './pages/dashboard/Dashboard';
 import Loader from './components/loader/Loader';
 import ScrollToTop from './components/scrollToTop/ScrollToTop';
+import Purchase from './pages/purchase/Purchase';
+import Warehouse from './pages/warehouse/Warehouse';
+import ProductsTable from './pages/productsTable/ProductsTable';
+import ProductsReturned from './pages/productsReturned/ProductsReturned';
+import Sales from './pages/sales/Sales';
+import Customers from './pages/customers/Customers';
 
 const routes = [
   { path: "/", element: <Home />, isProtected: false },
@@ -22,6 +28,14 @@ const routes = [
   { path: "/login", element: <Login />, isProtected: false },
 
   { path: "/dashboard", element: <Dashboard />, isProtected: true },
+  { path: "/purchase", element: <Purchase />, isProtected: true },
+  { path: "/warehouse", element: <Warehouse />, isProtected: true },
+  { path: "/products-table", element: <ProductsTable />, isProtected: true },
+  { path: "/products-returned", element: <ProductsReturned />, isProtected: true },
+  { path: "/income", element: <ProductsReturned />, isProtected: true },
+  { path: "/expense", element: <ProductsReturned />, isProtected: true },
+  { path: "/sales", element: <Sales />, isProtected: true },
+  { path: "/customers", element: <Customers />, isProtected: true },
  
 ];
 

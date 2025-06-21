@@ -1,12 +1,12 @@
 import React from 'react'
 import AdminLayout from '../../layouts/adminLayout/AdminLayout'
 
-const Dashboard = () => {
+const Income = () => {
   return (
     <AdminLayout>
-      
+        
     </AdminLayout>
   )
 }
 
-export default Dashboard
+export default Income
