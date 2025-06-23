@@ -1,10 +1,20 @@
 import React from 'react'
 import AdminLayout from '../../layouts/adminLayout/AdminLayout'
+import AdminBigComponentHeader from '../../components/admin/adminBigComponentHeader/AdminBigComponentHeader'
+import DashboardFirst from '../../components/admin/dashboard/dashboardFirst/DashboardFirst'
+import SalesChart from '../../components/admin/dashboard/dashboardSecond/SalesChart'
+import DashboardThird from '../../components/admin/dashboard/dashboardThird/DashboardThird'
+import DashboardEnd from '../../components/admin/dashboard/dashboardEnd/DashboardEnd'
 
 const Dashboard = () => {
   return (
     <AdminLayout>
-      
+      <AdminBigComponentHeader adminHeader={"Şəxsi göstəricilərin"}/>
+      <DashboardFirst/>
+      <SalesChart/>
+      <DashboardThird/>
+      <AdminBigComponentHeader adminHeader={"Tükənmək üzrə olan məhsullar"}/>
+      <DashboardEnd/>
     </AdminLayout>
   )
 }

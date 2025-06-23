@@ -1,0 +1,12 @@
+.admin_big_comp_header h2{
+    font-family: "Poppins", sans-serif;
+    font-weight: 500;
+    font-size: 1.8rem;
+    line-height: 140%;
+    letter-spacing: 0%;
+    color: var(--gray11);
+}
+.admin_big_comp_header{
+    padding-top: 27px;
+    padding-bottom: 24px;
+}
