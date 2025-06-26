@@ -39,6 +39,10 @@ button {
     cursor: pointer;
     border: none;
 }
+select{
+    outline: none;
+    border: none;
+}
 main{
     background-color: var(--gray);
 }

@@ -3,14 +3,18 @@ import Sidebar from '../../components/admin/sidebar/Sidebar'
 import AdminHeader from '../../components/admin/adminHeader/AdminHeader'
 import "./css/adminLayout.css"
 
-const AdminLayout = ({children}) => {
+const AdminLayout = ({ children, adminHeader, adminHeaderHide }) => {
   return (
     <div>
-        <Sidebar/>
-        <div className="admin_content">
-            <AdminHeader/>
-            <main>{children}</main>
-        </div>
+      <Sidebar />
+      <div className="admin_content">
+        {
+          adminHeaderHide !== true ?
+            <AdminHeader adminHeader={adminHeader} /> : null
+        }
+
+        <main>{children}</main>
+      </div>
     </div>
   )
 }

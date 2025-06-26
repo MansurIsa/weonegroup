@@ -17,6 +17,7 @@ import ProductsTable from './pages/productsTable/ProductsTable';
 import ProductsReturned from './pages/productsReturned/ProductsReturned';
 import Sales from './pages/sales/Sales';
 import Customers from './pages/customers/Customers';
+import NewPurchase from './pages/purchase/NewPurchase';
 
 const routes = [
   { path: "/", element: <Home />, isProtected: false },
@@ -29,6 +30,7 @@ const routes = [
 
   { path: "/dashboard", element: <Dashboard />, isProtected: true },
   { path: "/purchase", element: <Purchase />, isProtected: true },
+  { path: "/new-purchase", element: <NewPurchase />, isProtected: true },
   { path: "/warehouse", element: <Warehouse />, isProtected: true },
   { path: "/products-table", element: <ProductsTable />, isProtected: true },
   { path: "/products-returned", element: <ProductsReturned />, isProtected: true },

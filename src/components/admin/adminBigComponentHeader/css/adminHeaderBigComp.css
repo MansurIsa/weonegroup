@@ -1,4 +1,4 @@
-.admin_big_comp_header h2{
+.admin_big_comp_header h2 {
     font-family: "Poppins", sans-serif;
     font-weight: 500;
     font-size: 1.8rem;
@@ -6,7 +6,25 @@
     letter-spacing: 0%;
     color: var(--gray11);
 }
-.admin_big_comp_header{
-    padding-top: 27px;
+
+.admin_big_comp_header {
     padding-bottom: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.admin_big_comp_header button {
+    background-color: var(--yellow);
+    padding: 10px 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: Poppins;
+    font-weight: 500;
+    font-size: 1.6rem;
+    line-height: 24px;
+    letter-spacing: 0%;
+    color: var(--white);
+    border-radius: 8px;
 }
