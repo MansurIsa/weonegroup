@@ -35,6 +35,8 @@
 
 .dashboard_end_container {
     padding-bottom: 78px;
+    margin-top: 24px !important;
+    
 }
 
 .custom_table {

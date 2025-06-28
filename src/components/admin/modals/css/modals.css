@@ -1,0 +1,105 @@
+.modal_content {
+
+    min-width: 800px;
+}
+
+.modal_inner_container {
+    display: flex;
+    width: 100%;
+    gap: 60px;
+}
+
+.product_table_modal_left {
+    width: 20%;
+    /* border-right: 1px solid #ddd; */
+}
+
+.brands_title {
+    font-family: Poppins;
+    font-weight: 500;
+    font-size: 1.6rem;
+    line-height: 24px;
+    letter-spacing: 0%;
+    color: var(--gray11);
+    background-color: var(--gray12);
+    padding: 16px 24px;
+    text-align: center;
+}
+
+
+.brand_item {
+    font-family: Poppins;
+    font-weight: 400;
+    font-size: 1.6rem;
+    line-height: 24px;
+    letter-spacing: 0%;
+    vertical-align: middle;
+    padding: 16px 24px;
+    border: 1px solid var(--gray12);
+    text-align: center;
+
+}
+
+.brand_item:hover {
+    background-color: var(--gray2);
+}
+
+.product_table_modal_right {
+    width: 80%;
+    padding: 0 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.search_box {
+    margin: 10px 0;
+}
+
+.search_input {
+    width: 100%;
+    padding: 10px;
+    border-radius: 6px;
+    border: 1px solid var(--gray12);
+    font-size: 1.8rem;
+}
+
+.products_list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    flex: 1;
+    overflow-y: auto;
+}
+
+.product_item {
+
+    padding: 21px 24px;
+    border-bottom: 1px solid var(--gray12);
+    font-family: Poppins;
+    font-weight: 400;
+    font-size: 1.6rem;
+    line-height: 20px;
+    letter-spacing: 0%;
+    vertical-align: middle;
+    color: var(--gray11);
+}
+
+.select_button_container {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 10px;
+}
+
+.select_button {
+    background-color: var(--yellow);
+    padding: 10px 72px;
+    font-family: Arial;
+    font-weight: 400;
+    font-size: 2rem;
+    line-height: 28px;
+    letter-spacing: 0%;
+    color: var(--white);
+    border-radius: 12px;
+    margin-top: 32px;
+}

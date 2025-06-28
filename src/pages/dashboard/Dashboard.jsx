@@ -8,7 +8,7 @@ import DashboardEnd from '../../components/admin/dashboard/dashboardEnd/Dashboar
 
 const Dashboard = () => {
   return (
-    <AdminLayout adminHeader="İdarə paneli">
+    <AdminLayout adminHeader="İdarə paneli" dashboardSearch={true}>
       <AdminBigComponentHeader adminHeader={"Şəxsi göstəricilərin"} hideShowBtn={false} buttonContent="" />
       <DashboardFirst/>
       <SalesChart/>

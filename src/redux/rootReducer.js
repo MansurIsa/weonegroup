@@ -7,6 +7,7 @@ import { ServicesReducer } from "./slices/servicesSlices";
 import { BasketReducer } from "./slices/basketSlice";
 import { LoginReducer } from "./slices/loginSlices";
 import { LoaderReducer } from "./slices/loaderSlice";
+import { ProductTableReducer } from "./slices/admin/productTableSlice";
 
 
 const rootReducer = combineReducers({
@@ -17,7 +18,8 @@ const rootReducer = combineReducers({
   services: ServicesReducer,
   basket: BasketReducer,
   login: LoginReducer,
-  loader: LoaderReducer
+  loader: LoaderReducer,
+  productTable: ProductTableReducer
 });
 
 export default rootReducer;

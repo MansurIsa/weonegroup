@@ -1,0 +1,24 @@
+.custom_file_input {
+    padding: 14px 16px;
+    border: 1px solid var(--gray12);
+    border-radius: 6px;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+}
+
+.product_movement_date {
+    display: flex;
+    align-items: center;
+    gap: 52px;
+    margin-bottom: 32px !important;
+}
+
+.product_movement_date p {
+    font-family: Poppins;
+    font-weight: 400;
+    font-size: 1.6rem;
+    line-height: 24px;
+    letter-spacing: 0%;
+    color: var(--gray11);
+}

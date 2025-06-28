@@ -4,6 +4,7 @@ import DashboardFirst from '../../components/admin/dashboard/dashboardFirst/Dash
 import AdminBigComponentHeader from '../../components/admin/adminBigComponentHeader/AdminBigComponentHeader'
 import PurchaseEnd from '../../components/admin/purchaseEnd/PurchaseEnd'
 import { useNavigate } from 'react-router-dom'
+import SearchInpMain from '../../components/admin/searchInpMain/SearchInpMain'
 
 const Purchase = () => {
   const navigate=useNavigate()
@@ -15,6 +16,7 @@ const Purchase = () => {
     <AdminLayout adminHeader="Məhsul alışı">
         <DashboardFirst/>
          <AdminBigComponentHeader adminHeader={"Alınmış Məhsulların Cədvəli"} hideShowBtn={true} buttonContent="Yeni alış əlave et" onClick={handleClick}/>
+         <SearchInpMain/>
          <PurchaseEnd/>
     </AdminLayout>
   )
