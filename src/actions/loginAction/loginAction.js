@@ -20,7 +20,7 @@ export const postLogin = (data, navigate) => async (dispatch) => {
       localStorage.setItem("accessToken", accessToken);
 
       // 4. Token ilə user məlumatları çəkilir
-      const userResp = await axios.get(`${baseUrl}user/`, {
+      const userResp = await axios.get(`${baseUrl}core/user/`, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },
@@ -47,7 +47,7 @@ export const postLogin = (data, navigate) => async (dispatch) => {
 
 export const getUserObj = () => async (dispatch) => {
   dispatch(startLoading());
-  return await axios.get(`${baseUrl}user/`, {
+  return await axios.get(`${baseUrl}core/user/`, {
     headers: {
       Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
     }

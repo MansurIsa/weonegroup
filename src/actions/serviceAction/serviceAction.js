@@ -5,7 +5,7 @@ import { startLoading, stopLoading } from "../../redux/slices/loaderSlice";
 
 export const getServicesList = () => async (dispatch) => {
   dispatch(startLoading());
-  return await axios.get(`${baseUrl}service-list/`)
+  return await axios.get(`${baseUrl}core/service-list/`)
     .then((resp) => {
         console.log(resp.data);
       dispatch(getServicesListFunc(resp.data));
@@ -19,7 +19,7 @@ export const getServicesList = () => async (dispatch) => {
 
 export const getMissionList = () => async (dispatch) => {
   dispatch(startLoading());
-  return await axios.get(`${baseUrl}mission-list/`)
+  return await axios.get(`${baseUrl}core/mission-list/`)
     .then((resp) => {
         console.log(resp.data);
       dispatch(getMissionListFunc(resp.data));

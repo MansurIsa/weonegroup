@@ -1,0 +1,12 @@
+
+.sales_dates_inputs{
+    max-width: 400px;
+    
+}
+.sales_dates_inputs div{
+    display: flex;
+    align-items: center;
+}
+.sales_dates_inputs div input{
+    background: none;
+}

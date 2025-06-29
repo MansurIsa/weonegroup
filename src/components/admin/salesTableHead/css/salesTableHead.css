@@ -1,0 +1,4 @@
+.sales_table_head_right{
+    display: grid;
+    grid-template-columns: repeat(2,1fr);
+}

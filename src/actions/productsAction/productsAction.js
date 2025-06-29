@@ -6,7 +6,7 @@ import toast from "react-hot-toast";
 
 export const getProductsList = () => async (dispatch) => {
   dispatch(startLoading());
-  return await axios.get(`${baseUrl}product-list/`)
+  return await axios.get(`${baseUrl}core/product-list/`)
     .then((resp) => {
         console.log(resp.data);
       dispatch(getProductsListFunc(resp.data));
@@ -21,7 +21,7 @@ export const getProductsList = () => async (dispatch) => {
 
 export const getCategoryList = () => async (dispatch) => {
   dispatch(startLoading());
-  return await axios.get(`${baseUrl}category-list/`)
+  return await axios.get(`${baseUrl}core/category-list/`)
     .then((resp) => {
         console.log(resp.data);
       dispatch(getCategoryListFunc(resp.data));
@@ -35,7 +35,7 @@ export const getCategoryList = () => async (dispatch) => {
 
 export const getBrandList = () => async (dispatch) => {
   dispatch(startLoading());
-  return await axios.get(`${baseUrl}brand-list/`)
+  return await axios.get(`${baseUrl}core/brand-list/`)
     .then((resp) => {
         console.log(resp.data);
       dispatch(getBrandListFunc(resp.data));
@@ -50,7 +50,7 @@ export const getBrandList = () => async (dispatch) => {
 
 export const addProductToCart = (data,navigate) => async (dispatch) => {
   dispatch(startLoading());
-  return await axios.post(`${baseUrl}basketitem-create/`,data,{
+  return await axios.post(`${baseUrl}core/basketitem-create/`,data,{
     headers: {
           Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
         }

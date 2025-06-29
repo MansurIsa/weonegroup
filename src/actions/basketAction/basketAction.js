@@ -6,7 +6,7 @@ import toast from "react-hot-toast";
 
 export const getBasketItemList = () => async (dispatch) => {
   dispatch(startLoading());
-  return await axios.get(`${baseUrl}user-basketitem-list/`,{
+  return await axios.get(`${baseUrl}core/user-basketitem-list/`,{
     headers: {
           Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
         }
@@ -25,7 +25,7 @@ export const getBasketItemList = () => async (dispatch) => {
 
 export const basketClear = (data) => async (dispatch) => {
   dispatch(startLoading());
-  return await axios.post(`${baseUrl}basketitem-clean/`,data,{
+  return await axios.post(`${baseUrl}core/basketitem-clean/`,data,{
     headers: {
           Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
         }
@@ -46,7 +46,7 @@ export const basketClear = (data) => async (dispatch) => {
 
 export const basketItemUpdate = (id,data) => async (dispatch) => {
   dispatch(startLoading());
-  return await axios.put(`${baseUrl}basketitem-update-delete/${id}/`,data,{
+  return await axios.put(`${baseUrl}core/basketitem-update-delete/${id}/`,data,{
     headers: {
           Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
         }
@@ -67,7 +67,7 @@ export const basketItemUpdate = (id,data) => async (dispatch) => {
 
 export const basketItemDelete = (id) => async (dispatch) => {
   dispatch(startLoading());
-  return await axios.delete(`${baseUrl}basketitem-update-delete/${id}/`,{
+  return await axios.delete(`${baseUrl}core/basketitem-update-delete/${id}/`,{
     headers: {
           Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
         }

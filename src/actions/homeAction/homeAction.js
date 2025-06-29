@@ -5,7 +5,7 @@ import { startLoading, stopLoading } from "../../redux/slices/loaderSlice";
 
 export const getSettingsList = () => async (dispatch) => {
   dispatch(startLoading());
-  return await axios.get(`${baseUrl}settings/`)
+  return await axios.get(`${baseUrl}core/settings/`)
     .then((resp) => {
         console.log(resp.data);
       dispatch(getSettingsListFunc(resp.data));
@@ -20,7 +20,7 @@ export const getSettingsList = () => async (dispatch) => {
 
 export const getBannerList = () => async (dispatch) => {
   dispatch(startLoading());
-  return await axios.get(`${baseUrl}banner-list/`)
+  return await axios.get(`${baseUrl}core/banner-list/`)
     .then((resp) => {
         console.log(resp.data);
       dispatch(getBannerListFunc(resp.data));
@@ -35,7 +35,7 @@ export const getBannerList = () => async (dispatch) => {
 
 export const getSocialList = () => async (dispatch) => {
   dispatch(startLoading());
-  return await axios.get(`${baseUrl}socialmedia-list/`)
+  return await axios.get(`${baseUrl}core/socialmedia-list/`)
     .then((resp) => {
         console.log(resp.data);
         dispatch(getSocialListFunc(resp.data));

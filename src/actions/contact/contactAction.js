@@ -6,7 +6,7 @@ import toast from "react-hot-toast";
 export const contactForm = (data) => async (dispatch) => {
   try {
     dispatch(startLoading()); 
-    const response = await axios.post(`${baseUrl}application-create/`, data);
+    const response = await axios.post(`${baseUrl}core/application-create/`, data);
     toast.success("Müraciət uğurla göndərildi");
     return response.data;
   } catch (err) {

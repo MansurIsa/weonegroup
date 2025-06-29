@@ -21,6 +21,7 @@ import NewPurchase from './pages/purchase/NewPurchase';
 import NewWarehouse from './pages/warehouse/NewWarehouse';
 import NewProducts from './pages/productsTable/NewProducts';
 import ProductsMovement from './pages/productsTable/ProductsMovement';
+import ProductsMovementCustomer from './pages/productsTable/ProductsMovementCustomer';
 
 const routes = [
   { path: "/", element: <Home />, isProtected: false },
@@ -39,6 +40,7 @@ const routes = [
   { path: "/products-table", element: <ProductsTable />, isProtected: true },
   { path: "/new-products", element: <NewProducts />, isProtected: true },
   { path: "/product-movement", element: <ProductsMovement />, isProtected: true },
+  { path: "/product-movement-customer", element: <ProductsMovementCustomer />, isProtected: true },
   { path: "/products-returned", element: <ProductsReturned />, isProtected: true },
   { path: "/income", element: <ProductsReturned />, isProtected: true },
   { path: "/expense", element: <ProductsReturned />, isProtected: true },
