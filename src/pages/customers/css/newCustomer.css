@@ -1,0 +1,14 @@
+.new_customer_form_group{
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+}
+.new_customer_form_group div{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.new_customer_form_group div label input{
+    width: 30px;
+}

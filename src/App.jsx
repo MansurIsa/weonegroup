@@ -22,6 +22,11 @@ import NewWarehouse from './pages/warehouse/NewWarehouse';
 import NewProducts from './pages/productsTable/NewProducts';
 import ProductsMovement from './pages/productsTable/ProductsMovement';
 import ProductsMovementCustomer from './pages/productsTable/ProductsMovementCustomer';
+import SalesProductsCustomer from './pages/sales/SalesProductsCustomer';
+import SalesProductsSelect from './pages/sales/SalesProductsSelect';
+import CustomerMovement from './pages/customers/CustomerMovement';
+import NewCustomer from './pages/customers/NewCustomer';
+import CustomerMovementFacture from './pages/customers/CustomerMovementFacture';
 
 const routes = [
   { path: "/", element: <Home />, isProtected: false },
@@ -45,8 +50,12 @@ const routes = [
   { path: "/income", element: <ProductsReturned />, isProtected: true },
   { path: "/expense", element: <ProductsReturned />, isProtected: true },
   { path: "/sales", element: <Sales />, isProtected: true },
+   { path: "/product-sales-customer", element: <SalesProductsCustomer />, isProtected: true },
+   { path: "/sales-products-select", element: <SalesProductsSelect />, isProtected: true },
   { path: "/customers", element: <Customers />, isProtected: true },
- 
+ { path: "/customer-movement", element: <CustomerMovement />, isProtected: true },
+ { path: "/customer-movement-facture", element: <CustomerMovementFacture/>, isProtected: true },
+  { path: "/new-customer", element: <NewCustomer />, isProtected: true },
 ];
 
 const App = () => {
