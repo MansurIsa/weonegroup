@@ -8,6 +8,7 @@
 .product_table_head_right {
     display: flex;
     flex-direction: column;
+   /* align-items: flex-start; */
 }
 
 .left_box {

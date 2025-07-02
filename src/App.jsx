@@ -27,6 +27,8 @@ import SalesProductsSelect from './pages/sales/SalesProductsSelect';
 import CustomerMovement from './pages/customers/CustomerMovement';
 import NewCustomer from './pages/customers/NewCustomer';
 import CustomerMovementFacture from './pages/customers/CustomerMovementFacture';
+import Income from './pages/income/Income';
+import Expense from './pages/expense/Expense';
 
 const routes = [
   { path: "/", element: <Home />, isProtected: false },
@@ -47,8 +49,8 @@ const routes = [
   { path: "/product-movement", element: <ProductsMovement />, isProtected: true },
   { path: "/product-movement-customer", element: <ProductsMovementCustomer />, isProtected: true },
   { path: "/products-returned", element: <ProductsReturned />, isProtected: true },
-  { path: "/income", element: <ProductsReturned />, isProtected: true },
-  { path: "/expense", element: <ProductsReturned />, isProtected: true },
+  { path: "/income", element: <Income />, isProtected: true },
+  { path: "/expense", element: <Expense />, isProtected: true },
   { path: "/sales", element: <Sales />, isProtected: true },
    { path: "/product-sales-customer", element: <SalesProductsCustomer />, isProtected: true },
    { path: "/sales-products-select", element: <SalesProductsSelect />, isProtected: true },

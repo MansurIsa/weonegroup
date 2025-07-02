@@ -8,6 +8,7 @@ import { BasketReducer } from "./slices/basketSlice";
 import { LoginReducer } from "./slices/loginSlices";
 import { LoaderReducer } from "./slices/loaderSlice";
 import { ProductTableReducer } from "./slices/admin/productTableSlice";
+import { IncomeReducer } from "./slices/admin/incomeSlices";
 
 
 const rootReducer = combineReducers({
@@ -19,7 +20,9 @@ const rootReducer = combineReducers({
   basket: BasketReducer,
   login: LoginReducer,
   loader: LoaderReducer,
-  productTable: ProductTableReducer
+  
+  productTable: ProductTableReducer,
+  income: IncomeReducer
 });
 
 export default rootReducer;
