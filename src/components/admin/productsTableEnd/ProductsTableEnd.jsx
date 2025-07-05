@@ -2,60 +2,17 @@ import React, { useState } from 'react';
 import ReactPaginate from 'react-paginate';
 // import "./css/ProductsTableEnd.css"
 
-const data = [
-    {
-        productName: "Lada yağı",
-        article: ["504", "504A"],
-        quantity: 1000,
-        costPrice: "12 ₼",
-        purchasePrice: "8.2 $ / 750 ₼",
-        salePrice: "17 ₼",
-        discountPrice: "15 ₼",
-        arrivalDate: "03.11.2024"
-    },
-    {
-        productName: "Mühərrik yağı",
-        article: ["001"],
-        quantity: 1000,
-        costPrice: "12 ₼",
-        purchasePrice: "8.2 $ / 750 ₼",
-        salePrice: "17 ₼",
-        discountPrice: "15 ₼",
-        arrivalDate: "03.11.2024"
-    },
-    {
-        productName: "Radiator",
-        article: ["102", "102B"],
-        quantity: 1000,
-        costPrice: "12 ₼",
-        purchasePrice: "8.2 $ / 750 ₼",
-        salePrice: "17 ₼",
-        discountPrice: "15 ₼",
-        arrivalDate: "03.11.2024"
-    },
-    {
-        productName: "Əyləc diski",
-        article: ["066"],
-        quantity: 1000,
-        costPrice: "12 ₼",
-        purchasePrice: "8.2 $ / 750 ₼",
-        salePrice: "17 ₼",
-        discountPrice: "15 ₼",
-        arrivalDate: "03.11.2024"
-    },
-    // ... digər məhsullar da eyni qaydada əlavə et
-];
 
 
 
-const ITEMS_PER_PAGE = 3;
+const ITEMS_PER_PAGE = 8;
 
-const ProductsTableEnd = () => {
+const ProductsTableEnd = ({productsList}) => {
     const [currentPage, setCurrentPage] = useState(0);
 
     const offset = currentPage * ITEMS_PER_PAGE;
-    const currentPageData = data.slice(offset, offset + ITEMS_PER_PAGE);
-    const pageCount = Math.ceil(data.length / ITEMS_PER_PAGE);
+    const currentPageData = productsList?.slice(offset, offset + ITEMS_PER_PAGE);
+    const pageCount = Math.ceil(productsList?.length / ITEMS_PER_PAGE);
 
     const handlePageClick = (event) => {
         setCurrentPage(event.selected);
@@ -83,16 +40,16 @@ const ProductsTableEnd = () => {
                 </thead>
 
                 <tbody>
-                    {currentPageData.map((item, index) => (
+                    {currentPageData?.map((item, index) => (
                         <tr key={index}>
-                            <td>{item.productName}</td>
-                            <td>{item.article.join(', ')}</td>
-                            <td>{item.quantity}</td>
-                            <td>{item.costPrice}</td>
-                            <td>{item.purchasePrice}</td>
-                            <td>{item.salePrice}</td>
-                            <td>{item.discountPrice}</td>
-                            <td>{item.arrivalDate}</td>
+                            <td>{item?.name || "-"}</td>
+                           <td>{item?.articles?.map(article => article.name).join(', ') || "-"}</td>
+                            <td>{item?.amount || "-"}</td>
+                            <td>{item?.cost_price || "-"}</td>
+                            <td>{item?.purchase_price || "-"}</td>
+                            <td>{item?.price || "-"}</td>
+                            <td>{item?.discount_price || "-"}</td>
+                            <td>{item?.date || "-"}</td>
                             <td style={{cursor: "pointer"}}>
                                 <svg width="25" height="24" viewBox="0 0 25 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                     <path d="M12.5 13C13.0523 13 13.5 12.5523 13.5 12C13.5 11.4477 13.0523 11 12.5 11C11.9477 11 11.5 11.4477 11.5 12C11.5 12.5523 11.9477 13 12.5 13Z" fill="#202020" stroke="#202020" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />

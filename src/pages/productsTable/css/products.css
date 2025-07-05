@@ -22,3 +22,20 @@
     letter-spacing: 0%;
     color: var(--gray11);
 }
+
+
+.image_preview_wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+}
+
+.change_image_btn {
+    padding: 6px 15px;
+    font-size: 14px;
+    background-color: var(--gray12);
+    border: 1px solid var(--gray12);
+    border-radius: 6px;
+    cursor: pointer;
+}
