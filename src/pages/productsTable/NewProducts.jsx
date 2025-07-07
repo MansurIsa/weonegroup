@@ -78,22 +78,25 @@ const NewProducts = () => {
     };
 
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        const form = new FormData();
-        form.append('name', formData.name);
-        formData.articles.forEach((art, i) => {
-            form.append(`articles[${i}]`, art);
-        });
-        form.append('category', formData.category);
-        form.append('brand', formData.brand);
-        form.append('date', formData.date); // ✅ date əlavə olunur
-        if (formData.image) {
-            form.append('image', formData.image);
-        }
+   const handleSubmit = (e) => {
+    e.preventDefault();
+    const form = new FormData();
+    form.append('name', formData.name);
 
-        dispatch(addProduct(form, navigate)); // Dəyişiklik: `formData` əvəzinə `form`
-    };
+    // ✅ Artikllar JSON şəklində array olaraq göndərilir
+    form.append('articles', JSON.stringify(formData.articles));
+
+    form.append('category', +formData.category);
+    form.append('brand', +formData.brand);
+    form.append('date', formData.date);
+
+    if (formData.image) {
+        form.append('image', formData.image);
+    }
+
+    dispatch(addProduct(form, navigate));
+};
+
 
 
 

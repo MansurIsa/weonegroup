@@ -9,6 +9,7 @@ export const addProduct = (data,navigate) => async (dispatch) => {
   return await axios.post(`${baseUrl}core/product-create/`,data,{
     headers: {
           Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+          'Content-Type': 'multipart/form-data'
         }
   })
     .then((resp) => {

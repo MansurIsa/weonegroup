@@ -2,14 +2,14 @@ import axios from "axios";
 import { baseUrl } from "../../mainApi/MainApi";
 import { startLoading, stopLoading } from "../../redux/slices/loaderSlice";
 import toast from "react-hot-toast";
-import { getPurchaseListFunc } from "../../redux/slices/admin/purchaseSlices";
+import { getStockListFunc } from "../../redux/slices/admin/stockSlices";
 
-export const getPurchaseList = () => async (dispatch) => {
+export const getStockList = () => async (dispatch) => {
   dispatch(startLoading());
-  return await axios.get(`${baseUrl}accounting/purchase-list/`)
+  return await axios.get(`${baseUrl}accounting/stock-list/`)
     .then((resp) => {
         console.log(resp.data);
-      dispatch(getPurchaseListFunc(resp.data));
+      dispatch(getStockListFunc(resp.data));
     })
     .catch((err) => {
       console.log(err);
@@ -19,17 +19,17 @@ export const getPurchaseList = () => async (dispatch) => {
 };
 
 
-export const addPurchase = (data,navigate) => async (dispatch) => {
+export const addStock = (data,navigate) => async (dispatch) => {
   dispatch(startLoading());
-  return await axios.post(`${baseUrl}accounting/purchase-create/`,data,{
+  return await axios.post(`${baseUrl}accounting/addtostock/`,data,{
     headers: {
           Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
         }
   })
     .then((resp) => {
         console.log(resp);
-        toast.success("Alış uğurla edildi");
-        navigate("/purchase")
+        toast.success("Anbara uğurla əlavə edildi");
+        navigate("/warehouse")
     })
     .catch((err) => {
       console.log(err);

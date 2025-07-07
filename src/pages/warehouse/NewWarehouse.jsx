@@ -1,91 +1,45 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import AdminLayout from '../../layouts/adminLayout/AdminLayout';
 import './css/warehouse.css';
 import { useNavigate } from 'react-router-dom';
-
-const productData = [
-    {
-        brand: 'Castrol',
-        name: 'Lada yağı',
-        article: ['504', '504A'],
-        stock: 1000,
-        cost: 12,
-        sale: 17,
-        discount: 15
-    },
-    {
-        brand: 'Opel',
-        name: 'Mühərrik yağı',
-        article: ['001'],
-        stock: 1000,
-        cost: 12,
-        sale: 17,
-        discount: 15
-    },
-    {
-        brand: 'Hyundai',
-        name: 'Radiator',
-        article: ['102', '102B'],
-        stock: 1000,
-        cost: 12,
-        sale: 17,
-        discount: 15
-    },
-    {
-        brand: 'Toyoto',
-        name: 'Əyləc diski',
-        article: ['066'],
-        stock: 1000,
-        cost: 12,
-        sale: 17,
-        discount: 15
-    },
-    {
-        brand: 'BMW',
-        name: 'Mühərrik yağı',
-        article: ['002', '002C'],
-        stock: 1000,
-        cost: 12,
-        sale: 17,
-        discount: 15
-    },
-    {
-        brand: 'Hyundai',
-        name: 'Radiator',
-        article: ['103'],
-        stock: 1000,
-        cost: 12,
-        sale: 17,
-        discount: 15
-    },
-    {
-        brand: 'Toyoto',
-        name: 'Əyləc diski',
-        article: ['105'],
-        stock: 1000,
-        cost: 12,
-        sale: 17,
-        discount: 15
-    },
-    {
-        brand: 'Opel',
-        name: 'Mühərrik yağı',
-        article: ['010'],
-        stock: 1000,
-        cost: 12,
-        sale: 17,
-        discount: 15
-    }
-];
+import { useDispatch, useSelector } from 'react-redux';
+import { getBrandList, getCategoryList, getProductsList } from '../../actions/productsAction/productsAction';
+import { getPurchaseList } from '../../actions/purchaseAction/purchaseAction';
+import { addStock } from '../../actions/stockActions/stockActions';
 
 const NewWarehouse = () => {
     const [search, setSearch] = useState('');
     const [selectedRows, setSelectedRows] = useState([]);
-    const [quantityValues, setQuantityValues] = useState({});
+    const [selectedBrand, setSelectedBrand] = useState('');
+    const [selectedCategory, setSelectedCategory] = useState('');
 
-    const filtered = productData.filter(p =>
-        p.brand.toLowerCase().includes(search.toLowerCase()) ||
-        p.name.toLowerCase().includes(search.toLowerCase())
+    const navigate = useNavigate();
+    const dispatch = useDispatch();
+
+    const { categoryList, brandList } = useSelector(state => state.products);
+    const { purchaseList } = useSelector(state => state.purchase);
+
+    useEffect(() => {
+        dispatch(getBrandList());
+        dispatch(getCategoryList());
+        dispatch(getProductsList());
+        dispatch(getPurchaseList());
+    }, [dispatch]);
+
+    const returnWarehouse = () => {
+        navigate("/warehouse");
+    };
+    console.log(purchaseList);
+
+    // 🔍 Filtrlənmiş və statusu G olan məhsullar
+    const filtered = purchaseList.filter(p =>
+        p.status === "G" &&
+        (!selectedBrand || p.product?.brand?.id === +selectedBrand) &&
+        (!selectedCategory || p.product?.category?.id === +selectedCategory) &&
+        (
+            p.product?.name?.toLowerCase().includes(search.toLowerCase()) ||
+            p.product?.articles?.some(article => article.name.toLowerCase().includes(search.toLowerCase()))
+        )
     );
 
     const toggleRow = (index) => {
@@ -96,41 +50,80 @@ const NewWarehouse = () => {
         }
     };
 
-    const handleQuantityChange = (index, value) => {
-        setQuantityValues({ ...quantityValues, [index]: value });
+    const totalCost = filtered.reduce((acc, item) => acc + item.amount * item.product.cost_price, 0);
+    const totalProfit = filtered.reduce((acc, item) => acc + item.amount * (item.product?.price - item?.product?.cost_price), 0);
+
+
+    const handleSave = () => {
+        const selectedItemIds = filtered
+            .map((item, index) => selectedRows.includes(index) ? item.product.id : null)
+            .filter(id => id !== null);
+
+        const payload = {
+            item_ids: selectedItemIds
+        };
+
+        console.log("Göndərilən məhsul ID-ləri:", payload);
+        dispatch(addStock(payload,navigate))
+
+        // Burada dispatch və ya API call edə bilərsən:
+        // dispatch(sendSelectedItemsToBackend(payload));
     };
 
-    const totalCost = filtered.reduce((acc, item) => acc + item.stock * item.cost, 0);
-    const totalProfit = filtered.reduce((acc, item) => acc + item.stock * (item.sale - item.cost), 0);
-
-
-    const navigate=useNavigate()
-
-    const returnWarehouse = () => {
-        navigate("/warehouse")
-    }
     return (
         <AdminLayout adminHeaderHide={true}>
-
             <div className="admin_container warehouse_page">
                 <div className="return_btn">
                     <button onClick={returnWarehouse}>Geri dön</button>
                 </div>
-                <div className="warehouse_search">
+
+                {/* <div className="warehouse_search_filters">
                     <input
                         type="text"
                         placeholder="Axtar..."
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
                     />
-                </div>
+
+                    <select value={selectedBrand} onChange={(e) => setSelectedBrand(e.target.value)}>
+                        <option value="">Bütün Markalar</option>
+                        {brandList?.map((b) => (
+                            <option key={b.id} value={b.id}>{b.name}</option>
+                        ))}
+                    </select>
+
+                    <select value={selectedCategory} onChange={(e) => setSelectedCategory(e.target.value)}>
+                        <option value="">Bütün Kateqoriyalar</option>
+                        {categoryList?.map((c) => (
+                            <option key={c.id} value={c.id}>{c.name}</option>
+                        ))}
+                    </select>
+                </div> */}
 
                 <div className="warehouse_content">
                     <div className="warehouse_sidebar">
-                        <strong>Markalar</strong>
-                        {[...new Set(productData.map(p => p.brand))].map((brand, idx) => (
-                            <div key={idx} className="sidebar_brand">{brand}</div>
-                        ))}
+
+                        <input
+                            type="text"
+                            placeholder="Axtar..."
+                            value={search}
+                            onChange={(e) => setSearch(e.target.value)}
+                        />
+
+                        <select value={selectedBrand} onChange={(e) => setSelectedBrand(e.target.value)}>
+                            <option value="">Bütün Markalar</option>
+                            {brandList?.map((b) => (
+                                <option key={b.id} value={b.id}>{b.name}</option>
+                            ))}
+                        </select>
+
+                        <select value={selectedCategory} onChange={(e) => setSelectedCategory(e.target.value)}>
+                            <option value="">Bütün Kateqoriyalar</option>
+                            {categoryList?.map((c) => (
+                                <option key={c.id} value={c.id}>{c.name}</option>
+                            ))}
+                        </select>
+
                     </div>
 
                     <div className="warehouse_table_wrapper">
@@ -142,9 +135,9 @@ const NewWarehouse = () => {
                                     <th>Artikl</th>
                                     <th>Qalan Say</th>
                                     <th>Maya Dəyəri</th>
+                                    <th>Alış Qiyməti</th>
                                     <th>Satış Qiyməti</th>
                                     <th>Endirimli Qiymət</th>
-                                    <th>Miqdar</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -157,23 +150,13 @@ const NewWarehouse = () => {
                                                 onChange={() => toggleRow(index)}
                                             />
                                         </td>
-                                        <td>{item.name}</td>
-                                        <td>{item.article.join(', ')}</td>
-                                        <td>{item.stock}</td>
-                                        <td>{item.cost} ₼</td>
-                                        <td>{item.sale} ₼</td>
-                                        <td>{item.discount} ₼</td>
-                                        <td>
-                                            {selectedRows.includes(index) && (
-                                                <input
-                                                    type="number"
-                                                    placeholder="0"
-                                                    className="quantity_input"
-                                                    value={quantityValues[index] || ''}
-                                                    onChange={(e) => handleQuantityChange(index, e.target.value)}
-                                                />
-                                            )}
-                                        </td>
+                                        <td>{item.product?.name}</td>
+                                        <td>{item.product?.articles?.map(a => a.name).join(', ')}</td>
+                                        <td>{item.amount}</td>
+                                        <td>{item.product?.cost_price} ₼</td>
+                                        <td>{item.product?.purchase_price} ₼</td>
+                                        <td>{item.product?.price} ₼</td>
+                                        <td>{item.product?.discount_price} ₼</td>
                                     </tr>
                                 ))}
                             </tbody>
@@ -182,23 +165,23 @@ const NewWarehouse = () => {
                         <div className="warehouse_summary">
                             <div>
                                 <label>Ümumi məbləğ</label>
-                                <span>{totalCost} AZN</span>
+                                <span>{totalCost.toFixed(2)} AZN</span>
                             </div>
                             <div>
                                 <label>Satışdan əldə olunan qazanc</label>
-                                <span>{totalProfit} AZN</span>
+                                <span>{totalProfit.toFixed(2)} AZN</span>
                             </div>
                         </div>
 
                         <div className="warehouse_submit">
-                            <button className="save_btn">Yadda saxla</button>
+                            <button className="save_btn" onClick={handleSave}>Yadda saxla</button>
                         </div>
+
                     </div>
                 </div>
             </div>
         </AdminLayout>
     );
 };
-
 
 export default NewWarehouse;

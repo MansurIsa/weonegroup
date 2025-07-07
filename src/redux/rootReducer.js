@@ -10,6 +10,7 @@ import { LoaderReducer } from "./slices/loaderSlice";
 import { ProductTableReducer } from "./slices/admin/productTableSlice";
 import { IncomeReducer } from "./slices/admin/incomeSlices";
 import { PurchaseReducer } from "./slices/admin/purchaseSlices";
+import { StockReducer } from "./slices/admin/stockSlices";
 
 
 const rootReducer = combineReducers({
@@ -24,7 +25,8 @@ const rootReducer = combineReducers({
   
   productTable: ProductTableReducer,
   income: IncomeReducer,
-  purchase: PurchaseReducer
+  purchase: PurchaseReducer,
+  stock: StockReducer,
 });
 
 export default rootReducer;
