@@ -50,6 +50,7 @@ const NewPurchase = () => {
             status: formData.status,
             cost_price: parseFloat(formData.costPrice),
             purchase_price: parseFloat(formData.purchasePriceValue),
+            currency: formData.purchaseCurrency,
             price: parseFloat(formData.salePrice),
             discount_price: parseFloat(formData.discountPrice)
         };
@@ -138,9 +139,9 @@ const NewPurchase = () => {
                                 onChange={handleChange}
                             >
                                 <option value="">Valyuta seçin</option>
-                                <option value="azn">₼ AZN</option>
-                                <option value="usd">$ USD</option>
-                                <option value="rub">₽ RUB</option>
+                                <option value="M">₼ AZN</option>
+                                <option value="D">$ USD</option>
+                                <option value="R">₽ RUB</option>
                             </select>
                         </div>
 
@@ -148,11 +149,12 @@ const NewPurchase = () => {
                             <div className="form_group">
                                 <label>
                                     Alış qiyməti (
-                                    {formData.purchaseCurrency === 'azn'
+                                    {formData.purchaseCurrency === 'M'
                                         ? '₼'
-                                        : formData.purchaseCurrency === 'usd'
+                                        : formData.purchaseCurrency === 'D'
                                         ? '$'
-                                        : '₽'}
+                                        : formData.purchaseCurrency === 'R'
+                                        ? '₽': ""}
                                     )
                                 </label>
                                 <input

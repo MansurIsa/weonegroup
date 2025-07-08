@@ -3,6 +3,7 @@ import AdminLayout from '../../layouts/adminLayout/AdminLayout'
 import SalesTableHead from '../../components/admin/salesTableHead/SalesTableHead'
 import SalesTableEnd from '../../components/admin/salesTableEnd/SalesTableEnd'
 import AdminBigComponentHeader from '../../components/admin/adminBigComponentHeader/AdminBigComponentHeader'
+import "./css/sales.css"
 
 const Sales = () => {
   return (

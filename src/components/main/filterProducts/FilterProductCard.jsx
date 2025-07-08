@@ -34,31 +34,52 @@ const FilterProductCard = ({ data }) => {
             <img src={data?.image} alt="" />
             <div className="filter_product_card_content">
                 {
-                    accessToken?
-                    <span
-                    className={` ${+data?.amount > 0
-                            ? 'filter_product_card_content_stock_green'
-                            : 'filter_product_card_content_stock_red'
-                        }`}
-                >
-                    {+data?.amount > 0 ? 'Stokda var' : 'Stokda bitib'}
-                </span>: null
+                    accessToken ?
+                        <span
+                            className={` ${+data?.amount > 0
+                                ? 'filter_product_card_content_stock_green'
+                                : 'filter_product_card_content_stock_red'
+                                }`}
+                        >
+                            {+data?.amount > 0 ? 'Stokda var' : 'Stokda bitib'}
+                        </span> : null
                 }
-                
+
                 <h3>{data?.name}</h3>
                 <p>{data?.brand?.name}</p>
 
                 <div>
                     {
-                        accessToken ? <span className='filter_product_card_content_price'>{data?.price} AZN</span> : null
-                    }
-                    {
-                        accessToken ? <span>{data?.discount_price} AZN</span> : null
+                        accessToken && userObj?.status === "S" &&
+                        <span>{data?.price} AZN</span>
                     }
 
-                   
+                    {
+                        accessToken && userObj?.status === "E" &&
+                        <span>{data?.discount_price} AZN</span>
+                    }
+
+                    {
+                        accessToken && userObj?.status === "SE" && (
+                            <>
+                                <span className='filter_product_card_content_price'>{data?.price} AZN</span>
+                                <span>{data?.discount_price} AZN</span>
+                            </>
+                        )
+                    }
                 </div>
-                 <button onClick={() => addToCart(data)}>Səbətə əlavə et</button>
+
+                <button
+                    onClick={() => {
+                        if (!accessToken || +data?.amount > 0) {
+                            addToCart(data);
+                        }
+                    }}
+                    disabled={accessToken && +data?.amount <= 0}
+                >
+                    Səbətə əlavə et
+                </button>
+
             </div>
 
 

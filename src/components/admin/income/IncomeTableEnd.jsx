@@ -6,15 +6,12 @@ import "./css/income.css"; // Stil faylını özünə uyğun əlavə et
 
 const ITEMS_PER_PAGE = 5;
 
-const IncomeTableEnd = () => {
-    const dispatch = useDispatch();
-    const { paymentList } = useSelector(state => state.income);
+const IncomeTableEnd = ({paymentList}) => {
+   
 
     const [currentPage, setCurrentPage] = useState(0);
 
-    useEffect(() => {
-        dispatch(getPaymentList());
-    }, [dispatch]);
+
 
     const formatDateTime = (datetime) => {
         const date = new Date(datetime);
@@ -40,9 +37,10 @@ const IncomeTableEnd = () => {
                 <thead>
                     <tr>
                         <th>Ad Soyad</th>
-                        <th>Məhsul</th>
+                        <th>İstifadəşi adı</th>
+                        {/* <th>Məhsul</th>
                         <th>Satış Qiyməti</th>
-                        <th>Miqdarı</th>
+                        <th>Miqdarı</th> */}
                         <th>Məbləğ</th>
                         <th>Ödəniş Tarixi</th>
                     </tr>
@@ -51,10 +49,9 @@ const IncomeTableEnd = () => {
                 <tbody>
                     {currentPageData.map((item, index) => (
                         <tr key={item.id}>
+                            <td>{item.customer?.first_name || '-'} {item.customer?.last_name || '-'}</td>
                             <td>{item.customer?.username || '-'}</td>
-                            <td>-</td>
-                            <td>-</td>
-                            <td>-</td>
+                          
                             <td>{item.amount} ₼</td>
                             <td>{formatDateTime(item.datetime)}</td>
                         </tr>

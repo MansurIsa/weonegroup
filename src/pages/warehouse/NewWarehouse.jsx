@@ -56,7 +56,7 @@ const NewWarehouse = () => {
 
     const handleSave = () => {
         const selectedItemIds = filtered
-            .map((item, index) => selectedRows.includes(index) ? item.product.id : null)
+            .map((item, index) => selectedRows.includes(index) ? item.id : null)
             .filter(id => id !== null);
 
         const payload = {

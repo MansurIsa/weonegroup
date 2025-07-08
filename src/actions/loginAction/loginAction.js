@@ -2,7 +2,7 @@ import axios from "axios";
 import toast from "react-hot-toast";
 import { baseUrl } from "../../mainApi/MainApi";
 import { startLoading, stopLoading } from "../../redux/slices/loaderSlice";
-import { getUserObjFunc } from "../../redux/slices/loginSlices";
+import { getUserObjFunc, getUsersListFunc } from "../../redux/slices/loginSlices";
 
 export const postLogin = (data, navigate) => async (dispatch) => {
   try {
@@ -20,7 +20,7 @@ export const postLogin = (data, navigate) => async (dispatch) => {
       localStorage.setItem("accessToken", accessToken);
 
       // 4. Token ilə user məlumatları çəkilir
-      const userResp = await axios.get(`${baseUrl}core/user/`, {
+      const userResp = await axios.get(`${baseUrl}core/user-retrieve-update-delete/`, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },
@@ -47,7 +47,7 @@ export const postLogin = (data, navigate) => async (dispatch) => {
 
 export const getUserObj = () => async (dispatch) => {
   dispatch(startLoading());
-  return await axios.get(`${baseUrl}core/user/`, {
+  return await axios.get(`${baseUrl}core/user-retrieve-update-delete/`, {
     headers: {
       Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
     }
@@ -79,6 +79,29 @@ export const createUser = (data, navigate) => async (dispatch) => {
     .catch((err) => {
       console.log(err);
       toast.error("Xəta baş verdi. Zəhmət olmasa yenidən yoxlayın ❌");
+    }).finally(() => {
+      dispatch(stopLoading());
+    });;
+};
+
+
+export const getUsersList = () => async (dispatch) => {
+  dispatch(startLoading());
+  return await axios.get(`${baseUrl}core/user-list/`,
+
+    {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+      }
+    }
+
+  )
+    .then((resp) => {
+      console.log(resp.data);
+      dispatch(getUsersListFunc(resp.data));
+    })
+    .catch((err) => {
+      console.log(err);
     }).finally(() => {
       dispatch(stopLoading());
     });;

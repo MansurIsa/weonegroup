@@ -11,6 +11,14 @@ const SalesProductsSelect = () => {
     const [quantityValues, setQuantityValues] = useState({});
     const [selectedBrand, setSelectedBrand] = useState('');
     const [selectedCategory, setSelectedCategory] = useState('');
+    const [priceValues, setPriceValues] = useState({});
+
+    const handlePriceChange = (index, value) => {
+        setPriceValues({ ...priceValues, [index]: value });
+    };
+
+
+
 
     const navigate = useNavigate();
     const dispatch = useDispatch();
@@ -45,20 +53,27 @@ const SalesProductsSelect = () => {
         }
     };
 
-    const handleQuantityChange = (index, value) => {
-        setQuantityValues({ ...quantityValues, [index]: value });
+    const handleQuantityChange = (index, value, max) => {
+        const parsedValue = +value;
+        if (parsedValue <= max) {
+            setQuantityValues({ ...quantityValues, [index]: value });
+        }
     };
+
 
     const totalCost = filtered.reduce((acc, item) => acc + item.amount * item.product?.cost_price, 0);
     const totalProfit = filtered.reduce((acc, item) => acc + item.amount * (item.product?.price - item.product?.cost_price), 0);
 
     const handleSave = () => {
-        const item_ids = selectedRows.map(index => filtered[index].product.id);
-        console.log("Seçilmiş məhsul ID-ləri:", item_ids);
+        const selectedItems = selectedRows.map(index => ({
+            product_id: filtered[index].product.id,
+            quantity: +quantityValues[index] || 0,
+            price: +priceValues[index] || filtered[index].product.price
+        }));
 
-        // Burada backendə göndərilə bilər:
-        // axios.post('/api/sales-products/', { item_ids })
+        console.log("Seçilmiş məhsullar:", selectedItems);
     };
+
 
     return (
         <AdminLayout adminHeaderHide={true}>
@@ -119,7 +134,20 @@ const SalesProductsSelect = () => {
                                         <td>{item.product?.articles?.map(a => a.name).join(', ')}</td>
                                         <td>{item.amount}</td>
                                         <td>{item.product?.cost_price} ₼</td>
-                                        <td>{item.product?.price} ₼</td>
+
+                                        <td>
+                                            {selectedRows.includes(index) ? (
+                                                <input
+                                                    type="number"
+                                                    value={priceValues[index] ?? item.product?.price}
+                                                    onChange={(e) => handlePriceChange(index, e.target.value)}
+                                                    className="price_input"
+                                                />
+                                            ) : (
+                                                `${item.product?.price} ₼`
+                                            )}
+                                        </td>
+
                                         <td>{item.product?.discount_price} ₼</td>
                                         <td>
                                             {selectedRows.includes(index) && (
@@ -128,13 +156,14 @@ const SalesProductsSelect = () => {
                                                     placeholder="0"
                                                     className="quantity_input"
                                                     value={quantityValues[index] || ''}
-                                                    onChange={(e) => handleQuantityChange(index, e.target.value)}
+                                                    onChange={(e) => handleQuantityChange(index, e.target.value, item.amount)}
                                                 />
                                             )}
                                         </td>
                                     </tr>
                                 ))}
                             </tbody>
+
                         </table>
 
                         <div className="warehouse_summary">

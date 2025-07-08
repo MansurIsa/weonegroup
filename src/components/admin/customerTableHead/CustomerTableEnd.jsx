@@ -1,93 +1,21 @@
 import React, { useState } from 'react';
 import ReactPaginate from 'react-paginate';
-// import "./css/CustomerTableEnd.css"
 
-const data = [
-    {
-        fullName: "Elçin Quliyev",
-        address: "Bakı, Yasamal",
-        email: "bhbcbdsjjs@gmail.com",
-        phone: "050 xxx xx xx",
-        theyOweUs: "200 ₼",
-        weOweThem: "0 ₼",
-        paymentStatus: "Satış"
-    },
-    {
-        fullName: "Elçin Quliyev",
-        address: "Bakı, Yasamal",
-        email: "bhbcbdsjjs@gmail.com",
-        phone: "050 xxx xx xx",
-        theyOweUs: "200 ₼",
-        weOweThem: "0 ₼",
-        paymentStatus: "Endirimli"
-    },
-    {
-        fullName: "Elçin Quliyev",
-        address: "Bakı, Yasamal",
-        email: "bhbcbdsjjs@gmail.com",
-        phone: "050 xxx xx xx",
-        theyOweUs: "200 ₼",
-        weOweThem: "0 ₼",
-        paymentStatus: "Endirimli"
-    },
-    {
-        fullName: "Elçin Quliyev",
-        address: "Bakı, Yasamal",
-        email: "bhbcbdsjjs@gmail.com",
-        phone: "050 xxx xx xx",
-        theyOweUs: "200 ₼",
-        weOweThem: "0 ₼",
-        paymentStatus: "Endirimli"
-    },
-    {
-        fullName: "Elçin Quliyev",
-        address: "Bakı, Yasamal",
-        email: "bhbcbdsjjs@gmail.com",
-        phone: "050 xxx xx xx",
-        theyOweUs: "200 ₼",
-        weOweThem: "0 ₼",
-        paymentStatus: "Endirimli"
-    },
-    {
-        fullName: "Elçin Quliyev",
-        address: "Bakı, Yasamal",
-        email: "bhbcbdsjjs@gmail.com",
-        phone: "050 xxx xx xx",
-        theyOweUs: "200 ₼",
-        weOweThem: "0 ₼",
-        paymentStatus: "Satış"
-    },
-    {
-        fullName: "Elçin Quliyev",
-        address: "Bakı, Yasamal",
-        email: "bhbcbdsjjs@gmail.com",
-        phone: "050 xxx xx xx",
-        theyOweUs: "200 ₼",
-        weOweThem: "15 ₼",
-        paymentStatus: "Satış"
-    },
-    {
-        fullName: "Elçin Quliyev",
-        address: "Bakı, Yasamal",
-        email: "bhbcbdsjjs@gmail.com",
-        phone: "050 xxx xx xx",
-        theyOweUs: "200 ₼",
-        weOweThem: "15 ₼",
-        paymentStatus: "Satış"
-    }
-];
+
+
 
 
 
 
 const ITEMS_PER_PAGE = 3;
 
-const CustomerTableEnd = () => {
+const CustomerTableEnd = ({ usersList }) => {
     const [currentPage, setCurrentPage] = useState(0);
 
     const offset = currentPage * ITEMS_PER_PAGE;
-    const currentPageData = data.slice(offset, offset + ITEMS_PER_PAGE);
-    const pageCount = Math.ceil(data.length / ITEMS_PER_PAGE);
+    const currentPageData = usersList.slice(offset, offset + ITEMS_PER_PAGE);
+    const pageCount = Math.ceil(usersList.length / ITEMS_PER_PAGE);
+
 
     const handlePageClick = (event) => {
         setCurrentPage(event.selected);
@@ -99,9 +27,9 @@ const CustomerTableEnd = () => {
                 <thead>
                     <tr>
                         <th>Ad Soyad</th>
-                        <th>Ünvan</th>
-                        <th>Elektron poçt</th>
+                        <th>İstifadəçi adı</th>
                         <th>Əlaqə nömrəsi</th>
+                        <th>Ünvan</th>
                         <th>Bizə borc</th>
                         <th>Bizim borc</th>
                         <th>Ödəniş status</th>
@@ -115,17 +43,24 @@ const CustomerTableEnd = () => {
 
 
                 <tbody>
-                    {currentPageData.map((item, index) => (
+                    {currentPageData?.map((item, index) => (
                         <tr key={index}>
-                            <td>{item.fullName}</td>
-                            <td>{item.address}</td>
-                            <td>{item.email}</td>
-                            <td>{item.phone}</td>
-                            <td>{item.theyOweUs}</td>
-                            <td>{item.weOweThem}</td>
-                            <td>{item.paymentStatus}</td>
+                            <td>{item.first_name  || "-"} {item.last_name|| "-"}</td>
+
+                            <td>{item.username || "-"}</td>
+                            <td>{item.phone_number || "-"}</td>
+                            <td>{item.address || "-"}</td>
+                            <td>0 ₼</td> {/* Bizə borc üçün hazırda dummy dəyər */}
+                            <td>0 ₼</td> {/* Bizim borc üçün hazırda dummy dəyər */}
+                            <td>
+                                {
+                                    item.status === "S" ? "Satış Qiyməti"
+                                        : item.status === "E" ? "Endirimli Qiyməti"
+                                            : item.status === "SE" ? "Satış və Endirimli Qiyməti"
+                                                : "—"
+                                }
+                            </td>
                             <td style={{ cursor: "pointer" }}>
-                                {/* 3 nöqtə ikonu və ya əməliyyat ikonu yerləşə bilər */}
                                 <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                                     <circle cx="10" cy="4" r="1.5" fill="#202020" />
                                     <circle cx="10" cy="10" r="1.5" fill="#202020" />
@@ -135,6 +70,7 @@ const CustomerTableEnd = () => {
                         </tr>
                     ))}
                 </tbody>
+
 
 
 

@@ -56,6 +56,9 @@ const SalesTableEnd = () => {
         setCurrentPage(event.selected);
     };
 
+    console.log(currentPageData);
+    
+
     return (
         <div className='admin_container dashboard_end_container'>
             <div className="form_group sales_dates_inputs">
@@ -79,7 +82,7 @@ const SalesTableEnd = () => {
                 <thead>
                     <tr>
                         <th></th>
-                        <th>Müştəri Adı</th>
+                        <th>Müştəri</th>
                         <th>Məhsul</th>
                         <th>Marka</th>
                         <th>Miqdar</th>

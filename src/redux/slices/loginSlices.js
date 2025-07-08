@@ -3,7 +3,8 @@ import { createSlice } from '@reduxjs/toolkit';
 const LoginSlice = createSlice({
     name: 'login',
     initialState: {
-      userObj: {}
+      userObj: {},
+      usersList: []
     },
     reducers: {
        getUserObjFunc: (state,action)=>{
@@ -11,9 +12,12 @@ const LoginSlice = createSlice({
        },
         logoutFunc: (state) => {
             state.userObj = {}; // istifadəçi məlumatını təmizlə
+        },
+        getUsersListFunc: (state,action)=>{
+            state.usersList=action.payload
         }
     }
 });
 
 export const LoginReducer = LoginSlice.reducer;
-export const {getUserObjFunc,logoutFunc} = LoginSlice.actions;
+export const {getUserObjFunc,logoutFunc,getUsersListFunc} = LoginSlice.actions;

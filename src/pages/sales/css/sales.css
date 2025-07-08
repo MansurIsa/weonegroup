@@ -1,0 +1,7 @@
+.price_input{
+     width: 70px;
+  padding: 5px 8px;
+  border-radius: 6px;
+  border: 1px solid var(--gray12);
+  font-size: 1.6rem;
+}
