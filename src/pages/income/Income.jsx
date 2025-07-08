@@ -44,7 +44,7 @@ const Income = () => {
 
   return (
     <AdminLayout adminHeader="Kassa">
-      <IncomeTableHead />
+      <IncomeTableHead paymentList={paymentList}/>
       <AdminBigComponentHeader
         adminHeader="Ödəniş cədvəli"
         hideShowBtn={true}

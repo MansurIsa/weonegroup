@@ -1,46 +1,75 @@
-import React, { useState } from 'react';
-import { FaListUl } from 'react-icons/fa';
-import { useDispatch } from 'react-redux';
+import React, { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { handleOpenModal } from '../../../redux/slices/admin/productTableSlice';
 import { useNavigate } from 'react-router-dom';
+import { getUsersList } from '../../../actions/loginAction/loginAction';
 
 const CustomerTableHeadLeft = () => {
-    
-const dispatch=useDispatch()
-const navigate=useNavigate()
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
+  const [startDate, setStartDate] = useState('');
+  const [endDate, setEndDate] = useState('');
+  const [selectedCustomer, setSelectedCustomer] = useState('');
 
-const handleCustomerMovement=()=>{
-    navigate("/customer-movement")
-}
+  useEffect(() => {
+    dispatch(getUsersList());
+  }, [dispatch]);
 
-    return (
-        <div className="left_box">
-            <h3>Müştəri  hərəkəti </h3>
+  const { usersList } = useSelector(state => state.login);
 
-            <div className="form_group">
-                <label>Tarix aralığı</label>
-                <div className="date_range">
-                    <input type="date" defaultValue="2024-11-03" />
-                    <input type="date" defaultValue="2025-06-03" />
-                </div>
-            </div>
+  const handleCustomerMovement = () => {
+    const queryParams = new URLSearchParams();
 
-            <div className="form_group">
-                <label>Müştəri </label>
-                <select>
-                    <option>Müştərini seç</option>
-                </select>
-            </div>
+    if (startDate) queryParams.append('start', startDate);
+    if (endDate) queryParams.append('end', endDate);
+    if (selectedCustomer) queryParams.append('customerId', selectedCustomer);
 
-            
+    navigate(`/customer-movement?${queryParams.toString()}`);
+  };
 
-            <button onClick={handleCustomerMovement} className="submit_btn">Keçid et</button>
+  return (
+    <div className="left_box">
+      <h3>Müştəri hərəkəti</h3>
 
-            
-           
+      <div className="form_group">
+        <label>Tarix aralığı</label>
+        <div className="date_range">
+          <input
+            type="date"
+            value={startDate}
+            onChange={(e) => setStartDate(e.target.value)}
+          />
+          <input
+            type="date"
+            value={endDate}
+            onChange={(e) => setEndDate(e.target.value)}
+          />
         </div>
-    );
+      </div>
+
+      <div className="form_group">
+        <label>Müştəri</label>
+        <select
+          value={selectedCustomer}
+          onChange={(e) => setSelectedCustomer(e.target.value)}
+        >
+          <option value="">Müştərini seç</option>
+          {usersList
+            ?.filter(user => !user.is_staff)
+            .map(user => (
+              <option key={user.id} value={user.id}>
+                {user.first_name} {user.last_name} ({user?.username})
+              </option>
+            ))}
+        </select>
+      </div>
+
+      <button onClick={handleCustomerMovement} className="submit_btn">
+        Keçid et
+      </button>
+    </div>
+  );
 };
 
 export default CustomerTableHeadLeft;

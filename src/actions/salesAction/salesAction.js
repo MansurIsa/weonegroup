@@ -18,3 +18,25 @@ export const getSalesList = () => async (dispatch) => {
     });;
 };
 
+
+
+
+export const addSale = (data,navigate) => async (dispatch) => {
+  dispatch(startLoading());
+  return await axios.post(`${baseUrl}accounting/bulk-sale/`,data,{
+    headers: {
+          Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+        }
+  })
+    .then((resp) => {
+        console.log(resp);
+        toast.success("Məhsul satışı icra olundu");
+        navigate("/sales")
+    })
+    .catch((err) => {
+      console.log(err);
+       toast.error("Xəta baş verdi. Zəhmət olmasa yenidən yoxlayın ❌");
+    }).finally(() => {
+      dispatch(stopLoading());
+    });;
+};

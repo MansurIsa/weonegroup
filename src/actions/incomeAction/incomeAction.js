@@ -2,7 +2,7 @@ import axios from "axios";
 import { baseUrl } from "../../mainApi/MainApi";
 import { startLoading, stopLoading } from "../../redux/slices/loaderSlice";
 import toast from "react-hot-toast";
-import { getPaymentListFunc } from "../../redux/slices/admin/incomeSlices";
+import { getExpenseListFunc, getPaymentListFunc } from "../../redux/slices/admin/incomeSlices";
 
 export const getPaymentList = () => async (dispatch) => {
   dispatch(startLoading());
@@ -39,3 +39,37 @@ export const addIncome = (data,navigate) => async (dispatch) => {
     });;
 };
 
+export const addExpense = (data,navigate) => async (dispatch) => {
+  dispatch(startLoading());
+  return await axios.post(`${baseUrl}accounting/expense-create/`,data,{
+    headers: {
+          Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+        }
+  })
+    .then((resp) => {
+        console.log(resp);
+        toast.success("Xərc əlavə edildi");
+        navigate("/expense")
+    })
+    .catch((err) => {
+      console.log(err);
+       toast.error("Xəta baş verdi. Zəhmət olmasa yenidən yoxlayın ❌");
+    }).finally(() => {
+      dispatch(stopLoading());
+    });;
+};
+
+
+export const getExpenseList = () => async (dispatch) => {
+  dispatch(startLoading());
+  return await axios.get(`${baseUrl}accounting/expense-list/`)
+    .then((resp) => {
+        console.log(resp.data);
+      dispatch(getExpenseListFunc(resp.data));
+    })
+    .catch((err) => {
+      console.log(err);
+    }).finally(() => {
+      dispatch(stopLoading());
+    });;
+};

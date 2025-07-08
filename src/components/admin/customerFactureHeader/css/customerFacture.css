@@ -1,0 +1,25 @@
+@media print {
+  body * {
+    visibility: hidden;
+  }
+
+  .dashboard_end_container,
+  .dashboard_end_container * {
+    visibility: visible;
+  }
+
+  .dashboard_end_container {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+  }
+
+  .sales_products_factura_btns {
+    display: none; /* Çap zamanı düymələr gizlədilsin */
+  }
+
+  .dashboard_end_pagination {
+    display: none; /* Səhifələmə də çapda gizlədilsin */
+  }
+}

@@ -4,6 +4,8 @@ import { useNavigate } from 'react-router-dom';
 import { getBrandList, getCategoryList } from '../../actions/productsAction/productsAction';
 import { getStockList } from '../../actions/stockActions/stockActions';
 import { useDispatch, useSelector } from 'react-redux';
+import { addSale } from '../../actions/salesAction/salesAction';
+import toast from 'react-hot-toast';
 
 const SalesProductsSelect = () => {
     const [search, setSearch] = useState('');
@@ -12,10 +14,13 @@ const SalesProductsSelect = () => {
     const [selectedBrand, setSelectedBrand] = useState('');
     const [selectedCategory, setSelectedCategory] = useState('');
     const [priceValues, setPriceValues] = useState({});
+    const [invalidRows, setInvalidRows] = useState([]);
+
 
     const handlePriceChange = (index, value) => {
         setPriceValues({ ...priceValues, [index]: value });
     };
+
 
 
 
@@ -25,6 +30,10 @@ const SalesProductsSelect = () => {
 
     const { categoryList, brandList } = useSelector(state => state.products);
     const { stockList } = useSelector(state => state.stock);
+    const { customerId, saleDate } = useSelector(state => state.sales);
+
+    console.log(customerId,saleDate);
+    
 
     useEffect(() => {
         dispatch(getBrandList());
@@ -54,25 +63,58 @@ const SalesProductsSelect = () => {
     };
 
     const handleQuantityChange = (index, value, max) => {
-        const parsedValue = +value;
-        if (parsedValue <= max) {
-            setQuantityValues({ ...quantityValues, [index]: value });
+    const parsedValue = +value;
+
+    if (parsedValue <= max) {
+        setQuantityValues({ ...quantityValues, [index]: value });
+
+        if (parsedValue <= 0) {
+            setInvalidRows(prev => [...new Set([...prev, index])]);
+        } else {
+            setInvalidRows(prev => prev.filter(i => i !== index));
         }
-    };
+    }
+};
+
 
 
     const totalCost = filtered.reduce((acc, item) => acc + item.amount * item.product?.cost_price, 0);
     const totalProfit = filtered.reduce((acc, item) => acc + item.amount * (item.product?.price - item.product?.cost_price), 0);
 
-    const handleSave = () => {
-        const selectedItems = selectedRows.map(index => ({
-            product_id: filtered[index].product.id,
-            quantity: +quantityValues[index] || 0,
-            price: +priceValues[index] || filtered[index].product.price
-        }));
+const handleSave = () => {
+    if (!customerId || !saleDate) {
+        toast.error("Zəhmət olmasa müştəri və satış tarixini seçin.");
+        return;
+    }
 
-        console.log("Seçilmiş məhsullar:", selectedItems);
+    const selectedItems = selectedRows.map(index => {
+        const product = filtered[index].product;
+        return {
+            product_id: product.id,
+            quantity: +quantityValues[index] || 0,
+            price: +priceValues[index] || product.price
+        };
+    });
+
+    // ✅ Miqdar yoxlaması burada
+    if (selectedItems.some(item => item.quantity <= 0)) {
+        toast.error("Bütün seçilmiş məhsullar üçün miqdar 0-dan çox olmalıdır.");
+        return;
+    }
+
+    const payload = {
+        customer: customerId,
+        products: selectedItems.map(item => item.product_id),
+        prices: selectedItems.map(item => item.price),
+        amounts: selectedItems.map(item => item.quantity),
+        datetimes: selectedItems.map(() => saleDate)
     };
+
+    console.log("Yadda saxlanan məlumat:", payload);
+    dispatch(addSale(payload, navigate));
+};
+
+
 
 
     return (
@@ -149,17 +191,23 @@ const SalesProductsSelect = () => {
                                         </td>
 
                                         <td>{item.product?.discount_price} ₼</td>
-                                        <td>
-                                            {selectedRows.includes(index) && (
-                                                <input
-                                                    type="number"
-                                                    placeholder="0"
-                                                    className="quantity_input"
-                                                    value={quantityValues[index] || ''}
-                                                    onChange={(e) => handleQuantityChange(index, e.target.value, item.amount)}
-                                                />
-                                            )}
-                                        </td>
+                                       <td>
+  {selectedRows.includes(index) && (
+    <div>
+      <input
+        type="number"
+        placeholder="0"
+        className={`quantity_input ${invalidRows.includes(index) ? 'input_error' : ''}`}
+        value={quantityValues[index] || ''}
+        onChange={(e) => handleQuantityChange(index, e.target.value, item.amount)}
+      />
+      {invalidRows.includes(index) && (
+        <p className="input_error_text">Miqdar 0-dan çox olmalıdır</p>
+      )}
+    </div>
+  )}
+</td>
+
                                     </tr>
                                 ))}
                             </tbody>

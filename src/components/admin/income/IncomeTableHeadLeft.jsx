@@ -10,55 +10,72 @@ import {
   Cell
 } from 'recharts';
 
-const monthlyData = [
-  { name: 'Yan', gəlir: 18 },
-  { name: 'Fev', gəlir: 22 },
-  { name: 'Mar', gəlir: 19 },
-  { name: 'Apr', gəlir: 25 },
-  { name: 'May', gəlir: 7 },
-  { name: 'İyn', gəlir: 22 },
-  { name: 'İyl', gəlir: 17 },
-  { name: 'Aug', gəlir: 22 },
-  { name: 'Sen', gəlir: 19 },
-  { name: 'Okt', gəlir: 24 },
-  { name: 'Nyb', gəlir: 15 },
-  { name: 'Dek', gəlir: 22 },
+const colors = [
+  '#66C2FF', '#A0E5A0', '#202020', '#99D6FF',
+  '#BDD2E1', '#A0E5A0', '#6684FF', '#A0E5A0',
+  '#202020', '#99D6FF', '#BDD2E1', '#A0E5A0'
 ];
 
-const yearlyData = [
-  { name: '2020', gəlir: 150 },
-  { name: '2021', gəlir: 180 },
-  { name: '2022', gəlir: 210 },
-  { name: '2023', gəlir: 240 },
-  { name: '2024', gəlir: 280 },
-];
+// Qruplaşdırma funksiyası
+const groupPaymentsByRange = (paymentList, range) => {
+  const grouped = {};
 
-const dailyData = [
-  { name: '01', gəlir: 1.5 },
-  { name: '02', gəlir: 1.8 },
-  { name: '03', gəlir: 1.1 },
-  { name: '04', gəlir: 2.2 },
-  { name: '05', gəlir: 1.9 },
-  { name: '06', gəlir: 2.4 },
-  { name: '07', gəlir: 2.1 },
-];
+  paymentList.forEach(({ datetime, amount }) => {
+    const date = new Date(datetime);
+    let key;
 
-const colors = ['#66C2FF', '#A0E5A0', '#202020', '#99D6FF', '#BDD2E1', '#A0E5A0', '#6684FF', '#A0E5A0', '#202020', '#99D6FF', '#BDD2E1', '#A0E5A0'];
-
-const IncomeTableHeadLeft = () => {
-  const [range, setRange] = useState('Aylıq');
-  const [dropdownOpen, setDropdownOpen] = useState(false);
-
-  const getData = () => {
     switch (range) {
       case 'Günlük':
-        return dailyData;
+        // YYYY-MM-DD
+        key = date.toISOString().slice(0, 10);
+        break;
+      case 'Aylıq':
+        // YYYY-MM
+        key = `${date.getFullYear()}-${(date.getMonth() + 1)
+          .toString()
+          .padStart(2, '0')}`;
+        break;
       case 'İllik':
-        return yearlyData;
+        // YYYY
+        key = `${date.getFullYear()}`;
+        break;
       default:
-        return monthlyData;
+        key = `${date.getFullYear()}-${(date.getMonth() + 1)
+          .toString()
+          .padStart(2, '0')}`;
     }
-  };
+
+    if (!grouped[key]) grouped[key] = 0;
+    grouped[key] += amount;
+  });
+
+  // Ay adları Azərbaycan dilində
+  const monthNames = [
+    'Yan', 'Fev', 'Mar', 'Apr', 'May', 'İyn',
+    'İyl', 'Avq', 'Sen', 'Okt', 'Noy', 'Dek'
+  ];
+
+  return Object.entries(grouped).map(([key, gəlir]) => {
+    let name;
+
+    if (range === 'Günlük') {
+      // key = YYYY-MM-DD, ad kimi gün (DD)
+      name = key.slice(8, 10);
+    } else if (range === 'Aylıq') {
+      // key = YYYY-MM
+      const [, month] = key.split('-');
+      name = monthNames[parseInt(month, 10) - 1];
+    } else if (range === 'İllik') {
+      name = key;
+    }
+
+    return { name, gəlir: parseFloat(gəlir.toFixed(2)) };
+  });
+};
+
+const IncomeTableHeadLeft = ({ paymentList = [] }) => {
+  const [range, setRange] = useState('Aylıq');
+  const [dropdownOpen, setDropdownOpen] = useState(false);
 
   const toggleDropdown = () => {
     setDropdownOpen(!dropdownOpen);
@@ -69,6 +86,8 @@ const IncomeTableHeadLeft = () => {
     setDropdownOpen(false);
   };
 
+  const data = groupPaymentsByRange(paymentList, range);
+
   return (
     <div className="income_chart_container">
       <div className="income_chart_header">
@@ -76,14 +95,30 @@ const IncomeTableHeadLeft = () => {
         <div className="income_chart_dropdown_wrapper">
           <div className="income_chart_dropdown" onClick={toggleDropdown}>
             {range}
-            <svg width="12" height="12" viewBox="0 0 10 6" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M1 1L5 5L9 1" stroke="#202020" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+            <svg
+              width="12"
+              height="12"
+              viewBox="0 0 10 6"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M1 1L5 5L9 1"
+                stroke="#202020"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
             </svg>
           </div>
           {dropdownOpen && (
             <div className="income_chart_dropdown_menu">
               {['Günlük', 'Aylıq', 'İllik'].map((item) => (
-                <div key={item} className="income_chart_dropdown_item" onClick={() => handleRangeChange(item)}>
+                <div
+                  key={item}
+                  className="income_chart_dropdown_item"
+                  onClick={() => handleRangeChange(item)}
+                >
                   {item}
                 </div>
               ))}
@@ -93,7 +128,7 @@ const IncomeTableHeadLeft = () => {
       </div>
 
       <ResponsiveContainer width="100%" height={200}>
-        <BarChart data={getData()}>
+        <BarChart data={data}>
           <CartesianGrid vertical={false} strokeDasharray="3 3" />
           <XAxis dataKey="name" stroke="#ccc" tick={{ fontSize: 12 }} />
           <YAxis
@@ -103,7 +138,7 @@ const IncomeTableHeadLeft = () => {
           />
           <Tooltip formatter={(v) => `${v}M`} />
           <Bar dataKey="gəlir" radius={[6, 6, 0, 0]}>
-            {getData().map((_, index) => (
+            {data.map((_, index) => (
               <Cell key={index} fill={colors[index % colors.length]} />
             ))}
           </Bar>

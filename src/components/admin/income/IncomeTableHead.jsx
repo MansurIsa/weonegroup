@@ -3,10 +3,12 @@ import IncomeTableHeadLeft from './IncomeTableHeadLeft'
 import IncomeTableHeadRight from './IncomeTableHeadRight'
 import "./css/income.css"
 
-const IncomeTableHead = () => {
+const IncomeTableHead = ({paymentList}) => {
+    console.log(paymentList);
+    
     return (
         <div className='admin_container product_table_head_container'>
-            <IncomeTableHeadLeft />
+            <IncomeTableHeadLeft paymentList={paymentList}/>
             <IncomeTableHeadRight />
         </div>
     )
