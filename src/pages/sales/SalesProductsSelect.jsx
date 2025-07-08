@@ -1,91 +1,41 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import AdminLayout from '../../layouts/adminLayout/AdminLayout';
 import { useNavigate } from 'react-router-dom';
-
-const productData = [
-    {
-        brand: 'Castrol',
-        name: 'Lada yağı',
-        article: ['504', '504A'],
-        stock: 1000,
-        cost: 12,
-        sale: 17,
-        discount: 15
-    },
-    {
-        brand: 'Opel',
-        name: 'Mühərrik yağı',
-        article: ['001'],
-        stock: 1000,
-        cost: 12,
-        sale: 17,
-        discount: 15
-    },
-    {
-        brand: 'Hyundai',
-        name: 'Radiator',
-        article: ['102', '102B'],
-        stock: 1000,
-        cost: 12,
-        sale: 17,
-        discount: 15
-    },
-    {
-        brand: 'Toyoto',
-        name: 'Əyləc diski',
-        article: ['066'],
-        stock: 1000,
-        cost: 12,
-        sale: 17,
-        discount: 15
-    },
-    {
-        brand: 'BMW',
-        name: 'Mühərrik yağı',
-        article: ['002', '002C'],
-        stock: 1000,
-        cost: 12,
-        sale: 17,
-        discount: 15
-    },
-    {
-        brand: 'Hyundai',
-        name: 'Radiator',
-        article: ['103'],
-        stock: 1000,
-        cost: 12,
-        sale: 17,
-        discount: 15
-    },
-    {
-        brand: 'Toyoto',
-        name: 'Əyləc diski',
-        article: ['105'],
-        stock: 1000,
-        cost: 12,
-        sale: 17,
-        discount: 15
-    },
-    {
-        brand: 'Opel',
-        name: 'Mühərrik yağı',
-        article: ['010'],
-        stock: 1000,
-        cost: 12,
-        sale: 17,
-        discount: 15
-    }
-];
+import { getBrandList, getCategoryList } from '../../actions/productsAction/productsAction';
+import { getStockList } from '../../actions/stockActions/stockActions';
+import { useDispatch, useSelector } from 'react-redux';
 
 const SalesProductsSelect = () => {
     const [search, setSearch] = useState('');
     const [selectedRows, setSelectedRows] = useState([]);
     const [quantityValues, setQuantityValues] = useState({});
+    const [selectedBrand, setSelectedBrand] = useState('');
+    const [selectedCategory, setSelectedCategory] = useState('');
 
-    const filtered = productData.filter(p =>
-        p.brand.toLowerCase().includes(search.toLowerCase()) ||
-        p.name.toLowerCase().includes(search.toLowerCase())
-    );
+    const navigate = useNavigate();
+    const dispatch = useDispatch();
+
+    const { categoryList, brandList } = useSelector(state => state.products);
+    const { stockList } = useSelector(state => state.stock);
+
+    useEffect(() => {
+        dispatch(getBrandList());
+        dispatch(getCategoryList());
+        dispatch(getStockList());
+    }, [dispatch]);
+
+    const returnSales = () => {
+        navigate("/sales");
+    };
+
+    const filtered = stockList?.filter(p =>
+        (!selectedBrand || p.product?.brand?.id === +selectedBrand) &&
+        (!selectedCategory || p.product?.category?.id === +selectedCategory) &&
+        (
+            p.product?.name?.toLowerCase().includes(search.toLowerCase()) ||
+            p.product?.articles?.some(a => a.name.toLowerCase().includes(search.toLowerCase()))
+        )
+    ) || [];
 
     const toggleRow = (index) => {
         if (selectedRows.includes(index)) {
@@ -99,37 +49,46 @@ const SalesProductsSelect = () => {
         setQuantityValues({ ...quantityValues, [index]: value });
     };
 
-    const totalCost = filtered.reduce((acc, item) => acc + item.stock * item.cost, 0);
-    const totalProfit = filtered.reduce((acc, item) => acc + item.stock * (item.sale - item.cost), 0);
+    const totalCost = filtered.reduce((acc, item) => acc + item.amount * item.product?.cost_price, 0);
+    const totalProfit = filtered.reduce((acc, item) => acc + item.amount * (item.product?.price - item.product?.cost_price), 0);
 
+    const handleSave = () => {
+        const item_ids = selectedRows.map(index => filtered[index].product.id);
+        console.log("Seçilmiş məhsul ID-ləri:", item_ids);
 
-    const navigate=useNavigate()
+        // Burada backendə göndərilə bilər:
+        // axios.post('/api/sales-products/', { item_ids })
+    };
 
-    const returnSales = () => {
-        navigate("/sales")
-    }
     return (
         <AdminLayout adminHeaderHide={true}>
-
             <div className="admin_container warehouse_page">
                 <div className="return_btn">
                     <button onClick={returnSales}>Geri dön</button>
                 </div>
-                <div className="warehouse_search">
-                    <input
-                        type="text"
-                        placeholder="Axtar..."
-                        value={search}
-                        onChange={(e) => setSearch(e.target.value)}
-                    />
-                </div>
 
                 <div className="warehouse_content">
                     <div className="warehouse_sidebar">
-                        <strong>Markalar</strong>
-                        {[...new Set(productData.map(p => p.brand))].map((brand, idx) => (
-                            <div key={idx} className="sidebar_brand">{brand}</div>
-                        ))}
+                        <input
+                            type="text"
+                            placeholder="Axtar..."
+                            value={search}
+                            onChange={(e) => setSearch(e.target.value)}
+                        />
+
+                        <select value={selectedBrand} onChange={(e) => setSelectedBrand(e.target.value)}>
+                            <option value="">Bütün Markalar</option>
+                            {brandList?.map((b) => (
+                                <option key={b.id} value={b.id}>{b.name}</option>
+                            ))}
+                        </select>
+
+                        <select value={selectedCategory} onChange={(e) => setSelectedCategory(e.target.value)}>
+                            <option value="">Bütün Kateqoriyalar</option>
+                            {categoryList?.map((c) => (
+                                <option key={c.id} value={c.id}>{c.name}</option>
+                            ))}
+                        </select>
                     </div>
 
                     <div className="warehouse_table_wrapper">
@@ -156,12 +115,12 @@ const SalesProductsSelect = () => {
                                                 onChange={() => toggleRow(index)}
                                             />
                                         </td>
-                                        <td>{item.name}</td>
-                                        <td>{item.article.join(', ')}</td>
-                                        <td>{item.stock}</td>
-                                        <td>{item.cost} ₼</td>
-                                        <td>{item.sale} ₼</td>
-                                        <td>{item.discount} ₼</td>
+                                        <td>{item.product?.name}</td>
+                                        <td>{item.product?.articles?.map(a => a.name).join(', ')}</td>
+                                        <td>{item.amount}</td>
+                                        <td>{item.product?.cost_price} ₼</td>
+                                        <td>{item.product?.price} ₼</td>
+                                        <td>{item.product?.discount_price} ₼</td>
                                         <td>
                                             {selectedRows.includes(index) && (
                                                 <input
@@ -181,16 +140,16 @@ const SalesProductsSelect = () => {
                         <div className="warehouse_summary">
                             <div>
                                 <label>Ümumi məbləğ</label>
-                                <span>{totalCost} AZN</span>
+                                <span>{totalCost.toFixed(2)} AZN</span>
                             </div>
                             <div>
                                 <label>Satışdan əldə olunan qazanc</label>
-                                <span>{totalProfit} AZN</span>
+                                <span>{totalProfit.toFixed(2)} AZN</span>
                             </div>
                         </div>
 
                         <div className="warehouse_submit">
-                            <button className="save_btn">Yadda saxla</button>
+                            <button className="save_btn" onClick={handleSave}>Yadda saxla</button>
                         </div>
                     </div>
                 </div>
@@ -198,6 +157,5 @@ const SalesProductsSelect = () => {
         </AdminLayout>
     );
 };
-
 
 export default SalesProductsSelect;

@@ -1,88 +1,34 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import ReactPaginate from 'react-paginate';
+import { useDispatch, useSelector } from 'react-redux';
+import { getPaymentList } from '../../../actions/incomeAction/incomeAction';
+import "./css/income.css"; // Stil faylını özünə uyğun əlavə et
 
-const incomeData = [
-    {
-        name: "Elçin Quliyev",
-        product: "Disk 17",
-        price: "240 AZN",
-        quantity: 1,
-        total: "200 ₼",
-        date: "15.05.2025",
-        time: "12:00"
-    },
-    {
-        name: "Elçin Quliyev",
-        product: "Disk 17",
-        price: "240 AZN",
-        quantity: 10,
-        total: "200 ₼",
-        date: "15.05.2025",
-        time: "12:00"
-    },
-    {
-        name: "Elçin Quliyev",
-        product: "Disk 17",
-        price: "240 AZN",
-        quantity: 10,
-        total: "200 ₼",
-        date: "15.05.2025",
-        time: "12:00"
-    },
-    {
-        name: "Elçin Quliyev",
-        product: "Disk 17",
-        price: "240 AZN",
-        quantity: 10,
-        total: "200 ₼",
-        date: "15.05.2025",
-        time: "12:00"
-    },
-    {
-        name: "Elçin Quliyev",
-        product: "Disk 17",
-        price: "240 AZN",
-        quantity: 10,
-        total: "200 ₼",
-        date: "15.05.2025",
-        time: "12:00"
-    },
-    {
-        name: "Elçin Quliyev",
-        product: "Disk 17",
-        price: "240 AZN",
-        quantity: 10,
-        total: "200 ₼",
-        date: "15.05.2025",
-        time: "12:00"
-    },
-    {
-        name: "Elçin Quliyev",
-        product: "Disk 17",
-        price: "240 AZN",
-        quantity: 10,
-        total: "200 ₼",
-        date: "15.05.2025",
-        time: "12:00"
-    },
-    {
-        name: "Elçin Quliyev",
-        product: "Disk 17",
-        price: "240 AZN",
-        quantity: 10,
-        total: "200 ₼",
-        date: "15.05.2025",
-        time: "12:00"
-    },
-];
-
-const ITEMS_PER_PAGE = 4;
+const ITEMS_PER_PAGE = 5;
 
 const IncomeTableEnd = () => {
+    const dispatch = useDispatch();
+    const { paymentList } = useSelector(state => state.income);
+
     const [currentPage, setCurrentPage] = useState(0);
+
+    useEffect(() => {
+        dispatch(getPaymentList());
+    }, [dispatch]);
+
+    const formatDateTime = (datetime) => {
+        const date = new Date(datetime);
+        const day = String(date.getDate()).padStart(2, '0');
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const year = date.getFullYear();
+        const hour = String(date.getHours()).padStart(2, '0');
+        const minute = String(date.getMinutes()).padStart(2, '0');
+        return `${day}.${month}.${year} ${hour}:${minute}`;
+    };
+
     const offset = currentPage * ITEMS_PER_PAGE;
-    const currentPageData = incomeData.slice(offset, offset + ITEMS_PER_PAGE);
-    const pageCount = Math.ceil(incomeData.length / ITEMS_PER_PAGE);
+    const currentPageData = paymentList.slice(offset, offset + ITEMS_PER_PAGE);
+    const pageCount = Math.ceil(paymentList.length / ITEMS_PER_PAGE);
 
     const handlePageClick = (event) => {
         setCurrentPage(event.selected);
@@ -104,13 +50,13 @@ const IncomeTableEnd = () => {
 
                 <tbody>
                     {currentPageData.map((item, index) => (
-                        <tr key={index}>
-                            <td>{item.name}</td>
-                            <td>{item.product}</td>
-                            <td>{item.price}</td>
-                            <td>{item.quantity}</td>
-                            <td>{item.total}</td>
-                            <td>{item.date} &nbsp;&nbsp; {item.time}</td>
+                        <tr key={item.id}>
+                            <td>{item.customer?.username || '-'}</td>
+                            <td>-</td>
+                            <td>-</td>
+                            <td>-</td>
+                            <td>{item.amount} ₼</td>
+                            <td>{formatDateTime(item.datetime)}</td>
                         </tr>
                     ))}
                 </tbody>

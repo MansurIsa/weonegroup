@@ -14,6 +14,8 @@ const Income = () => {
     dispatch(handleIncomeAddPaymentModal())
   }
 
+  
+
   const {incomeAddPaymentModal}=useSelector(state=>state.income)
   return (
     <AdminLayout adminHeader="Kassa">

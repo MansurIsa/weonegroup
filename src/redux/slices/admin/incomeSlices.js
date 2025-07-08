@@ -4,7 +4,8 @@ const IncomeSlice = createSlice({
     name: 'income',
     initialState: {
       
-        incomeAddPaymentModal: false
+        incomeAddPaymentModal: false,
+        paymentList: []
     },
     reducers: {
 
@@ -13,9 +14,12 @@ const IncomeSlice = createSlice({
         },
          closeIncomeAddPaymentModal: (state,action)=>{
             state.incomeAddPaymentModal=false
+        },
+        getPaymentListFunc: (state,action)=>{
+            state.paymentList=action.payload
         }
     }
 });
 
 export const IncomeReducer = IncomeSlice.reducer;
-export const {handleIncomeAddPaymentModal,closeIncomeAddPaymentModal} = IncomeSlice.actions;
+export const {handleIncomeAddPaymentModal,closeIncomeAddPaymentModal,getPaymentListFunc} = IncomeSlice.actions;

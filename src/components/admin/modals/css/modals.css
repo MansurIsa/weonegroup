@@ -112,10 +112,11 @@
    
 
 }
-.close_icon{
+.income_add_payment_modal_container .left_box .close_icon{
     margin-left: auto;
     display: block;
     font-size: 3rem;
     cursor: pointer;
     margin-bottom: 15px;
+    position: relative;
 }

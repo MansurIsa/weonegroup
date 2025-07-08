@@ -1,20 +1,23 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import AdminLayout from '../../layouts/adminLayout/AdminLayout';
-import "./css/newCustomer.css"
+import "./css/newCustomer.css";
+import { useDispatch } from 'react-redux';
+import { createUser } from '../../actions/loginAction/loginAction';
 
 const NewCustomer = () => {
     const [formData, setFormData] = useState({
         name: '',
         surname: '',
         address: '',
-        email: '',
+        username: '',
+        password: '',
         phone: '',
-        website: '',
         priceType: ''
     });
 
     const navigate = useNavigate();
+    const dispatch=useDispatch()
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -24,17 +27,22 @@ const NewCustomer = () => {
         }));
     };
 
-    const handleCheckboxChange = (type) => {
-        setFormData(prev => ({
-            ...prev,
-            priceType: prev.priceType === type ? '' : type
-        }));
-    };
-
     const handleSubmit = (e) => {
         e.preventDefault();
-        console.log('Form məlumatları:', formData);
-        // buraya API göndərişi yazıla bilər
+        const payload = {
+            username: formData.username,
+            first_name: formData.name,
+            last_name: formData.surname,
+            address: formData.address,
+            phone_number: formData.phone,
+            status: formData.priceType,
+            password: formData.password,
+            is_staff: false,
+            is_superuser: false
+        };
+        console.log('Form məlumatları:', payload);
+        dispatch(createUser(payload,navigate))
+        // Buraya API göndərişi əlavə oluna bilər
     };
 
     const handleReturn = () => {
@@ -73,13 +81,26 @@ const NewCustomer = () => {
                             />
                         </div>
 
+
+
                         <div className="form_group">
-                            <label>Ünvan</label>
+                            <label>İstifadəçi adı</label>
                             <input
                                 type="text"
-                                name="address"
-                                placeholder="Ünvanı daxil edin"
-                                value={formData.address}
+                                name="username"
+                                placeholder="İstifadəçi adını daxil edin"
+                                value={formData.username}
+                                onChange={handleChange}
+                            />
+                        </div>
+
+                        <div className="form_group">
+                            <label>Şifrə</label>
+                            <input
+                                type="password"
+                                name="password"
+                                placeholder="Şifrənizi daxil edin"
+                                value={formData.password}
                                 onChange={handleChange}
                             />
                         </div>
@@ -94,49 +115,29 @@ const NewCustomer = () => {
                                 onChange={handleChange}
                             />
                         </div>
-
                         <div className="form_group">
-                            <label>Elektron poçt</label>
-                            <input
-                                type="email"
-                                name="email"
-                                placeholder="Elektron poçtunuzu daxil edin"
-                                value={formData.email}
-                                onChange={handleChange}
-                            />
-                        </div>
-
-                        <div className="form_group">
-                            <label>Vebsayt (vacib deyil)</label>
+                            <label>Ünvan</label>
                             <input
                                 type="text"
-                                name="website"
-                                placeholder="Vebsaytın linkini daxil edin"
-                                value={formData.website}
+                                name="address"
+                                placeholder="Ünvanı daxil edin"
+                                value={formData.address}
                                 onChange={handleChange}
                             />
                         </div>
 
-                        <div className="form_group new_customer_form_group">
+                        <div className="form_group">
                             <label>Ödəniş statusu</label>
-                            <div className="checkbox_group">
-                                <label>
-                                    <input
-                                        type="checkbox"
-                                        checked={formData.priceType === 'normal'}
-                                        onChange={() => handleCheckboxChange('normal')}
-                                    />
-                                    Satış qiymət
-                                </label>
-                                <label style={{ marginLeft: '20px' }}>
-                                    <input
-                                        type="checkbox"
-                                        checked={formData.priceType === 'discount'}
-                                        onChange={() => handleCheckboxChange('discount')}
-                                    />
-                                    Endirimli qiymət
-                                </label>
-                            </div>
+                            <select
+                                name="priceType"
+                                value={formData.priceType}
+                                onChange={handleChange}
+                            >
+                                <option value="">Seçin</option>
+                                <option value="S">Satış qiyməti</option>
+                                <option value="E">Endirimli qiymət</option>
+                                <option value="SE">Satış və endirimli qiymət</option>
+                            </select>
                         </div>
                     </div>
 
