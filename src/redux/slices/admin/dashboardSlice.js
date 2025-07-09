@@ -5,7 +5,8 @@ const DashboardSlice = createSlice({
     initialState: {
       dashboardList: {},
       mostDebtObj: {},
-      stockOutList: []
+      stockOutList: [],
+      chartObj: {}
         
     },
     reducers: {
@@ -17,11 +18,14 @@ const DashboardSlice = createSlice({
         },
         getStockOutDashboardListFunc: (state,action)=>{
             state.stockOutList=action.payload
+        },
+        getChartsDashboardListFunc: (state,action)=>{
+            state.chartObj=action.payload
         }
        
     }
 });
 
 export const DashboardReducer = DashboardSlice.reducer;
-export const {getDashboardListFunc,getMostDebtDashboardListFunc,getStockOutDashboardListFunc
+export const {getDashboardListFunc,getMostDebtDashboardListFunc,getStockOutDashboardListFunc,getChartsDashboardListFunc
 } = DashboardSlice.actions;

@@ -1,5 +1,11 @@
-import React from 'react'
-import { Route, Routes } from "react-router-dom";
+import React, { useEffect } from 'react';
+import { Route, Routes, Navigate } from "react-router-dom";
+import { useDispatch, useSelector } from 'react-redux';
+import { getUserObj } from './actions/loginAction/loginAction';
+import { Toaster } from 'react-hot-toast';
+import Loader from './components/loader/Loader';
+import ScrollToTop from './components/scrollToTop/ScrollToTop';
+
 import Home from './pages/home/Home';
 import About from './pages/about/About';
 import Products from './pages/products/Products';
@@ -7,10 +13,7 @@ import Contact from './pages/contact/Contact';
 import Services from './pages/services/Services';
 import Cart from './pages/cart/Cart';
 import Login from './pages/login/Login';
-import { Toaster } from 'react-hot-toast';
 import Dashboard from './pages/dashboard/Dashboard';
-import Loader from './components/loader/Loader';
-import ScrollToTop from './components/scrollToTop/ScrollToTop';
 import Purchase from './pages/purchase/Purchase';
 import Warehouse from './pages/warehouse/Warehouse';
 import ProductsTable from './pages/productsTable/ProductsTable';
@@ -30,49 +33,124 @@ import CustomerMovementFacture from './pages/customers/CustomerMovementFacture';
 import Income from './pages/income/Income';
 import Expense from './pages/expense/Expense';
 
-const routes = [
-  { path: "/", element: <Home />, isProtected: false },
-  { path: "/about", element: <About />, isProtected: false },
-  { path: "/products", element: <Products />, isProtected: false },
-  { path: "/contact", element: <Contact />, isProtected: false },
-  { path: "/services", element: <Services />, isProtected: false },
-  { path: "/cart", element: <Cart />, isProtected: false },
-  { path: "/login", element: <Login />, isProtected: false },
+// Token yoxlama funksiyası
+const isTokenExpired = (token) => {
+  try {
+    const payload = JSON.parse(atob(token.split('.')[1]));
+    const currentTime = Date.now() / 1000;
+    return payload.exp < currentTime;
+  } catch {
+    return true;
+  }
+};
 
-  { path: "/dashboard", element: <Dashboard />, isProtected: true },
-  { path: "/purchase", element: <Purchase />, isProtected: true },
-  { path: "/new-purchase", element: <NewPurchase />, isProtected: true },
-  { path: "/warehouse", element: <Warehouse />, isProtected: true },
-  { path: "/new-warehouse", element: <NewWarehouse />, isProtected: true },
-  { path: "/products-table", element: <ProductsTable />, isProtected: true },
-  { path: "/new-products", element: <NewProducts />, isProtected: true },
-  { path: "/product-movement", element: <ProductsMovement />, isProtected: true },
-  { path: "/product-movement-customer", element: <ProductsMovementCustomer />, isProtected: true },
-  { path: "/products-returned", element: <ProductsReturned />, isProtected: true },
-  { path: "/income", element: <Income />, isProtected: true },
-  { path: "/expense", element: <Expense />, isProtected: true },
-  { path: "/sales", element: <Sales />, isProtected: true },
-   { path: "/product-sales-customer", element: <SalesProductsCustomer />, isProtected: true },
-   { path: "/sales-products-select", element: <SalesProductsSelect />, isProtected: true },
-  { path: "/customers", element: <Customers />, isProtected: true },
- { path: "/customer-movement", element: <CustomerMovement />, isProtected: true },
- { path: "/customer-movement-facture", element: <CustomerMovementFacture/>, isProtected: true },
-  { path: "/new-customer", element: <NewCustomer />, isProtected: true },
+const isAuthenticated = () => {
+  const token = localStorage.getItem('accessToken');
+  if (!token) return false;
+  if (isTokenExpired(token)) {
+    localStorage.removeItem('accessToken');
+    return false;
+  }
+  return true;
+};
+
+// Sadəcə adminlərin daxil ola biləcəyi yollar
+const adminOnlyPaths = [
+  "/dashboard",
+  "/purchase",
+  "/new-purchase",
+  "/warehouse",
+  "/new-warehouse",
+  "/products-table",
+  "/new-products",
+  "/product-movement",
+  "/product-movement-customer",
+  "/products-returned",
+  "/income",
+  "/expense",
+  "/sales",
+  // "/product-sales-customer",
+  "/sales-products-select",
+  "/customers",
+  "/customer-movement",
+  "/customer-movement-facture",
+  "/new-customer"
 ];
 
+// Routing
 const App = () => {
+  const dispatch = useDispatch();
+  const { userObj } = useSelector(state => state.login);
+
+  useEffect(() => {
+    dispatch(getUserObj());
+  }, [dispatch]);
+
+  const routes = [
+    { path: "/", element: <Home />, isProtected: false },
+    { path: "/about", element: <About />, isProtected: false },
+    { path: "/products", element: <Products />, isProtected: false },
+    { path: "/contact", element: <Contact />, isProtected: false },
+    { path: "/services", element: <Services />, isProtected: false },
+    { path: "/cart", element: <Cart />, isProtected: false },
+    { path: "/login", element: <Login />, isProtected: false },
+    { path: "/dashboard", element: <Dashboard />, isProtected: true },
+    { path: "/purchase", element: <Purchase />, isProtected: true },
+    { path: "/new-purchase", element: <NewPurchase />, isProtected: true },
+    { path: "/warehouse", element: <Warehouse />, isProtected: true },
+    { path: "/new-warehouse", element: <NewWarehouse />, isProtected: true },
+    { path: "/products-table", element: <ProductsTable />, isProtected: true },
+    { path: "/new-products", element: <NewProducts />, isProtected: true },
+    { path: "/product-movement", element: <ProductsMovement />, isProtected: true },
+    { path: "/product-movement-customer", element: <ProductsMovementCustomer />, isProtected: true },
+    { path: "/products-returned", element: <ProductsReturned />, isProtected: true },
+    { path: "/income", element: <Income />, isProtected: true },
+    { path: "/expense", element: <Expense />, isProtected: true },
+    { path: "/sales", element: <Sales />, isProtected: true },
+    // { path: "/product-sales-customer", element: <SalesProductsCustomer />, isProtected: true },
+    { path: "/sales-products-select", element: <SalesProductsSelect />, isProtected: true },
+    { path: "/customers", element: <Customers />, isProtected: true },
+    { path: "/customer-movement", element: <CustomerMovement />, isProtected: true },
+    { path: "/customer-movement-facture", element: <CustomerMovementFacture />, isProtected: true },
+    { path: "/new-customer", element: <NewCustomer />, isProtected: true },
+  ];
+
   return (
     <div>
-       <Routes>
-        {routes?.map((route, i) => {
+      <Routes>
+        {routes.map((route, i) => {
+          const userIsAdmin = userObj?.is_staff === true;
+          const routeIsAdminOnly = adminOnlyPaths.includes(route.path);
+
+          // Token varsa amma əsas səhifəyə gedirsə yönləndir
+          if ((route.path === '/' || route.path === '/login') && isAuthenticated()) {
+            return userObj?.is_staff
+              ? <Route key={i} path={route.path} element={<Navigate to="/dashboard" replace />} />
+              : <Route key={i} path={route.path} element={<Home />} />;
+          }
+
+
+          if (route.isProtected) {
+            if (!isAuthenticated()) {
+              return <Route key={i} path={route.path} element={<Navigate to="/login" replace />} />;
+            }
+
+            if (!userIsAdmin && routeIsAdminOnly) {
+              return <Route key={i} path={route.path} element={<Navigate to="/" replace />} />;
+            }
+
+            return <Route key={i} path={route.path} element={route.element} />;
+          }
+
           return <Route key={i} path={route.path} element={route.element} />;
         })}
       </Routes>
-      <Toaster position="top-right" />
-      <Loader/>
-      <ScrollToTop/>
-    </div>
-  )
-}
 
-export default App
+      <Toaster position="top-right" />
+      <Loader />
+      <ScrollToTop />
+    </div>
+  );
+};
+
+export default App;

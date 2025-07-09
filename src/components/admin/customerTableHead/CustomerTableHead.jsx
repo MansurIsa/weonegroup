@@ -6,7 +6,7 @@ const CustomerTableHead = () => {
     return (
         <div className='admin_container product_table_head_container'>
             <CustomerTableHeadLeft />
-            <CustomerTableHeadRight />
+            {/* <CustomerTableHeadRight /> */}
         </div>
     )
 }

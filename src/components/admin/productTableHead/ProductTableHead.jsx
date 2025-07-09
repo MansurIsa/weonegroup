@@ -11,7 +11,7 @@ const ProductTableHead = () => {
   return (
     <div className='admin_container product_table_head_container'>
         <ProductTableHeadLeft/>
-        <ProductTableHeadRight/>
+        {/* <ProductTableHeadRight/> */}
         {isModalOpen && <ProductsTableModal/>}
     </div>
   )

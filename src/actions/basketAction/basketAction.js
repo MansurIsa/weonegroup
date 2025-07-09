@@ -33,6 +33,7 @@ export const basketClear = (data) => async (dispatch) => {
     .then((resp) => {
         console.log(resp.data);
          dispatch(getBasketItemList())
+          window.location.reload()
         
     //   dispatch(getBasketItemListFunc(resp.data));
     })
@@ -83,6 +84,32 @@ export const basketItemDelete = (id) => async (dispatch) => {
     .catch((err) => {
       console.log(err);
       toast.error("Xəta baş verdi. Zəhmət olmasa yenidən yoxlayın ❌");
+    }).finally(() => {
+      dispatch(stopLoading());
+    });;
+};
+
+
+
+
+
+export const orderCreate = (data) => async (dispatch) => {
+  dispatch(startLoading());
+  return await axios.post(`${baseUrl}core/order-create/`,data,{
+    headers: {
+          Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+        }
+  })
+    .then((resp) => {
+        console.log(resp.data);
+        toast.success("Sifariş yaradıldı. Bizim zəngimizi gözləyin");
+        //  dispatch(getBasketItemList())
+        
+    //   dispatch(getBasketItemListFunc(resp.data));
+    })
+    .catch((err) => {
+      console.log(err);
+       toast.error("Xəta baş verdi. Zəhmət olmasa yenidən yoxlayın ❌");
     }).finally(() => {
       dispatch(stopLoading());
     });;

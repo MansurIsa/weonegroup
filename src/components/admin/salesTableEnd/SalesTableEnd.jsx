@@ -21,7 +21,7 @@ const SalesTableEnd = () => {
     }, [dispatch]);
 
     const handleSalesCustomer = () => {
-        navigate("/product-sales-customer");
+        navigate("/customer-movement-facture");
     };
 
     const formatDateTime = (datetime) => {

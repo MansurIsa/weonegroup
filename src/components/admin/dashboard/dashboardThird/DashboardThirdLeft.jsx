@@ -8,6 +8,8 @@ const DashboardThirdLeft = () => {
         dispatch(getMostDebtDashboardList())
     }, [dispatch])
     const { mostDebtObj } = useSelector(state => state.dashboard)
+    console.log(mostDebtObj);
+    
     return (
         <div className='dashboard_third_left'>
             <div className="dashboard_third_left_header">

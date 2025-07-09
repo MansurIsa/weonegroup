@@ -2,13 +2,15 @@ import React, { useEffect, useState } from 'react';
 import MainLayout from '../../layouts/mainLayout/MainLayout';
 import './css/cart.css';
 import { useDispatch, useSelector } from 'react-redux';
-import { basketClear, basketItemDelete, basketItemUpdate, getBasketItemList } from '../../actions/basketAction/basketAction';
+import { basketClear, basketItemDelete, basketItemUpdate, getBasketItemList, orderCreate } from '../../actions/basketAction/basketAction';
 import { Link } from 'react-router-dom';
 import { AiOutlineDelete } from 'react-icons/ai';
 
 const Cart = () => {
   const dispatch = useDispatch();
   const { basketItem } = useSelector((state) => state.basket);
+  console.log(basketItem);
+  
 
   const [selectedItems, setSelectedItems] = useState([]);
 
@@ -39,32 +41,43 @@ const Cart = () => {
     ?.filter(item => selectedItems.includes(item.id))
     .reduce((sum, item) => sum + item.product.price * item.quantity, 0) || 0;
 
-  const discountedAmount = totalAmount * 0.9;
+  // const discountedAmount = totalAmount * 0.9;
 
   // WhatsApp-a göndərmə funksiyası
-  const handleConfirmOrder = () => {
-    if (selectedItems.length === 0) return;
+ const handleConfirmOrder = () => {
+  if (selectedItems.length === 0) return;
 
-    const selectedProducts = basketItem.filter(item => selectedItems.includes(item.id));
+  const selectedProducts = basketItem.filter(item =>
+    selectedItems.includes(item.id)
+  );
 
-    // Seçilmiş məhsulların ID-lərindən ibarət array
-    const selectedIdsArray = selectedProducts.map(item => item.id);
+  // Product ID-lər
+  const productIds = selectedProducts.map(item => item.product.id);
 
-    console.log('Seçilmiş məhsulların ID-ləri:', selectedIdsArray);
+  // Müvafiq quantity-lər
+  const quantities = selectedProducts.map(item => item.quantity);
 
-    const message = selectedProducts.map(item =>
-      `${item.product.name} (${item.product.brand.name}) - ${item.quantity} ədəd - ${item.product.price} AZN`
-    ).join('\n');
+  // Total price
+  const total = selectedProducts.reduce((sum, item) => sum + item.product.price * item.quantity, 0);
 
-    const encodedMessage = encodeURIComponent(message);
-    const phoneNumber = '994516971835'; // Ölkə kodu ilə nömrəni yaz (0 olmadan)
-    const whatsappLink = `https://wa.me/${phoneNumber}?text=${encodedMessage}`;
-
-    window.open(whatsappLink, '_blank');
-
-    dispatch(basketClear({ item_ids: selectedIdsArray }))
-    window.location.reload()
+  // Payload
+  const payload = {
+    products: productIds,
+    quantities: quantities,
+    amount: total
   };
+
+  console.log("Payload:", payload);
+
+  // Backend-ə göndər
+  dispatch(orderCreate(payload));
+
+  // Səbəti təmizlə
+  const selectedBasketIds = selectedProducts.map(item => item.id);
+  dispatch(basketClear({ item_ids: selectedBasketIds }));
+ 
+};
+
 
   const incCartEl = (item) => {
   const updatedQuantity = item.quantity + 1;
@@ -134,12 +147,12 @@ const deleteBasketItem=(id)=>{
                 </div>
                 <div className="cart_right_container">
                   <p>Sifarişin məbləği <span>{totalAmount.toFixed(2)} AZN</span></p>
-                  <p>Endirimli məbləğ <span>{discountedAmount.toFixed(2)} AZN</span></p>
+                  {/* <p>Endirimli məbləğ <span>{discountedAmount.toFixed(2)} AZN</span></p> */}
                   <button
                     disabled={selectedItems.length === 0}
                     onClick={handleConfirmOrder}
                   >
-                    WhatsApp ilə göndər
+                    Sifariş et
                   </button>
                 </div>
               </div>

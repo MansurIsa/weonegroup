@@ -94,3 +94,7 @@
     letter-spacing: 0px;
     color: var(--mainFirst);
 }
+
+.admin_header_profile_icon{
+    font-size: 3rem;
+}

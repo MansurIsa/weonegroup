@@ -3,10 +3,12 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import Logo from '../../header/logo/Logo';
 import { FaChevronDown, FaChevronRight } from 'react-icons/fa';
 import './css/sidebar.css';
+import { useDispatch, useSelector } from 'react-redux';
+import { getUserObj } from '../../../actions/loginAction/loginAction';
 
 const Sidebar = () => {
     const location = useLocation();
-    const navigate=useNavigate();
+    const navigate = useNavigate();
     const currentPath = location.pathname;
 
     const [isProductMenuOpen, setIsProductMenuOpen] = useState(false);
@@ -32,9 +34,17 @@ const Sidebar = () => {
     const isSubmenuActive = (paths) => paths.some((path) => currentPath.startsWith(path));
 
 
-    const logOut=()=>{
-        navigate("/login")
+    const logOut = () => {
+        window.location.href = "/login";
+        localStorage.removeItem("accessToken")
     }
+
+    const dispatch = useDispatch()
+    useEffect(() => {
+        dispatch(getUserObj())
+    }, [dispatch])
+
+    const { userObj } = useSelector(state => state.login)
     return (
         <div className='sidebar_container'>
             <Logo />
@@ -105,24 +115,30 @@ const Sidebar = () => {
                         <path d="M16.4769 8.5081C18.528 8.5081 20.1994 6.6811 20.1994 4.4581C20.1994 2.26039 18.5366 0.519531 16.4769 0.519531C14.4343 0.519531 12.7539 2.2861 12.7539 4.47525C12.7624 6.68967 14.4343 8.5081 16.4769 8.5081ZM6.54943 8.69753C8.32457 8.69753 9.78086 7.10325 9.78086 5.14725C9.78086 3.2341 8.34171 1.69167 6.54943 1.69167C4.77429 1.69167 3.30943 3.26025 3.318 5.16439C3.32657 7.11225 4.77429 8.69753 6.54943 8.69753ZM16.4769 7.20696C15.2186 7.20696 14.1411 6.00053 14.1411 4.47525C14.1411 2.97525 15.2014 1.8211 16.4769 1.8211C17.7609 1.8211 18.8121 2.95853 18.8121 4.45767C18.8121 5.98339 17.7523 7.20696 16.4769 7.20696ZM6.54943 7.41353C5.49814 7.41353 4.602 6.40553 4.602 5.16439C4.602 3.94939 5.48914 2.97567 6.54943 2.97567C7.635 2.97567 8.50543 3.93225 8.50543 5.14725C8.50543 6.40553 7.60929 7.41353 6.54943 7.41353ZM1.758 16.6H8.523C8.109 16.3672 7.79014 15.85 7.85057 15.3245H1.54286C1.37057 15.3245 1.28443 15.256 1.28443 15.0918C1.28443 12.955 3.723 10.9557 6.54129 10.9557C7.62686 10.9557 8.60057 11.2141 9.43671 11.7052C9.71407 11.3541 10.0423 11.0463 10.4104 10.792C9.29871 10.0591 7.96329 9.68025 6.54129 9.68025C2.93014 9.68025 0 12.2997 0 15.1694C0 16.126 0.585857 16.6 1.758 16.6ZM11.0649 16.6H21.8889C23.319 16.6 24 16.1692 24 15.2212C24 12.9635 21.1474 9.69696 16.4769 9.69696C11.7973 9.69696 8.94514 12.9635 8.94514 15.2212C8.94514 16.1692 9.62571 16.6 11.0649 16.6ZM10.6513 15.2988C10.4271 15.2988 10.3324 15.2388 10.3324 15.0575C10.3324 13.6441 12.5211 10.999 16.4769 10.999C20.424 10.999 22.6123 13.6441 22.6123 15.0575C22.6123 15.2384 22.5266 15.2988 22.302 15.2988H10.6513Z" fill="white" />
                     </svg>
                     Müştərilər</Link></li>
-               
-                <li className={isSubmenuActive(["/income", "/expense"]) ? "active" : ""} onClick={toggleCashboxMenu}>
-                    <Link to={'/income'} className={`submenu_header `}>
-                        <span><svg width="20" height="21" viewBox="0 0 20 21" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M18.25 16.3564H1.75C1.19772 16.3564 0.75 16.8042 0.75 17.3564V18.3564C0.75 18.9087 1.19772 19.3564 1.75 19.3564H18.25C18.8023 19.3564 19.25 18.9087 19.25 18.3564V17.3564C19.25 16.8042 18.8023 16.3564 18.25 16.3564Z" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
-                    <path d="M3.25 7.85423V16.3642M16.75 7.85423V16.3642M12.5 7.85423V16.3642M7.5 7.85423V16.3642M9.04 1.13023L1.27 5.38023C1.11263 5.46633 0.981324 5.59318 0.889836 5.74748C0.798347 5.90178 0.750048 6.07785 0.75 6.25723V7.25423C0.75 7.41336 0.813214 7.56597 0.925736 7.67849C1.03826 7.79101 1.19087 7.85423 1.35 7.85423H18.65C18.8091 7.85423 18.9617 7.79101 19.0743 7.67849C19.1868 7.56597 19.25 7.41336 19.25 7.25423V6.25723C19.25 6.07785 19.2017 5.90178 19.1102 5.74748C19.0187 5.59318 18.8874 5.46633 18.73 5.38023L10.96 1.13023C10.6657 0.969177 10.3355 0.884766 10 0.884766C9.66448 0.884766 9.33434 0.969177 9.04 1.13023Z" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
-                </svg>
-                            Kassa</span>
+                {
+                    userObj?.is_superuser === true ?
+                        <>
+                            <li className={isSubmenuActive(["/income", "/expense"]) ? "active" : ""} onClick={toggleCashboxMenu}>
+                                <Link to={'/income'} className={`submenu_header `}>
+                                    <span><svg width="20" height="21" viewBox="0 0 20 21" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M18.25 16.3564H1.75C1.19772 16.3564 0.75 16.8042 0.75 17.3564V18.3564C0.75 18.9087 1.19772 19.3564 1.75 19.3564H18.25C18.8023 19.3564 19.25 18.9087 19.25 18.3564V17.3564C19.25 16.8042 18.8023 16.3564 18.25 16.3564Z" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                                        <path d="M3.25 7.85423V16.3642M16.75 7.85423V16.3642M12.5 7.85423V16.3642M7.5 7.85423V16.3642M9.04 1.13023L1.27 5.38023C1.11263 5.46633 0.981324 5.59318 0.889836 5.74748C0.798347 5.90178 0.750048 6.07785 0.75 6.25723V7.25423C0.75 7.41336 0.813214 7.56597 0.925736 7.67849C1.03826 7.79101 1.19087 7.85423 1.35 7.85423H18.65C18.8091 7.85423 18.9617 7.79101 19.0743 7.67849C19.1868 7.56597 19.25 7.41336 19.25 7.25423V6.25723C19.25 6.07785 19.2017 5.90178 19.1102 5.74748C19.0187 5.59318 18.8874 5.46633 18.73 5.38023L10.96 1.13023C10.6657 0.969177 10.3355 0.884766 10 0.884766C9.66448 0.884766 9.33434 0.969177 9.04 1.13023Z" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                                    </svg>
+                                        Kassa</span>
 
-                    </Link>
-                    {isCashboxMenuOpen ? <FaChevronDown /> : <FaChevronRight />}
-                </li>
-                {isCashboxMenuOpen && (
-                    <ul className='submenu'>
-                        <li ><Link className={isActive("/income") ? "sub_active" : ""} to="/income">Gəlir</Link></li>
-                        <li ><Link className={isActive("/expense") ? "sub_active" : ""} to="/expense">Xərc</Link></li>
-                    </ul>
-                )}
+                                </Link>
+                                {isCashboxMenuOpen ? <FaChevronDown /> : <FaChevronRight />}
+                            </li>
+                            {isCashboxMenuOpen && (
+                                <ul className='submenu'>
+                                    <li ><Link className={isActive("/income") ? "sub_active" : ""} to="/income">Gəlir</Link></li>
+                                    <li ><Link className={isActive("/expense") ? "sub_active" : ""} to="/expense">Xərc</Link></li>
+                                </ul>
+                            )}
+                        </>
+                        : null
+                }
+
 
                 <hr />
                 <li onClick={logOut} className='log_out_admin'><svg width="16" height="18" viewBox="0 0 16 18" fill="none" xmlns="http://www.w3.org/2000/svg">
