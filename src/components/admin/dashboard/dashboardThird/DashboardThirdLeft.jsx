@@ -1,6 +1,13 @@
-import React from 'react'
+import React, { useEffect } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import { getMostDebtDashboardList } from '../../../../actions/dashboardAction/dashboardAction'
 
 const DashboardThirdLeft = () => {
+    const dispatch = useDispatch()
+    useEffect(() => {
+        dispatch(getMostDebtDashboardList())
+    }, [dispatch])
+    const { mostDebtObj } = useSelector(state => state.dashboard)
     return (
         <div className='dashboard_third_left'>
             <div className="dashboard_third_left_header">
@@ -14,29 +21,33 @@ const DashboardThirdLeft = () => {
                 <thead>
                     <tr>
                         <th>Müştəri Adı</th>
-                        <th>Kodu</th>
+                        {/* <th>Kodu</th> */}
                         <th>Borcu</th>
                         <th>Əlaqə</th>
                     </tr>
                 </thead>
                 <tbody>
+                    {
+                        mostDebtObj?.most_indebted_customers?.map((data, i) => {
+                            return (
+                                <tr key={i}>
+                                    <td>
+                                        {data?.name}
+                                    </td>
+                                    
+                                    <td>
+                                        {data?.debt} ₼
+                                    </td>
+                                    <td>
+                                       {data?.phone_number}
+                                    </td>
 
-                    <tr>
-                        <td>
-                            Elçin Quliyev
-                        </td>
-                        <td>
-                            504
-                        </td>
-                        <td>
-                            350 ₼
-                        </td>
-                        <td>
-                            050 xxx xx xx
-                        </td>
 
+                                </tr>
+                            )
+                        })
+                    }
 
-                    </tr>
 
                 </tbody>
             </table>

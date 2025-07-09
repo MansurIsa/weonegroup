@@ -24,23 +24,29 @@ const Customers = () => {
 
   const { usersList } = useSelector(state => state.login)
 
-  useEffect(() => {
-    setFilteredUsers(usersList)
-  }, [usersList])
+useEffect(() => {
+  // Yalnız is_staff === false olanları saxla
+  const filtered = usersList.filter(user => !user.is_staff);
+  setFilteredUsers(filtered);
+}, [usersList]);
 
-  const handleSearch = (query) => {
-    const lowerQuery = query.toLowerCase()
 
-    const filtered = usersList.filter(user =>
+ const handleSearch = (query) => {
+  const lowerQuery = query.toLowerCase();
+
+  const filtered = usersList
+    .filter(user => !user.is_staff) // burada da is_staff yoxla
+    .filter(user =>
       user.username.toLowerCase().includes(lowerQuery) ||
       user.first_name.toLowerCase().includes(lowerQuery) ||
       user.last_name.toLowerCase().includes(lowerQuery) ||
       user.phone_number?.toLowerCase().includes(lowerQuery) ||
       user.address?.toLowerCase().includes(lowerQuery)
-    )
+    );
 
-    setFilteredUsers(filtered)
-  }
+  setFilteredUsers(filtered);
+};
+
 
   return (
     <AdminLayout adminHeader="Müştərilər">

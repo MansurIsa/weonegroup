@@ -121,6 +121,7 @@ td {
 .dashboard_third_container {
     display: flex;
     margin-top: 48px !important;
+    margin-bottom: 48px !important;
     gap: 42px;
 
 }

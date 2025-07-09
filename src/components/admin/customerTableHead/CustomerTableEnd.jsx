@@ -50,8 +50,8 @@ const CustomerTableEnd = ({ usersList }) => {
                             <td>{item.username || "-"}</td>
                             <td>{item.phone_number || "-"}</td>
                             <td>{item.address || "-"}</td>
-                            <td>0 ₼</td> {/* Bizə borc üçün hazırda dummy dəyər */}
-                            <td>0 ₼</td> {/* Bizim borc üçün hazırda dummy dəyər */}
+                            <td>{item?.customer_debt_amount} ₼</td> {/* Bizə borc üçün hazırda dummy dəyər */}
+                            <td>{item?.our_debt_amount} ₼</td> {/* Bizim borc üçün hazırda dummy dəyər */}
                             <td>
                                 {
                                     item.status === "S" ? "Satış Qiyməti"

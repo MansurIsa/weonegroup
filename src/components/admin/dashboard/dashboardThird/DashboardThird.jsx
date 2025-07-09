@@ -7,7 +7,7 @@ const DashboardThird = () => {
   return (
     <div className='admin_container dashboard_third_container'>
         <DashboardThirdLeft/>
-        <DashboardThirdRight/>
+        {/* <DashboardThirdRight/> */}
     </div>
   )
 }
