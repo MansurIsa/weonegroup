@@ -59,14 +59,7 @@ const FilterProductCard = ({ data }) => {
                         <span>{data?.discount_price} AZN</span>
                     }
 
-                    {
-                        accessToken && userObj?.status === "SE" && (
-                            <>
-                                <span className='filter_product_card_content_price'>{data?.price} AZN</span>
-                                <span>{data?.discount_price} AZN</span>
-                            </>
-                        )
-                    }
+                 
                 </div>
 
                 <button

@@ -1,6 +1,6 @@
 import axios from "axios";
 import { baseUrl } from "../../mainApi/MainApi";
-import { getBrandListFunc, getCategoryListFunc, getProductsListFunc } from "../../redux/slices/productsSlices";
+import { getBrandListFunc, getCategoryListFunc, getProductsListFunc, getStoreListFunc } from "../../redux/slices/productsSlices";
 import { startLoading, stopLoading } from "../../redux/slices/loaderSlice";
 import toast from "react-hot-toast";
 
@@ -39,6 +39,20 @@ export const getBrandList = () => async (dispatch) => {
     .then((resp) => {
         console.log(resp.data);
       dispatch(getBrandListFunc(resp.data));
+    })
+    .catch((err) => {
+      console.log(err);
+    }).finally(() => {
+      dispatch(stopLoading());
+    });;
+};
+
+export const getStoreList = () => async (dispatch) => {
+  dispatch(startLoading());
+  return await axios.get(`${baseUrl}core/store-list/`)
+    .then((resp) => {
+        console.log(resp.data);
+      dispatch(getStoreListFunc(resp.data));
     })
     .catch((err) => {
       console.log(err);

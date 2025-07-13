@@ -37,6 +37,12 @@ const PurchaseEnd = ({purchaseList}) => {
         return date.toLocaleDateString('az-AZ');
     };
 
+    const currencyMap = {
+  D: "$",
+  M: "₼",
+  R: "₽"
+};
+
     return (
         <div className='admin_container dashboard_end_container'>
             <table className='custom_table'>
@@ -45,7 +51,7 @@ const PurchaseEnd = ({purchaseList}) => {
                         <th>Məhsul Adı</th>
                         <th>Artikl</th>
                         <th>Miqdar</th>
-                        <th>Qiymət</th>
+                        <th>Alış Qiyməti</th>
                         <th>Maya Dəyəri</th>
                         <th>Satış Qiyməti</th>
                         <th>Endirimli Qiymət</th>
@@ -56,7 +62,7 @@ const PurchaseEnd = ({purchaseList}) => {
                 <tbody>
                     {currentPageData?.map((item, index) => {
                         const product = item.product;
-                        const articleNames = product.articles?.map(article => article.name).join(', ');
+                        const articleNames = product.articles?.map(article => article.name).join(', ') || "-";
                         const statusText = getStatusLabel(item.status);
                         const statusClass = getStatusClass(item.status);
 
@@ -65,7 +71,7 @@ const PurchaseEnd = ({purchaseList}) => {
                                 <td>{product.name}</td>
                                 <td>{articleNames}</td>
                                 <td>{item.amount}</td>
-                                <td>{product.purchase_price} ₼</td>
+                               <td>{product.purchase_price} {currencyMap[product?.currency] || ""}</td>
                                 <td>{product.cost_price} ₼</td>
                                 <td>{product.price} ₼</td>
                                 <td>{product.discount_price} ₼</td>

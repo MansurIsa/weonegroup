@@ -8,10 +8,10 @@ import FilterProducts from '../../components/main/filterProducts/FilterProducts'
 const Products = () => {
   return (
     <MainLayout>
-      <OtherBanner bannerTitle="Məhsullar"/>
+      {/* <OtherBanner bannerTitle="Məhsullar"/> */}
       <section>
         <div className="project_container products_page">
-          <h2>Kateqoriyalar</h2>
+          <h2>Məhsullar</h2>
           <FilterProducts/>
         </div>
         

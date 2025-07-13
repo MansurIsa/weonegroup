@@ -32,6 +32,7 @@ import NewCustomer from './pages/customers/NewCustomer';
 import CustomerMovementFacture from './pages/customers/CustomerMovementFacture';
 import Income from './pages/income/Income';
 import Expense from './pages/expense/Expense';
+import ProductsDetail from './pages/products/ProductsDetail';
 
 // Token yoxlama funksiyası
 const isTokenExpired = (token) => {
@@ -90,6 +91,7 @@ const App = () => {
     { path: "/", element: <Home />, isProtected: false },
     { path: "/about", element: <About />, isProtected: false },
     { path: "/products", element: <Products />, isProtected: false },
+     { path: "/products/:id", element: <ProductsDetail />, isProtected: false },
     { path: "/contact", element: <Contact />, isProtected: false },
     { path: "/services", element: <Services />, isProtected: false },
     { path: "/cart", element: <Cart />, isProtected: false },

@@ -13,19 +13,22 @@ const NewCustomer = () => {
         username: '',
         password: '',
         phone: '',
-        priceType: ''
+        priceType: '',
+        isSupplier: false // yeni sahə
     });
 
+
     const navigate = useNavigate();
-    const dispatch=useDispatch()
+    const dispatch = useDispatch()
 
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData(prev => ({
             ...prev,
-            [name]: value
+            [name]: name === "isSupplier" ? value === "true" : value
         }));
     };
+
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -38,10 +41,12 @@ const NewCustomer = () => {
             status: formData.priceType,
             password: formData.password,
             is_staff: false,
-            is_superuser: false
+            is_superuser: false,
+            is_supplier: formData.isSupplier // əlavə edildi
         };
+
         console.log('Form məlumatları:', payload);
-        dispatch(createUser(payload,navigate))
+        dispatch(createUser(payload, navigate))
         // Buraya API göndərişi əlavə oluna bilər
     };
 
@@ -56,7 +61,7 @@ const NewCustomer = () => {
                     <button onClick={handleReturn}>Geri dön</button>
                 </div>
 
-                <h2>Yeni müştəri əlavə et</h2>
+                <h2>Yeni müştəri(tədarükçü) əlavə et</h2>
                 <form onSubmit={handleSubmit}>
                     <div className="form_grid">
                         <div className="form_group">
@@ -136,9 +141,21 @@ const NewCustomer = () => {
                                 <option value="">Seçin</option>
                                 <option value="S">Satış qiyməti</option>
                                 <option value="E">Endirimli qiymət</option>
-                                <option value="SE">Satış və endirimli qiymət</option>
+
                             </select>
                         </div>
+                        <div className="form_group">
+                            <label>Müştəri(Tədarükçü)</label>
+                            <select
+                                name="isSupplier"
+                                value={formData.isSupplier}
+                                onChange={handleChange}
+                            >
+                                <option value="false">Müştəri</option>
+                                <option value="true">Tədarükçü</option>
+                            </select>
+                        </div>
+
                     </div>
 
                     <div className="form_footer">

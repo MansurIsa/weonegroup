@@ -5,21 +5,26 @@ import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { getBrandList, getCategoryList, getProductsList } from '../../actions/productsAction/productsAction';
 import { addPurchase } from '../../actions/purchaseAction/purchaseAction';
+import CustomProductSelect from './CustomProductSelect ';
+import { getSupplierList } from '../../actions/loginAction/loginAction';
+import CustomSupplierSelect from './CustomSupplierSelect';
 
 const NewPurchase = () => {
     const [formData, setFormData] = useState({
         brand: '',
         category: '',
         productId: '',
+        supplierId: '', // əlavə edildi
         quantity: '',
         costPrice: '',
-        purchaseCurrency: '',        // Valyuta seçimi (azn, usd, rub)
-        purchasePriceValue: '',      // Seçilən valyutaya uyğun alış qiyməti
+        purchaseCurrency: '',
+        purchasePriceValue: '',
         salePrice: '',
         discountPrice: '',
         status: 'G',
         purchaseDate: ''
     });
+
 
     const navigate = useNavigate();
     const dispatch = useDispatch();
@@ -28,9 +33,11 @@ const NewPurchase = () => {
         dispatch(getBrandList());
         dispatch(getCategoryList());
         dispatch(getProductsList());
+        dispatch(getSupplierList())
     }, [dispatch]);
 
     const { productsList, categoryList, brandList } = useSelector(state => state.products);
+    const { supplierList } = useSelector(state => state.login)
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -45,6 +52,7 @@ const NewPurchase = () => {
 
         const payload = {
             product: +formData.productId,
+            supplier: formData.supplierId ? +formData.supplierId : null,
             amount: +formData.quantity,
             date: formData.purchaseDate,
             status: formData.status,
@@ -52,8 +60,10 @@ const NewPurchase = () => {
             purchase_price: parseFloat(formData.purchasePriceValue),
             currency: formData.purchaseCurrency,
             price: parseFloat(formData.salePrice),
-            discount_price: parseFloat(formData.discountPrice)
+            discount_price: parseFloat(formData.discountPrice),
+            
         };
+
 
         console.log("Backend-ə göndəriləcək data:", payload);
         dispatch(addPurchase(payload, navigate));
@@ -79,27 +89,9 @@ const NewPurchase = () => {
                 <form onSubmit={handleSubmit}>
                     <div className="form_grid">
 
-                        <div className="form_group">
-                            <label>Marka</label>
-                            <select name="brand" value={formData.brand} onChange={handleChange}>
-                                <option value="">Marka seçin</option>
-                                {brandList?.map((brand) => (
-                                    <option key={brand.id} value={brand.id}>{brand.name}</option>
-                                ))}
-                            </select>
-                        </div>
 
-                        <div className="form_group">
-                            <label>Kateqoriya</label>
-                            <select name="category" value={formData.category} onChange={handleChange}>
-                                <option value="">Kateqoriya seçin</option>
-                                {categoryList?.map((category) => (
-                                    <option key={category.id} value={category.id}>{category.name}</option>
-                                ))}
-                            </select>
-                        </div>
 
-                        <div className="form_group">
+                        {/* <div className="form_group">
                             <label>Məhsul</label>
                             <select name="productId" value={formData.productId} onChange={handleChange}>
                                 <option value="">Məhsul seçin</option>
@@ -107,7 +99,14 @@ const NewPurchase = () => {
                                     <option key={product.id} value={product.id}>{product.name}</option>
                                 ))}
                             </select>
-                        </div>
+                        </div> */}
+
+
+                        <CustomProductSelect
+                            products={filteredProducts}
+                            value={formData.productId}
+                            onChange={(id) => setFormData(prev => ({ ...prev, productId: id }))}
+                        />
 
                         <div className="form_group">
                             <label>Miqdar</label>
@@ -119,6 +118,13 @@ const NewPurchase = () => {
                                 onChange={handleChange}
                             />
                         </div>
+
+                        <CustomSupplierSelect
+                            suppliers={supplierList}
+                            value={formData.supplierId}
+                            onChange={(id) => setFormData(prev => ({ ...prev, supplierId: id }))}
+                        />
+
 
                         <div className="form_group">
                             <label>Maya dəyəri (AZN)</label>
@@ -152,9 +158,9 @@ const NewPurchase = () => {
                                     {formData.purchaseCurrency === 'M'
                                         ? '₼'
                                         : formData.purchaseCurrency === 'D'
-                                        ? '$'
-                                        : formData.purchaseCurrency === 'R'
-                                        ? '₽': ""}
+                                            ? '$'
+                                            : formData.purchaseCurrency === 'R'
+                                                ? '₽' : ""}
                                     )
                                 </label>
                                 <input

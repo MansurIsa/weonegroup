@@ -6,7 +6,8 @@ const LoginSlice = createSlice({
       userObj: {},
       usersList: [],
       customerMovementList: [],
-      customerFactureList: []
+      customerFactureList: [],
+      supplierList: []
     },
     reducers: {
        getUserObjFunc: (state,action)=>{
@@ -24,10 +25,13 @@ const LoginSlice = createSlice({
         getCustomerFactureListFunc:(state,action)=>{
             state.customerFactureList=action.payload
         },
+        getSupplierListFunc: (state,action)=>{
+            state.supplierList=action.payload
+        }
     }
 });
 
 export const LoginReducer = LoginSlice.reducer;
 export const {getUserObjFunc,logoutFunc,getUsersListFunc,getCustomerMovementListFunc,
-    getCustomerFactureListFunc
+    getCustomerFactureListFunc,getSupplierListFunc
 } = LoginSlice.actions;

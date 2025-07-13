@@ -5,7 +5,8 @@ const ProductsSlice = createSlice({
   initialState: {
     productsList: [],
     categoryList: [],
-    brandList: []
+    brandList: [],
+    storeList: [],
   },
   reducers: {
     getProductsListFunc: (state, action) => {
@@ -16,9 +17,12 @@ const ProductsSlice = createSlice({
     },
      getBrandListFunc: (state, action) => {
       state.brandList=action.payload
+    },
+    getStoreListFunc: (state, action) => {
+      state.storeList=action.payload
     }
   },
 });
 
 export const ProductsReducer = ProductsSlice.reducer;
-export const { getProductsListFunc,getCategoryListFunc,getBrandListFunc} = ProductsSlice.actions;
+export const { getProductsListFunc,getCategoryListFunc,getBrandListFunc,getStoreListFunc} = ProductsSlice.actions;

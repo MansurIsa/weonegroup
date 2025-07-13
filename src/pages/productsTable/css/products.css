@@ -1,5 +1,5 @@
 .custom_file_input {
-    padding: 14px 16px;
+    padding: 10px 16px;
     border: 1px solid var(--gray12);
     border-radius: 6px;
     display: flex !important;
@@ -39,3 +39,5 @@
     border-radius: 6px;
     cursor: pointer;
 }
+
+
