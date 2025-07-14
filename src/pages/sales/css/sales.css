@@ -15,3 +15,16 @@
   font-size: 1.2rem;
   margin-top: 4px;
 }
+.left_box_mb{
+  margin-bottom: 40px;
+}
+.warehouse_table_wrapper{
+  margin-top: 20px;
+}
+
+td select{
+  border: 1px solid var(--gray12);
+  padding: 5px;
+  border-radius: 6px;
+  font-size: 1.8rem;
+}

@@ -4,8 +4,11 @@ const SalesSlice = createSlice({
     name: 'sales',
     initialState: {
         salesList: [],
-        customerId: null,      // Yeni əlavə
-        saleDate: null         // Yeni əlavə
+        customerId: null,      
+        saleDate: null,
+        saleUpdateModal: false,
+        saleUpdateId: "" ,
+        saleUpdateObj: {}       
     },
     reducers: {
         getSalesListFunc: (state, action) => {
@@ -16,7 +19,19 @@ const SalesSlice = createSlice({
         },
         setSaleDate: (state, action) => {
             state.saleDate = action.payload;
+        },
+        saleUpdateModalFunc: (state,action)=>{
+            state.saleUpdateModal=true
+            state.saleUpdateId=action.payload
+        },
+        closeSaleUpdateModalFunc: (state)=>{
+            state.saleUpdateModal=false
+        },
+        setSaleUpdateObjFunc: (state,action)=>{
+            state.saleUpdateObj=action.payload
         }
+
+
     }
 });
 
@@ -24,5 +39,7 @@ export const SalesReducer = SalesSlice.reducer;
 export const {
     getSalesListFunc,
     setCustomerId,
-    setSaleDate
+    setSaleDate,saleUpdateModalFunc,
+    closeSaleUpdateModalFunc,
+    setSaleUpdateObjFunc
 } = SalesSlice.actions;

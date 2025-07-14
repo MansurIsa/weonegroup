@@ -7,6 +7,7 @@ import { useNavigate } from 'react-router-dom'
 import SearchInpMain from '../../components/admin/searchInpMain/SearchInpMain'
 import { useDispatch, useSelector } from 'react-redux'
 import { getPurchaseList } from '../../actions/purchaseAction/purchaseAction'
+import PurchaseDeleteModal from '../../components/admin/modals/PurchaseDeleteModal'
 
 const Purchase = () => {
   const navigate = useNavigate()
@@ -21,7 +22,7 @@ const Purchase = () => {
     dispatch(getPurchaseList());
   }, [dispatch]);
 
-  const { purchaseList } = useSelector(state => state.purchase);
+  const { purchaseList,purchaseUpdateModal } = useSelector(state => state.purchase);
   const [filteredProducts, setFilteredProducts] = useState([])
 
   const handleSearch = (query) => {
@@ -47,6 +48,7 @@ const Purchase = () => {
       <AdminBigComponentHeader adminHeader={"Alınmış Məhsulların Cədvəli"} hideShowBtn={true} buttonContent="Yeni alış əlave et" onClick={handleClick} />
       <SearchInpMain onSearch={handleSearch} />
       <PurchaseEnd purchaseList={filteredProducts} />
+      {purchaseUpdateModal && <PurchaseDeleteModal/>}
     </AdminLayout>
   )
 }

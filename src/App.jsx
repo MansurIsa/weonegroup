@@ -33,6 +33,8 @@ import CustomerMovementFacture from './pages/customers/CustomerMovementFacture';
 import Income from './pages/income/Income';
 import Expense from './pages/expense/Expense';
 import ProductsDetail from './pages/products/ProductsDetail';
+import UpdateSalesProductsSelect from './pages/sales/UpdateSalesProductsSelect';
+import UpdateNewPurchase from './pages/purchase/UpdateNewPurchase';
 
 // Token yoxlama funksiyası
 const isTokenExpired = (token) => {
@@ -115,6 +117,10 @@ const App = () => {
     { path: "/customer-movement", element: <CustomerMovement />, isProtected: true },
     { path: "/customer-movement-facture", element: <CustomerMovementFacture />, isProtected: true },
     { path: "/new-customer", element: <NewCustomer />, isProtected: true },
+
+
+     { path: "/update-sales-products-select", element: <UpdateSalesProductsSelect />, isProtected: true },
+     { path: "/update-new-purchase", element: <UpdateNewPurchase />, isProtected: true },
   ];
 
   return (

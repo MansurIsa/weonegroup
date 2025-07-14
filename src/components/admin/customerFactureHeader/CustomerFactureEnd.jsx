@@ -26,9 +26,9 @@ const CustomerFactureEnd = ({ factureList = [] }) => {
     (acc, item) => acc + (item.amount * item.price),
     0
   );
-const handlePrint = () => {
-  window.print();
-};
+  const handlePrint = () => {
+    window.print();
+  };
 
   return (
     <div className='admin_container dashboard_end_container'>
@@ -38,8 +38,11 @@ const handlePrint = () => {
             <th>N</th>
             <th>Məhsul Adı</th>
             <th>Artikl</th>
+            <th>Kateqoriya</th>
+            <th>Marka</th>
+            <th>Brend</th>
             <th>Miqdar</th>
-            <th>Qiymət</th>
+            <th>Satış Qiyməti</th>
             <th>Ümumi məbləğ</th>
           </tr>
         </thead>
@@ -51,6 +54,9 @@ const handlePrint = () => {
               <td>
                 {item.product?.articles?.map((art) => art.name).join(', ') || '—'}
               </td>
+               <td>{item.product?.category?.name || '—'}</td>
+               <td>{item.product?.brand?.name || '—'}</td>
+               <td>{item.product?.store?.name || '—'}</td>
               <td>{item.amount}</td>
               <td>{item.price} ₼</td>
               <td>{(item.amount * item.price).toFixed(2)} ₼</td>

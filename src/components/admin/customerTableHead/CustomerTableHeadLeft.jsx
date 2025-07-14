@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { handleOpenModal } from '../../../redux/slices/admin/productTableSlice';
 import { useNavigate } from 'react-router-dom';
 import { getUsersList } from '../../../actions/loginAction/loginAction';
+import CustomCustomerSelect from './CustomCustomerSelect';
 
 const CustomerTableHeadLeft = () => {
   const dispatch = useDispatch();
@@ -48,22 +48,11 @@ const CustomerTableHeadLeft = () => {
         </div>
       </div>
 
-      <div className="form_group">
-        <label>Müştəri</label>
-        <select
-          value={selectedCustomer}
-          onChange={(e) => setSelectedCustomer(e.target.value)}
-        >
-          <option value="">Müştərini seç</option>
-          {usersList
-            ?.filter(user => !user.is_staff)
-            .map(user => (
-              <option key={user.id} value={user.id}>
-                {user.first_name} {user.last_name} ({user?.username})
-              </option>
-            ))}
-        </select>
-      </div>
+      <CustomCustomerSelect
+        customers={usersList?.filter(user => !user.is_staff)}
+        value={selectedCustomer}
+        onChange={(id) => setSelectedCustomer(id)}
+      />
 
       <button onClick={handleCustomerMovement} className="submit_btn">
         Keçid et

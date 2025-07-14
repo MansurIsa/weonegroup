@@ -1,6 +1,8 @@
 .modal_content {
 
     min-width: 800px;
+    max-height: 90vh;
+    overflow: scroll;
 }
 
 .modal_inner_container {
@@ -119,4 +121,31 @@
     cursor: pointer;
     margin-bottom: 15px;
     position: relative;
+}
+
+.warehouse_content h2{
+    font-size: 3rem;
+    font-style: italic;
+    color: var(--gray10);
+}
+
+
+.modal_yes_no_btns{
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    margin-top: 40px;
+}
+.modal_yes_no_btns button{
+    padding: 8px 36px;
+    border-radius: 12px;
+    border: 1px solid var(--white);
+    font-size: 1.8rem;
+    color: var(--white);
+}
+.modal_yes_no_btns button:nth-of-type(1){
+    background-color: var(--green);
+}
+.modal_yes_no_btns button:nth-of-type(2){
+    background-color: var(--red);
 }

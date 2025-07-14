@@ -27,11 +27,11 @@ const CustomerMovementFacture = () => {
 
   return (
     <AdminLayout adminHeaderHide={true}>
-      <CustomerFactureHeader
+      {/* <CustomerFactureHeader
         usersList={usersList}
         selectedCustomerId={selectedCustomerId}
         setSelectedCustomerId={setSelectedCustomerId}
-      />
+      /> */}
       <SearchInpMain onSearch={setSearchTerm} />
       <CustomerFactureEnd factureList={filteredFactures} />
     </AdminLayout>

@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { getUsersList } from '../../../actions/loginAction/loginAction';
 import { setCustomerId, setSaleDate } from '../../../redux/slices/admin/salesSlice';
+import CustomCustomerSelect from './CustomCustomerSelect';
 
 
 const SalesTableHeadLeft = () => {
@@ -38,19 +39,16 @@ const SalesTableHeadLeft = () => {
 
   return (
     <div className="left_box">
-      <div className="form_group form_group_sales_table_head">
-        <label>Müştəri</label>
-        <select onChange={handleCustomerChange} value={selectedCustomerId}>
-          <option value="">Müştərini seç</option>
-          {usersList
-            .filter(user => user.is_staff === false)
-            .map(user => (
-              <option key={user.id} value={user.id}>
-                {user.first_name} {user.last_name} ({user.username})
-              </option>
-            ))}
-        </select>
-      </div>
+
+
+      <CustomCustomerSelect
+        customers={usersList.filter(user => user.is_staff === false)}
+        value={selectedCustomerId}
+        onChange={(id) => {
+          setSelectedCustomerId(id);
+          dispatch(setCustomerId(id));
+        }}
+      />
 
       <div className="form_group form_group_sales_table_head">
         <label>Satış tarixi</label>

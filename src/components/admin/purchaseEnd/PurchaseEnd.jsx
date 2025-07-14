@@ -1,12 +1,19 @@
-import React, {  useState } from 'react';
+import React, { useState } from 'react';
 import ReactPaginate from 'react-paginate';
 import "./css/purchaseEnd.css"
+import { FaPenToSquare } from 'react-icons/fa6';
+import { AiTwotoneDelete } from 'react-icons/ai';
+import { useDispatch } from 'react-redux';
+import { purchaseUpdateModalFunc, setUpdatePurchaseObjFunc } from '../../../redux/slices/admin/purchaseSlices';
+import { useNavigate } from 'react-router-dom';
 
 const ITEMS_PER_PAGE = 5;
 
-const PurchaseEnd = ({purchaseList}) => {
-  
+const PurchaseEnd = ({ purchaseList }) => {
+
     const [currentPage, setCurrentPage] = useState(0);
+    const dispatch=useDispatch()
+    const navigate=useNavigate()
 
     const offset = currentPage * ITEMS_PER_PAGE;
     const currentPageData = purchaseList.slice(offset, offset + ITEMS_PER_PAGE);
@@ -38,10 +45,20 @@ const PurchaseEnd = ({purchaseList}) => {
     };
 
     const currencyMap = {
-  D: "$",
-  M: "₼",
-  R: "₽"
-};
+        D: "$",
+        M: "₼",
+        R: "₽"
+    };
+
+    const deletePurchase=(x)=>{
+       dispatch(purchaseUpdateModalFunc(x))
+    
+       
+    }
+    const updatePurchase=(item)=>{
+        navigate("/update-new-purchase")
+         dispatch(setUpdatePurchaseObjFunc(item))
+    }
 
     return (
         <div className='admin_container dashboard_end_container'>
@@ -57,6 +74,7 @@ const PurchaseEnd = ({purchaseList}) => {
                         <th>Endirimli Qiymət</th>
                         <th>Status</th>
                         <th>Alış Tarixi</th>
+                        <th>Düzəliş/Sil</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -71,12 +89,16 @@ const PurchaseEnd = ({purchaseList}) => {
                                 <td>{product.name}</td>
                                 <td>{articleNames}</td>
                                 <td>{item.amount}</td>
-                               <td>{product.purchase_price} {currencyMap[product?.currency] || ""}</td>
+                                <td>{product.purchase_price} {currencyMap[product?.currency] || ""}</td>
                                 <td>{product.cost_price} ₼</td>
                                 <td>{product.price} ₼</td>
                                 <td>{product.discount_price} ₼</td>
                                 <td className={`status ${statusClass}`}>{statusText}</td>
                                 <td>{formatDate(item.date)}</td>
+                                <td className='table_update'>
+                                    <FaPenToSquare onClick={() => updatePurchase(item)} />
+                                    <AiTwotoneDelete onClick={() => deletePurchase(item?.id)} />
+                                </td>
                             </tr>
                         );
                     })}
