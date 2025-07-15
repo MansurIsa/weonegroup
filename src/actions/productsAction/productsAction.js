@@ -1,8 +1,9 @@
 import axios from "axios";
 import { baseUrl } from "../../mainApi/MainApi";
-import { getBrandListFunc, getCategoryListFunc, getProductsListFunc, getStoreListFunc } from "../../redux/slices/productsSlices";
+import { getBrandListFunc, getCategoryListFunc, getProductObjFunc, getProductsListFunc, getStoreListFunc } from "../../redux/slices/productsSlices";
 import { startLoading, stopLoading } from "../../redux/slices/loaderSlice";
 import toast from "react-hot-toast";
+import { closeProductsDeleteModalFunc } from "../../redux/slices/admin/productTableSlice";
 
 export const getProductsList = () => async (dispatch) => {
   dispatch(startLoading());
@@ -73,6 +74,65 @@ export const addProductToCart = (data,navigate) => async (dispatch) => {
         console.log(resp);
         toast.success("Məhsul səbətə əlavə edildi");
         navigate("/cart")
+    })
+    .catch((err) => {
+      console.log(err);
+       toast.error("Xəta baş verdi. Zəhmət olmasa yenidən yoxlayın ❌");
+    }).finally(() => {
+      dispatch(stopLoading());
+    });;
+};
+
+
+
+export const getProductObj = (id) => async (dispatch) => {
+  dispatch(startLoading());
+  return await axios.get(`${baseUrl}core/product-retrieve/${id}/`)
+    .then((resp) => {
+        console.log(resp.data);
+      dispatch(getProductObjFunc(resp.data));
+    })
+    .catch((err) => {
+      console.log(err);
+    }).finally(() => {
+      dispatch(stopLoading());
+    });;
+};
+
+
+export const deleteProducts = (id,navigate) => async (dispatch) => {
+  dispatch(startLoading());
+  return await axios.delete(`${baseUrl}core/product-update-delete/${id}/`,{
+    headers: {
+          Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+        }
+  })
+    .then((resp) => {
+        console.log(resp);
+        toast.success("Məhsul Silindi");
+        navigate("/products-table")
+        dispatch(closeProductsDeleteModalFunc())
+    })
+    .catch((err) => {
+      console.log(err);
+       toast.error("Xəta baş verdi. Zəhmət olmasa yenidən yoxlayın ❌");
+    }).finally(() => {
+      dispatch(stopLoading());
+    });;
+};
+
+
+export const updateProduct = (id,data,navigate) => async (dispatch) => {
+  dispatch(startLoading());
+  return await axios.put(`${baseUrl}core/product-update-delete/${id}/`,data,{
+    headers: {
+          Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+        }
+  })
+    .then((resp) => {
+        console.log(resp);
+        toast.success("Məhsul Redaktə edildi");
+        navigate("/products-table")
     })
     .catch((err) => {
       console.log(err);

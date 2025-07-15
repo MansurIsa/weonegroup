@@ -35,6 +35,7 @@ import Expense from './pages/expense/Expense';
 import ProductsDetail from './pages/products/ProductsDetail';
 import UpdateSalesProductsSelect from './pages/sales/UpdateSalesProductsSelect';
 import UpdateNewPurchase from './pages/purchase/UpdateNewPurchase';
+import UpdateNewProducts from './pages/productsTable/UpdateNewProducts';
 
 // Token yoxlama funksiyası
 const isTokenExpired = (token) => {
@@ -121,6 +122,7 @@ const App = () => {
 
      { path: "/update-sales-products-select", element: <UpdateSalesProductsSelect />, isProtected: true },
      { path: "/update-new-purchase", element: <UpdateNewPurchase />, isProtected: true },
+     { path: "/update-new-products", element: <UpdateNewProducts />, isProtected: true },
   ];
 
   return (

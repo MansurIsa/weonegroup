@@ -7,6 +7,7 @@ import SearchInpMain from '../../components/admin/searchInpMain/SearchInpMain'
 import ProductsTableEnd from '../../components/admin/productsTableEnd/ProductsTableEnd'
 import { useDispatch, useSelector } from 'react-redux'
 import { getProductsList } from '../../actions/productsAction/productsAction'
+import ProductsDeleteModal from '../../components/admin/modals/ProductsDeleteModal'
 
 const ProductsTable = () => {
   const navigate = useNavigate()
@@ -14,6 +15,7 @@ const ProductsTable = () => {
 
   const [filteredProducts, setFilteredProducts] = useState([])
   const { productsList } = useSelector(state => state.products)
+  const {productsDeleteModal}=useSelector(state=>state.productTable)
 
   useEffect(() => {
     dispatch(getProductsList())
@@ -50,6 +52,7 @@ const ProductsTable = () => {
       />
       <SearchInpMain onSearch={handleSearch} />
       <ProductsTableEnd productsList={filteredProducts} />
+      {productsDeleteModal && <ProductsDeleteModal/>}
     </AdminLayout>
   )
 }

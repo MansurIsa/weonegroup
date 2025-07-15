@@ -1,16 +1,16 @@
 import React from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
-import { closePurchaseUpdateModalFunc } from '../../../redux/slices/admin/purchaseSlices'
 import { deletePurchase } from '../../../actions/purchaseAction/purchaseAction'
+import { deleteProducts } from '../../../actions/productsAction/productsAction'
 import { closeProductsDeleteModalFunc } from '../../../redux/slices/admin/productTableSlice'
 
-const PurchaseDeleteModal = () => {
+const ProductsDeleteModal = () => {
     const dispatch=useDispatch()
     const navigate=useNavigate()
-    const {purchaseId}=useSelector(state=>state.purchase)
-    const handleProductsDelete=()=>{
-        // dispatch(deletePurchase(purchaseId,navigate))
+    const {productDeleteId}=useSelector(state=>state.productTable)
+    const handlePurchaseDelete=()=>{
+        dispatch(deleteProducts(productDeleteId,navigate))
         // dispatch(getSalesList());
     }
     return (
@@ -23,7 +23,7 @@ const PurchaseDeleteModal = () => {
 
                 </div>
                 <div className='modal_yes_no_btns'>
-                    <button onClick={handleProductsDelete}>Bəli</button>
+                    <button onClick={handlePurchaseDelete}>Bəli</button>
                     <button onClick={() => dispatch(closeProductsDeleteModalFunc())}>Xeyr</button>
                 </div>
             </div>
@@ -31,4 +31,4 @@ const PurchaseDeleteModal = () => {
     )
 }
 
-export default PurchaseDeleteModal
+export default ProductsDeleteModal

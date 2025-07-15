@@ -7,7 +7,10 @@ const ProductTableSlice = createSlice({
       productId: "",
       productsMovementList: [],
       returnBackList: [],
-      productReturnedModal: false
+      productReturnedModal: false,
+      productsDeleteModal: false,
+      productDeleteId: "",
+      productUpdateObj: {}
      
     },
     reducers: {
@@ -29,6 +32,16 @@ const ProductTableSlice = createSlice({
     },
     handleAddReturnedModal: (state,action)=>{
         state.productReturnedModal=true
+    },
+    productsDeleteModalFunc: (state,action)=>{
+        state.productsDeleteModal=true
+        state.productDeleteId=action.payload
+    },
+    closeProductsDeleteModalFunc: (state)=>{
+        state.productsDeleteModal=false
+    },
+    setUpdateProductsObjFunc: (state,action)=>{
+        state.productUpdateObj=action.payload
     }
     
     }
@@ -36,5 +49,6 @@ const ProductTableSlice = createSlice({
 
 export const ProductTableReducer = ProductTableSlice.reducer;
 export const {handleOpenModal,handleCloseModal,setSelectedProduct,getProductMovementListFunc,
-    getReturnBackListFunc,handleAddReturnedModal
+    getReturnBackListFunc,handleAddReturnedModal,productsDeleteModalFunc,closeProductsDeleteModalFunc,
+    setUpdateProductsObjFunc
 } = ProductTableSlice.actions;
