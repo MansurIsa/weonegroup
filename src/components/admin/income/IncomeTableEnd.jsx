@@ -3,11 +3,14 @@ import ReactPaginate from 'react-paginate';
 import { useDispatch, useSelector } from 'react-redux';
 import { getPaymentList } from '../../../actions/incomeAction/incomeAction';
 import "./css/income.css"; // Stil faylını özünə uyğun əlavə et
+import { FaPenToSquare } from 'react-icons/fa6';
+import { AiTwotoneDelete } from 'react-icons/ai';
+import { deleteIncomePaymentModal, handleIncomeUpdatePaymentModal } from '../../../redux/slices/admin/incomeSlices';
 
 const ITEMS_PER_PAGE = 5;
 
-const IncomeTableEnd = ({paymentList}) => {
-   
+const IncomeTableEnd = ({ paymentList }) => {
+
 
     const [currentPage, setCurrentPage] = useState(0);
 
@@ -30,6 +33,16 @@ const IncomeTableEnd = ({paymentList}) => {
     const handlePageClick = (event) => {
         setCurrentPage(event.selected);
     };
+    const dispatch = useDispatch()
+
+    const deleteIncome = (x) => {
+        dispatch(deleteIncomePaymentModal(x))
+    }
+
+
+    const updateIncome = (item) => {
+        dispatch(handleIncomeUpdatePaymentModal(item))
+    }
 
     return (
         <div className='admin_container dashboard_end_container'>
@@ -43,6 +56,7 @@ const IncomeTableEnd = ({paymentList}) => {
                         <th>Miqdarı</th> */}
                         <th>Məbləğ</th>
                         <th>Ödəniş Tarixi</th>
+                        <th>Düzəliş/Sil</th>
                     </tr>
                 </thead>
 
@@ -51,9 +65,13 @@ const IncomeTableEnd = ({paymentList}) => {
                         <tr key={item.id}>
                             <td>{item.customer?.first_name || '-'} {item.customer?.last_name || '-'}</td>
                             <td>{item.customer?.username || '-'}</td>
-                          
+
                             <td>{item.amount} ₼</td>
                             <td>{formatDateTime(item.datetime)}</td>
+                            <td className='table_update'>
+                                <FaPenToSquare onClick={() => updateIncome(item)} />
+                                <AiTwotoneDelete onClick={() => deleteIncome(item?.id)} />
+                            </td>
                         </tr>
                     ))}
                 </tbody>

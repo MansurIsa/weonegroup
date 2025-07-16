@@ -10,11 +10,11 @@ const PurchaseDeleteModal = () => {
     const navigate=useNavigate()
     const {purchaseId}=useSelector(state=>state.purchase)
     const handleProductsDelete=()=>{
-        // dispatch(deletePurchase(purchaseId,navigate))
+        dispatch(deletePurchase(purchaseId,navigate))
         // dispatch(getSalesList());
     }
     return (
-        <div className="modal_overlay" onClick={() => dispatch(closeProductsDeleteModalFunc())}>
+        <div className="modal_overlay" onClick={() => dispatch(closePurchaseUpdateModalFunc())}>
             <div className="modal_content" onClick={(e) => e.stopPropagation()}>
                 <div className="modal_inner_container">
                     <div className="warehouse_content">
@@ -24,7 +24,7 @@ const PurchaseDeleteModal = () => {
                 </div>
                 <div className='modal_yes_no_btns'>
                     <button onClick={handleProductsDelete}>Bəli</button>
-                    <button onClick={() => dispatch(closeProductsDeleteModalFunc())}>Xeyr</button>
+                    <button onClick={() => dispatch(closePurchaseUpdateModalFunc())}>Xeyr</button>
                 </div>
             </div>
         </div>

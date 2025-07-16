@@ -2,7 +2,7 @@ import axios from "axios";
 import toast from "react-hot-toast";
 import { baseUrl } from "../../mainApi/MainApi";
 import { startLoading, stopLoading } from "../../redux/slices/loaderSlice";
-import { getCustomerFactureListFunc, getCustomerMovementListFunc, getSupplierListFunc, getUserObjFunc, getUsersListFunc } from "../../redux/slices/loginSlices";
+import { closeCustomerUpdateModalFunc, getCustomerFactureListFunc, getCustomerMovementListFunc, getSupplierListFunc, getUserObjFunc, getUsersListFunc } from "../../redux/slices/loginSlices";
 
 export const postLogin = (data, navigate) => async (dispatch) => {
   try {
@@ -155,6 +155,51 @@ export const getSupplierList = () => async (dispatch) => {
     .then((resp) => {
       console.log(resp.data);
       dispatch(getSupplierListFunc(resp.data));
+    })
+    .catch((err) => {
+      console.log(err);
+    }).finally(() => {
+      dispatch(stopLoading());
+    });;
+};
+
+
+
+
+export const updateUser = (data,id,navigate) => async (dispatch) => {
+  dispatch(startLoading());
+  return await axios.put(`${baseUrl}core/profile-retrieve-update-delete/${id}/`, data, {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+    }
+  })
+    .then((resp) => {
+      console.log(resp.data);
+      navigate("/customers")
+      toast.success("Müştəri/Tədarükçü məlumatları Redaktə edildi");
+      
+    })
+    .catch((err) => {
+      console.log(err);
+      toast.error("Xəta baş verdi. Zəhmət olmasa yenidən yoxlayın ❌");
+    }).finally(() => {
+      dispatch(stopLoading());
+    });;
+};
+
+
+export const deleteCustomer = (id,navigate) => async (dispatch) => {
+  dispatch(startLoading());
+  return await axios.delete(`${baseUrl}core/profile-retrieve-update-delete/${id}/`, {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+    }
+  })
+    .then((resp) => {
+      console.log(resp.data);
+      navigate("/customers")
+      toast.success("Müştəri/Tədarükçü məlumatları Silindi");
+      dispatch(closeCustomerUpdateModalFunc())
     })
     .catch((err) => {
       console.log(err);

@@ -5,11 +5,14 @@ import DashboardFirst from '../../components/admin/dashboard/dashboardFirst/Dash
 import SalesChart from '../../components/admin/dashboard/dashboardSecond/SalesChart'
 import DashboardThird from '../../components/admin/dashboard/dashboardThird/DashboardThird'
 import DashboardEnd from '../../components/admin/dashboard/dashboardEnd/DashboardEnd'
+import MonthYearSelect from './MonthYearSelect'
+import "./css/dashboard.css"
 
 const Dashboard = () => {
   return (
     <AdminLayout adminHeader="İdarə paneli" dashboardSearch={false}>
       <AdminBigComponentHeader adminHeader={"Göstəricilər"} hideShowBtn={false} buttonContent="" />
+      <MonthYearSelect/>
       <DashboardFirst/>
       <SalesChart/>
       <DashboardThird/>

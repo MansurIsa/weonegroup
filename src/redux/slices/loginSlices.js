@@ -7,7 +7,11 @@ const LoginSlice = createSlice({
       usersList: [],
       customerMovementList: [],
       customerFactureList: [],
-      supplierList: []
+      supplierList: [],
+
+      updateCustomerObj: {},
+      deleteCustomerId: "",
+      customerDeleteModal: false
     },
     reducers: {
        getUserObjFunc: (state,action)=>{
@@ -27,11 +31,23 @@ const LoginSlice = createSlice({
         },
         getSupplierListFunc: (state,action)=>{
             state.supplierList=action.payload
+        },
+
+        setUpdateCustomerObjFunc: (state,action)=>{
+            state.updateCustomerObj=action.payload
+        },
+        customerUpdateModalFunc: (state,action)=>{
+            state.deleteCustomerId=action.payload
+            state.customerDeleteModal=true
+        },
+        closeCustomerUpdateModalFunc: (state,action)=>{
+            state.customerDeleteModal=false
         }
     }
 });
 
 export const LoginReducer = LoginSlice.reducer;
 export const {getUserObjFunc,logoutFunc,getUsersListFunc,getCustomerMovementListFunc,
-    getCustomerFactureListFunc,getSupplierListFunc
+    getCustomerFactureListFunc,getSupplierListFunc,setUpdateCustomerObjFunc,customerUpdateModalFunc,
+    closeCustomerUpdateModalFunc
 } = LoginSlice.actions;

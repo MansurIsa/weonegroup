@@ -25,7 +25,7 @@ const WarehouseProducts = ({ stockList }) => {
             <th>Artikl</th>
             <th>Miqdar</th>
             <th>Maya dəyəri</th>
-            <th>Əməliyyat</th>
+            {/* <th>Əməliyyat</th> */}
           </tr>
         </thead>
         <tbody>
@@ -43,7 +43,7 @@ const WarehouseProducts = ({ stockList }) => {
                 <td>{articles}</td>
                 <td>{item.amount}</td>
                 <td>{costPrice} ₼</td>
-                <td className="operation">+ Stok əlavə et</td>
+                {/* <td className="operation">+ Stok əlavə et</td> */}
               </tr>
             );
           })}

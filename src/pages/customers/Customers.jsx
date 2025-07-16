@@ -7,6 +7,7 @@ import SearchInpMain from '../../components/admin/searchInpMain/SearchInpMain'
 import CustomerTableEnd from '../../components/admin/customerTableHead/CustomerTableEnd'
 import { useDispatch, useSelector } from 'react-redux'
 import { getUsersList } from '../../actions/loginAction/loginAction'
+import CustomerDeleteModal from '../../components/admin/modals/CustomerDeleteModal'
 
 const Customers = () => {
   const navigate = useNavigate()
@@ -22,7 +23,7 @@ const Customers = () => {
     dispatch(getUsersList())
   }, [dispatch])
 
-  const { usersList } = useSelector(state => state.login)
+  const { usersList,customerDeleteModal } = useSelector(state => state.login)
 
 useEffect(() => {
   // Yalnız is_staff === false olanları saxla
@@ -59,6 +60,7 @@ useEffect(() => {
       />
       <SearchInpMain onSearch={handleSearch} />
       <CustomerTableEnd usersList={filteredUsers} />
+      {customerDeleteModal && <CustomerDeleteModal/>}
     </AdminLayout>
   )
 }

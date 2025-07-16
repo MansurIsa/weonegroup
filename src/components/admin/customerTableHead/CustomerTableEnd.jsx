@@ -2,6 +2,9 @@ import React, { useState } from 'react';
 import { AiTwotoneDelete } from 'react-icons/ai';
 import { FaPenToSquare } from 'react-icons/fa6';
 import ReactPaginate from 'react-paginate';
+import { useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+import { customerUpdateModalFunc, setUpdateCustomerObjFunc } from '../../../redux/slices/loginSlices';
 
 
 
@@ -18,15 +21,20 @@ const CustomerTableEnd = ({ usersList }) => {
     const currentPageData = usersList.slice(offset, offset + ITEMS_PER_PAGE);
     const pageCount = Math.ceil(usersList.length / ITEMS_PER_PAGE);
 
+    const navigate = useNavigate()
+    const dispatch = useDispatch()
+
+
 
     const handlePageClick = (event) => {
         setCurrentPage(event.selected);
     };
-    const updateCustomer=(item)=>{
-
+    const updateCustomer = (item) => {
+        navigate("/update-new-customer")
+        dispatch(setUpdateCustomerObjFunc(item))
     }
- const deleteCustomer=(x)=>{
-        
+    const deleteCustomer = (x) => {
+        dispatch(customerUpdateModalFunc(x))
     }
     return (
         <div className='admin_container dashboard_end_container'>
@@ -53,7 +61,7 @@ const CustomerTableEnd = ({ usersList }) => {
                 <tbody>
                     {currentPageData?.map((item, index) => (
                         <tr key={index}>
-                            <td>{item.first_name  || "-"} {item.last_name|| "-"}</td>
+                            <td>{item.first_name || "-"} {item.last_name || "-"}</td>
 
                             <td>{item.username || "-"}</td>
                             <td>{item.phone_number || "-"}</td>
@@ -69,9 +77,9 @@ const CustomerTableEnd = ({ usersList }) => {
                                 }
                             </td>
                             <td className='table_update'>
-                                    <FaPenToSquare onClick={() => updateCustomer(item)} />
-                                    <AiTwotoneDelete onClick={() => deleteCustomer(item?.id)} />
-                                </td>
+                                <FaPenToSquare onClick={() => updateCustomer(item)} />
+                                <AiTwotoneDelete onClick={() => deleteCustomer(item?.id)} />
+                            </td>
                         </tr>
                     ))}
                 </tbody>

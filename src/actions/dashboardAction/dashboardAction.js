@@ -3,9 +3,13 @@ import { baseUrl } from "../../mainApi/MainApi";
 import { startLoading, stopLoading } from "../../redux/slices/loaderSlice";
 import { getChartsDashboardListFunc, getDashboardListFunc, getMostDebtDashboardListFunc, getStockOutDashboardListFunc } from "../../redux/slices/admin/dashboardSlice";
 
-export const getDashboardList = () => async (dispatch) => {
+export const getDashboardList = (id, month, year) => async (dispatch) => {
   dispatch(startLoading());
-  return await axios.get(`${baseUrl}accounting/dashboard/`)
+  return await axios.get(`${baseUrl}accounting/dashboard/${id}/${month}/${year}/`, {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+    }
+  })
     .then((resp) => {
       console.log(resp.data);
       dispatch(getDashboardListFunc(resp.data));
@@ -46,9 +50,13 @@ export const getStockOutDashboardList = () => async (dispatch) => {
 };
 
 
-export const getChartsDashboardList = (x) => async (dispatch) => {
+export const getChartsDashboardList = (id, x) => async (dispatch) => {
   dispatch(startLoading());
-  return await axios.get(`${baseUrl}accounting/saledynamics/${x}/`)
+  return await axios.get(`${baseUrl}accounting/saledynamics/${id}/${x}/`, {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+    }
+  })
     .then((resp) => {
       console.log(resp.data);
       dispatch(getChartsDashboardListFunc(resp.data));

@@ -141,7 +141,14 @@ const SalesTableEnd = () => {
                             <td>{item?.seller?.first_name || "-"} {item?.seller?.last_name || "-"}</td>
                             <td>{(item.price * item.amount).toFixed(2)} ₼</td>
                             <td>{formatDateTime(item.datetime)}</td>
-                            <td>{item?.status === "S" ? "Satılıb" : item?.status === "G" ? "Gözləyir" : "-"}</td>
+                            <td style={{
+                                color:
+                                    item?.status === "S"
+                                        ? "var(--green)"
+                                        : item?.status === "G"
+                                            ? "var(--yellow)"
+                                            : "inherit"
+                            }}>{item?.status === "S" ? "Satılıb" : item?.status === "G" ? "Gözləyir" : "-"}</td>
                             <td className='table_update'>
                                 <FaPenToSquare onClick={() => updateSale(item)} />
                                 <AiTwotoneDelete onClick={() => deleteSale(item?.id)} />

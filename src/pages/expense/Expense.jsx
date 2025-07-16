@@ -10,6 +10,8 @@ import ExpenseTableHead from '../../components/admin/expense/ExpenseTableHead';
 import SearchInpMain from '../../components/admin/searchInpMain/SearchInpMain';
 import ExpenseTableEnd from '../../components/admin/expense/ExpenseTableEnd';
 import { getExpenseList } from '../../actions/incomeAction/incomeAction';
+import ExpenseDeletePaymentModal from '../../components/admin/modals/ExpenseDeletePaymentModal';
+import ExpenseUpdatePaymentModal from '../../components/admin/modals/ExpenseUpdatePaymentModal';
 
 const Expense = () => {
   const dispatch = useDispatch();
@@ -19,7 +21,7 @@ const Expense = () => {
     dispatch(getExpenseList());
   }, [dispatch]);
 
-  const { expenseList, expenseAddPaymentModal } = useSelector(state => state.income);
+  const { expenseList, expenseAddPaymentModal,expenseDeletePaymentModal,expenseUpdatePaymentModal } = useSelector(state => state.income);
 
   // 🔍 Filtered list — yalnız adı uyğun gələnlər
   const filteredExpenseList = expenseList?.filter(item =>
@@ -38,6 +40,8 @@ const Expense = () => {
       <SearchInpMain onSearch={setSearchTerm} />
       <ExpenseTableEnd expenseList={filteredExpenseList} />
       {expenseAddPaymentModal && <ExpenseAddPaymentModal />}
+      {expenseDeletePaymentModal && <ExpenseDeletePaymentModal/>}
+      {expenseUpdatePaymentModal && <ExpenseUpdatePaymentModal/>}
     </AdminLayout>
   );
 };

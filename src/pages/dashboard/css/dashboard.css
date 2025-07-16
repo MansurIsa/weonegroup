@@ -1,0 +1,6 @@
+.month_year_select{
+    display: flex;
+}
+.month_year_select select{
+    max-width: 300px !important;
+}

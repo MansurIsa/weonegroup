@@ -8,12 +8,16 @@ import { useDispatch, useSelector } from 'react-redux';
 import { handleIncomeAddPaymentModal } from '../../redux/slices/admin/incomeSlices';
 import IncomeAddPaymentModal from '../../components/admin/modals/IncomeAddPaymentModal';
 import { getPaymentList } from '../../actions/incomeAction/incomeAction';
+import IncomeUpdatePaymentModal from '../../components/admin/modals/IncomeUpdatePaymentModal';
+import IncomeDeletePaymentModal from '../../components/admin/modals/IncomeDeletePaymentModal';
 
 const Income = () => {
   const dispatch = useDispatch();
   const [filteredPayments, setFilteredPayments] = useState([]);
 
-  const { incomeAddPaymentModal, paymentList } = useSelector(state => state.income);
+  const { incomeAddPaymentModal, paymentList,incomeUpdatePaymentModal,
+    incomeDeletePaymentModal
+   } = useSelector(state => state.income);
 
   useEffect(() => {
     dispatch(getPaymentList());
@@ -54,6 +58,8 @@ const Income = () => {
       <SearchInpMain onSearch={handleSearch} />
       <IncomeTableEnd paymentList={filteredPayments} />
       {incomeAddPaymentModal && <IncomeAddPaymentModal />}
+      {incomeUpdatePaymentModal && <IncomeUpdatePaymentModal />}
+      {incomeDeletePaymentModal && <IncomeDeletePaymentModal/>}
     </AdminLayout>
   );
 };

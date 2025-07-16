@@ -2,7 +2,7 @@ import axios from "axios";
 import { baseUrl } from "../../mainApi/MainApi";
 import { startLoading, stopLoading } from "../../redux/slices/loaderSlice";
 import toast from "react-hot-toast";
-import { getExpenseListFunc, getPaymentListFunc } from "../../redux/slices/admin/incomeSlices";
+import { closeIncomeAddPaymentModal, getExpenseListFunc, getPaymentListFunc } from "../../redux/slices/admin/incomeSlices";
 
 export const getPaymentList = () => async (dispatch) => {
   dispatch(startLoading());
@@ -69,6 +69,91 @@ export const getExpenseList = () => async (dispatch) => {
     })
     .catch((err) => {
       console.log(err);
+    }).finally(() => {
+      dispatch(stopLoading());
+    });;
+};
+
+
+export const updateIncome = (data,id,navigate) => async (dispatch) => {
+  dispatch(startLoading());
+  return await axios.put(`${baseUrl}accounting/payment-retrieve-update-delete/${id}/`,data,{
+    headers: {
+          Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+        }
+  })
+    .then((resp) => {
+        console.log(resp);
+        toast.success("Ödəniş Məlumatları dəyişdirildi");
+        navigate("/income")
+    })
+    .catch((err) => {
+      console.log(err);
+       toast.error("Xəta baş verdi. Zəhmət olmasa yenidən yoxlayın ❌");
+    }).finally(() => {
+      dispatch(stopLoading());
+    });;
+};
+
+
+export const deleteIncome = (id,navigate) => async (dispatch) => {
+  dispatch(startLoading());
+  return await axios.delete(`${baseUrl}accounting/payment-retrieve-update-delete/${id}/`,{
+    headers: {
+          Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+        }
+  })
+    .then((resp) => {
+        console.log(resp);
+        toast.success("Ödəniş Məlumatları silindi");
+        navigate("/income")
+        dispatch(closeIncomeAddPaymentModal())
+    })
+    .catch((err) => {
+      console.log(err);
+       toast.error("Xəta baş verdi. Zəhmət olmasa yenidən yoxlayın ❌");
+    }).finally(() => {
+      dispatch(stopLoading());
+    });;
+};
+
+
+export const updateExpense = (data,id,navigate) => async (dispatch) => {
+  dispatch(startLoading());
+  return await axios.put(`${baseUrl}accounting/expense-retrieve-update-delete/${id}/`,data,{
+    headers: {
+          Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+        }
+  })
+    .then((resp) => {
+        console.log(resp);
+        toast.success("Xərc Məlumatları dəyişdirildi");
+        navigate("/expense")
+    })
+    .catch((err) => {
+      console.log(err);
+       toast.error("Xəta baş verdi. Zəhmət olmasa yenidən yoxlayın ❌");
+    }).finally(() => {
+      dispatch(stopLoading());
+    });;
+};
+
+export const deleteExpense = (id,navigate) => async (dispatch) => {
+  dispatch(startLoading());
+  return await axios.delete(`${baseUrl}accounting/expense-retrieve-update-delete/${id}/`,{
+    headers: {
+          Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+        }
+  })
+    .then((resp) => {
+        console.log(resp);
+        toast.success("Xərc Məlumatları silindi");
+        navigate("/expense")
+        dispatch(closeIncomeAddPaymentModal())
+    })
+    .catch((err) => {
+      console.log(err);
+       toast.error("Xəta baş verdi. Zəhmət olmasa yenidən yoxlayın ❌");
     }).finally(() => {
       dispatch(stopLoading());
     });;
