@@ -9,9 +9,9 @@ const ExpenseDeletePaymentModal = () => {
     const dispatch=useDispatch()
     const navigate=useNavigate()
     const {expenseDeletePaymentId}=useSelector(state=>state.income)
-    const handleExpenseDelete=()=>{
-        dispatch(deleteExpense(expenseDeletePaymentId,navigate))
-        dispatch(getExpenseList());
+    const handleExpenseDelete=async()=>{
+       await dispatch(deleteExpense(expenseDeletePaymentId,navigate))
+       await dispatch(getExpenseList());
     }
     return (
         <div className="modal_overlay" onClick={() => dispatch(closeIncomeAddPaymentModal())}>

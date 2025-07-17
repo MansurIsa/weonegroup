@@ -2,14 +2,16 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { IoMdClose } from 'react-icons/io';
 import { useNavigate } from 'react-router-dom';
-import { getSalesList } from '../../../actions/salesAction/salesAction';
+import { getReturnBackList, updateReturnBack } from '../../../actions/productsTableAction/productsTableAction';
 import { handleCloseModal } from '../../../redux/slices/admin/productTableSlice';
-import { addReturnBack, getReturnBackList } from '../../../actions/productsTableAction/productsTableAction';
-import CustomSalesSelect from './CustomSalesSelect'; // Yol doğru olsun
+import CustomSalesSelect from './CustomSalesSelect'; // PATH düzəldilməlidir
 
-const ProductReturnedModal = () => {
+const ProductReturnUpdateModal = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
+  const { salesList } = useSelector(state => state.sales);
+  const { productReturnUpdateObj } = useSelector(state => state.productTable);
 
   const [selectedSaleId, setSelectedSaleId] = useState('');
   const [returnDate, setReturnDate] = useState('');
@@ -17,20 +19,23 @@ const ProductReturnedModal = () => {
   const [amount, setAmount] = useState('');
 
   useEffect(() => {
-    dispatch(getSalesList());
-  }, [dispatch]);
-
-  const { salesList } = useSelector(state => state.sales);
+    if (productReturnUpdateObj) {
+      setSelectedSaleId(productReturnUpdateObj.sale?.id?.toString() || '');
+      setReturnDate(productReturnUpdateObj.date || '');
+      setReason(productReturnUpdateObj.reason || '');
+      setAmount(productReturnUpdateObj.amount?.toString() || '');
+    }
+  }, [productReturnUpdateObj]);
 
   const handleSubmit = async () => {
     const payload = {
       sale: selectedSaleId || null,
       date: returnDate || null,
       reason: reason || null,
-      amount: amount || null
+      amount: amount || null,
     };
 
-    await dispatch(addReturnBack(payload, navigate));
+    await dispatch(updateReturnBack(payload, productReturnUpdateObj?.id, navigate));
     await dispatch(handleCloseModal());
     await dispatch(getReturnBackList());
   };
@@ -42,6 +47,7 @@ const ProductReturnedModal = () => {
           <div className="left_box">
             <IoMdClose className='close_icon' onClick={() => dispatch(handleCloseModal())} />
 
+            {/* CustomSalesSelect */}
             <CustomSalesSelect
               sales={salesList}
               value={selectedSaleId}
@@ -85,4 +91,4 @@ const ProductReturnedModal = () => {
   );
 };
 
-export default ProductReturnedModal;
+export default ProductReturnUpdateModal;

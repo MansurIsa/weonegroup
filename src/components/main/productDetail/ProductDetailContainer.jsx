@@ -10,7 +10,7 @@ const ProductDetailContainer = ({ productObj, userObj }) => {
 
     const accessToken = localStorage.getItem("accessToken")
     const dispatch = useDispatch()
-    const navigate=useNavigate()
+    const navigate = useNavigate()
 
 
     const addToCart = (data) => {
@@ -40,35 +40,46 @@ const ProductDetailContainer = ({ productObj, userObj }) => {
                 </div>
 
                 <div className="product_detail_container_right">
-                    <h1>{productObj?.name}</h1>
+                    <div className="product_detail_container_right_color">
+                        <h1>{productObj?.name}</h1>
+                         {
+                            accessToken ? (
+                                productObj?.amount > 0 ? (
+                                    <p className='filter_product_card_content_stock_green'>Stokda var</p>
+                                ) : (
+                                    <p className='filter_product_card_content_stock_red'>Stokda bitib</p>
+                                )
+                            ) : null
+                        }
+                    </div>
+                    
                     <div className='product_detail_container_right_cat'>
                         <p>{productObj?.category?.name}</p>
                         <p>{productObj?.brand?.name}</p>
                         <p>{productObj?.store?.name}</p>
+
+                       
+
                     </div>
-                    <p className='product_detail_container_right_detail'>{productObj?.about}</p>
+                    <div
+                        className="product_detail_container_right_detail about_html_content"
+                        dangerouslySetInnerHTML={{ __html: productObj?.about }}
+                    />
+
+
                     {
-                        accessToken ? (
-                            productObj?.amount > 0 ? (
-                                <p className='filter_product_card_content_stock_green'>Stokda var</p>
-                            ) : (
-                                <p className='filter_product_card_content_stock_red'>Stokda bitib</p>
-                            )
-                        ) : null
+                        accessToken ?
+                            <p className='product_detail_container_right_price'>{userObj?.status === "S" ? productObj?.price : accessToken && "E" ? productObj?.discount_price : null} AZN</p> : null
                     }
-                    {
-                        accessToken?
-                         <p className='product_detail_container_right_price'>{ userObj?.status === "S" ? productObj?.price : accessToken && "E" ? productObj?.discount_price : null} AZN</p>: null
-                    }
-                   
+
                     <div className="product_detail_container_right_btn">
                         <button
                             onClick={() => {
-                                if (!accessToken || +productObj?.amount > 0) {
-                                    addToCart(productObj);
-                                }
+
+                                addToCart(productObj);
+
                             }}
-                            disabled={accessToken && +productObj?.amount <= 0}
+
                         >
                             Səbətə əlavə et
                         </button>

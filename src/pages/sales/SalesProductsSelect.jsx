@@ -11,7 +11,7 @@ import { getUsersList } from '../../actions/loginAction/loginAction';
 
 const SalesProductsSelect = () => {
   const [search, setSearch] = useState('');
-  const [selectedRows, setSelectedRows] = useState([]);
+  const [selectedProductIds, setSelectedProductIds] = useState([]);
   const [quantityValues, setQuantityValues] = useState({});
   const [priceValues, setPriceValues] = useState({});
   const [statusValues, setStatusValues] = useState({});
@@ -39,43 +39,44 @@ const SalesProductsSelect = () => {
     p.product?.articles?.some(a => a.name.toLowerCase().includes(search.toLowerCase()))
   ) || [];
 
-  const toggleRow = (index) => {
-    if (selectedRows.includes(index)) {
-      setSelectedRows(selectedRows.filter(i => i !== index));
+  const toggleRow = (productId, product, stockAmount) => {
+    const isSelected = selectedProductIds.includes(productId);
+
+    if (isSelected) {
+      setSelectedProductIds(prev => prev.filter(id => id !== productId));
       setQuantityValues(prev => {
-        const copy = { ...prev }; delete copy[index]; return copy;
+        const copy = { ...prev }; delete copy[productId]; return copy;
       });
       setPriceValues(prev => {
-        const copy = { ...prev }; delete copy[index]; return copy;
+        const copy = { ...prev }; delete copy[productId]; return copy;
       });
       setStatusValues(prev => {
-        const copy = { ...prev }; delete copy[index]; return copy;
+        const copy = { ...prev }; delete copy[productId]; return copy;
       });
     } else {
-      setSelectedRows([...selectedRows, index]);
-      const product = filtered[index]?.product;
-      setQuantityValues(prev => ({ ...prev, [index]: prev[index] ?? 1 }));
-      setPriceValues(prev => ({ ...prev, [index]: prev[index] ?? product?.price }));
-      setStatusValues(prev => ({ ...prev, [index]: prev[index] ?? 'G' }));
+      setSelectedProductIds(prev => [...prev, productId]);
+      setQuantityValues(prev => ({ ...prev, [productId]: prev[productId] ?? 1 }));
+      setPriceValues(prev => ({ ...prev, [productId]: prev[productId] ?? product?.price }));
+      setStatusValues(prev => ({ ...prev, [productId]: prev[productId] ?? 'G' }));
     }
   };
 
-  const handleQuantityChange = (index, value, max) => {
+  const handleQuantityChange = (productId, value, max) => {
     const val = +value;
     if (val >= 0 && val <= max) {
-      setQuantityValues({ ...quantityValues, [index]: val });
+      setQuantityValues({ ...quantityValues, [productId]: val });
     }
   };
 
-  const handlePriceChange = (index, value) => {
+  const handlePriceChange = (productId, value) => {
     const val = +value;
     if (val >= 0) {
-      setPriceValues({ ...priceValues, [index]: val });
+      setPriceValues({ ...priceValues, [productId]: val });
     }
   };
 
-  const handleStatusChange = (index, value) => {
-    setStatusValues({ ...statusValues, [index]: value });
+  const handleStatusChange = (productId, value) => {
+    setStatusValues({ ...statusValues, [productId]: value });
   };
 
   const handleDateChange = (e) => {
@@ -88,18 +89,20 @@ const SalesProductsSelect = () => {
       return;
     }
 
-    const selectedItems = selectedRows.map(index => {
-      const product = filtered[index]?.product;
+    const selectedItems = selectedProductIds.map(productId => {
+      const stockItem = stockList.find(item => item.product.id === productId);
+      const product = stockItem?.product;
+
       return {
-        product_id: product?.id,
-        quantity: +quantityValues[index] || 0,
-        price: +priceValues[index] || product?.price,
-        status: statusValues[index] || 'G'
+        product_id: productId,
+        quantity: +quantityValues[productId] || 0,
+        price: +priceValues[productId] || product?.price,
+        status: statusValues[productId] || 'G'
       };
     });
 
-    if (selectedItems.some(item => item.quantity <= 0)) {
-      toast.error("Miqdar sıfırdan böyük olmalıdır.");
+    if (selectedItems.some(item => item.quantity < 0)) {
+      toast.error("Miqdar mənfi ola bilməz.");
       return;
     }
 
@@ -112,7 +115,6 @@ const SalesProductsSelect = () => {
       statuses: selectedItems.map(p => p.status),
     };
 
-    console.log("Payload:", payload);
     dispatch(addSale(payload, navigate));
   };
 
@@ -165,55 +167,60 @@ const SalesProductsSelect = () => {
               </tr>
             </thead>
             <tbody>
-              {filtered.map((item, index) => (
-                <tr key={index}>
-                  <td>
-                    <input
-                      type="checkbox"
-                      checked={selectedRows.includes(index)}
-                      onChange={() => toggleRow(index)}
-                    />
-                  </td>
-                  <td>{item.product?.name}</td>
-                  <td>{item.product?.articles?.map(a => a.name).join(', ')}</td>
-                  <td>{item.amount}</td>
-                  <td>{item.product?.cost_price} ₼</td>
-                  <td>
-                    {selectedRows.includes(index) ? (
+              {filtered.map((item, index) => {
+                const product = item.product;
+                const productId = product.id;
+                const isSelected = selectedProductIds.includes(productId);
+                return (
+                  <tr key={productId}>
+                    <td>
                       <input
-                        type="number"
-                        value={priceValues[index] ?? item.product?.price}
-                        onChange={e => handlePriceChange(index, e.target.value)}
-                        className="price_input"
+                        type="checkbox"
+                        checked={isSelected}
+                        onChange={() => toggleRow(productId, product, item.amount)}
                       />
-                    ) : (
-                      `${item.product?.price} ₼`
-                    )}
-                  </td>
-                  <td>{item.product?.discount_price ?? '-'} ₼</td>
-                  <td>
-                    {selectedRows.includes(index) && (
-                      <input
-                        type="number"
-                        value={quantityValues[index] ?? ''}
-                        onChange={(e) => handleQuantityChange(index, e.target.value, item.amount)}
-                        className="quantity_input"
-                      />
-                    )}
-                  </td>
-                  <td>
-                    {selectedRows.includes(index) && (
-                      <select
-                        value={statusValues[index] ?? 'G'}
-                        onChange={(e) => handleStatusChange(index, e.target.value)}
-                      >
-                        <option value="G">Gözləyir</option>
-                        <option value="S">Satılıb</option>
-                      </select>
-                    )}
-                  </td>
-                </tr>
-              ))}
+                    </td>
+                    <td>{product?.name}</td>
+                    <td>{product?.articles?.map(a => a.name).join(', ')}</td>
+                    <td>{item.amount}</td>
+                    <td>{product?.cost_price} ₼</td>
+                    <td>
+                      {isSelected ? (
+                        <input
+                          type="number"
+                          value={priceValues[productId] ?? product?.price}
+                          onChange={e => handlePriceChange(productId, e.target.value)}
+                          className="price_input"
+                        />
+                      ) : (
+                        `${product?.price} ₼`
+                      )}
+                    </td>
+                    <td>{product?.discount_price ?? '-'} ₼</td>
+                    <td>
+                      {isSelected && (
+                        <input
+                          type="number"
+                          value={quantityValues[productId] ?? ''}
+                          onChange={(e) => handleQuantityChange(productId, e.target.value, item.amount)}
+                          className="quantity_input"
+                        />
+                      )}
+                    </td>
+                    <td>
+                      {isSelected && (
+                        <select
+                          value={statusValues[productId] ?? 'G'}
+                          onChange={(e) => handleStatusChange(productId, e.target.value)}
+                        >
+                          <option value="G">Gözləyir</option>
+                          <option value="S">Satılıb</option>
+                        </select>
+                      )}
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
 

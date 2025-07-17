@@ -8,9 +8,9 @@ const SaleDeleteModal = () => {
     const dispatch=useDispatch()
     const navigate=useNavigate()
     const {saleUpdateId}=useSelector(state=>state.sales)
-    const handleSaleDelete=()=>{
-        dispatch(deleteSale(saleUpdateId,navigate))
-        dispatch(getSalesList());
+    const handleSaleDelete=async()=>{
+       await dispatch(deleteSale(saleUpdateId,navigate))
+       await dispatch(getSalesList());
     }
     return (
         <div className="modal_overlay" onClick={() => dispatch(closeSaleUpdateModalFunc())}>

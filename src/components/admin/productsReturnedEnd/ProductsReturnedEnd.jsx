@@ -1,5 +1,9 @@
 import React, { useState } from 'react';
+import { AiTwotoneDelete } from 'react-icons/ai';
+import { FaPenToSquare } from 'react-icons/fa6';
 import ReactPaginate from 'react-paginate';
+import { useDispatch } from 'react-redux';
+import { deleteProductReturnModalFunc, handleProductReturnUpdateModalFunc } from '../../../redux/slices/admin/productTableSlice';
 
 const ITEMS_PER_PAGE = 5;
 
@@ -23,21 +27,32 @@ const ProductsReturnedEnd = ({ returnBackList = [] }) => {
   };
 
   console.log(currentPageData);
-  
+
+  const dispatch = useDispatch()
+
+  const updateProductReturn=(item)=>{
+     dispatch(handleProductReturnUpdateModalFunc(item))
+  }
+
+   const deleteProductReturn=(x)=>{
+     dispatch(deleteProductReturnModalFunc(x))
+  }
+
 
   return (
     <div className='admin_container dashboard_end_container'>
       <table className='custom_table'>
         <thead>
           <tr>
-             <th>Müştəri</th>
+            <th>Müştəri</th>
             <th>Məhsul Adı</th>
             <th>Artikl</th>
             <th>Qaytarılma Tarixi</th>
             <th>Səbəb</th>
             <th>Miqdar</th>
             <th>Dəyəri</th>
-           
+            <th>Düzəliş/Sil</th>
+
           </tr>
         </thead>
         <tbody>
@@ -49,14 +64,17 @@ const ProductsReturnedEnd = ({ returnBackList = [] }) => {
 
             return (
               <tr key={item.id}>
-                 <td>{customer.first_name} {customer.last_name}</td>
+                <td>{customer.first_name} {customer.last_name}</td>
                 <td>{product.name || '—'}</td>
                 <td>{articles}</td>
                 <td>{dateFormatted}</td>
                 <td>{item.reason || '—'}</td>
                 <td>{item.amount || 0}</td>
-                <td>{item?.sale?.price +`₼` || '—'}</td>
-               
+                <td>{item?.sale?.price + `₼` || '—'}</td>
+                <td className='table_update'>
+                  <FaPenToSquare onClick={() => updateProductReturn(item)} />
+                  <AiTwotoneDelete onClick={() => deleteProductReturn(item?.id)} />
+                </td>
               </tr>
             );
           })}

@@ -13,7 +13,7 @@ const ExpenseAddPaymentModal = () => {
   const [expenseAmount, setExpenseAmount] = useState('');
   const [expenseDate, setExpenseDate] = useState('');
 
-  const handleSubmit = () => {
+  const handleSubmit = async() => {
     const payload = {
       name: expenseName || null,
       amount: expenseAmount || null,
@@ -21,12 +21,9 @@ const ExpenseAddPaymentModal = () => {
     };
 
     console.log('Xərc göndərilir:', payload);
-    dispatch(addExpense(payload,navigate))
-
-    // dispatch(addExpense(payload, navigate));
-    // dispatch(closeExpenseAddPaymentModal());
-    dispatch(closeIncomeAddPaymentModal())
-    dispatch(getExpenseList());
+   await dispatch(addExpense(payload,navigate))
+   await dispatch(closeIncomeAddPaymentModal())
+   await dispatch(getExpenseList());
   };
 
   return (

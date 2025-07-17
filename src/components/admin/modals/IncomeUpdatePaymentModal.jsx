@@ -28,7 +28,7 @@ const IncomeUpdatePaymentModal = () => {
     }
   }, [dispatch, incomeUpdatePaymentObj]);
 
-  const handleSubmit = () => {
+  const handleSubmit = async() => {
     const payload = {
       datetime: selectedDatetime || null,
       amount: amount || null,
@@ -37,9 +37,9 @@ const IncomeUpdatePaymentModal = () => {
 
     console.log('Göndəriləcək məlumat:', payload);
 
-    dispatch(updateIncome(payload,incomeUpdatePaymentObj?.id, navigate)); // əgər update üçün ayrıca action varsa, onu istifadə et
-    dispatch(closeIncomeAddPaymentModal());
-    dispatch(getPaymentList());
+   await dispatch(updateIncome(payload,incomeUpdatePaymentObj?.id, navigate)); // əgər update üçün ayrıca action varsa, onu istifadə et
+   await dispatch(closeIncomeAddPaymentModal());
+   await dispatch(getPaymentList());
   };
 
   return (

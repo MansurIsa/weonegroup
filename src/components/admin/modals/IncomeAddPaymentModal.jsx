@@ -19,7 +19,7 @@ const IncomeAddPaymentModal = () => {
 
   const { usersList } = useSelector(state => state.login);
 
-  const handleSubmit = () => {
+  const handleSubmit = async() => {
     const payload = {
       datetime: selectedDatetime || null,
       amount: amount || null,
@@ -28,9 +28,9 @@ const IncomeAddPaymentModal = () => {
 
     console.log('Göndəriləcək məlumat:', payload);
     
-    dispatch(addIncome(payload,navigate)); // <-- Əgər API varsa, buradan göndər
-    dispatch(closeIncomeAddPaymentModal());
-    dispatch(getPaymentList())
+   await dispatch(addIncome(payload,navigate)); // <-- Əgər API varsa, buradan göndər
+   await dispatch(closeIncomeAddPaymentModal());
+   await dispatch(getPaymentList())
   };
 
   return (

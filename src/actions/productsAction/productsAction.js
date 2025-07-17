@@ -141,3 +141,24 @@ export const updateProduct = (id,data,navigate) => async (dispatch) => {
       dispatch(stopLoading());
     });;
 };
+
+
+export const updateArticle = (id,data) => async (dispatch) => {
+  dispatch(startLoading());
+  return await axios.put(`${baseUrl}core/article-retrieve-update-delete/${id}/`,data,{
+    headers: {
+          Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+        }
+  })
+    .then((resp) => {
+        console.log(resp);
+        // toast.success("Məhsul Redaktə edildi");
+        // navigate("/products-table")
+    })
+    .catch((err) => {
+      console.log(err);
+      //  toast.error("Xəta baş verdi. Zəhmət olmasa yenidən yoxlayın ❌");
+    }).finally(() => {
+      dispatch(stopLoading());
+    });;
+};

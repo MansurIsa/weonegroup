@@ -44,7 +44,7 @@ const Purchase = () => {
 
   return (
     <AdminLayout adminHeader="Məhsul alışı">
-      <DashboardFirst />
+      {/* <DashboardFirst /> */}
       <AdminBigComponentHeader adminHeader={"Alınmış Məhsulların Cədvəli"} hideShowBtn={true} buttonContent="Yeni alış əlave et" onClick={handleClick} />
       <SearchInpMain onSearch={handleSearch} />
       <PurchaseEnd purchaseList={filteredProducts} />

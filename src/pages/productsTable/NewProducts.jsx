@@ -6,6 +6,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { getBrandList, getCategoryList, getStoreList } from '../../actions/productsAction/productsAction';
 import { addProduct } from '../../actions/productsTableAction/productsTableAction';
 import CustomSelect from './CustomSelect';
+import EditableAboutField from './EditableAboutField';
 
 const NewProducts = () => {
     const [formData, setFormData] = useState({
@@ -239,17 +240,33 @@ const NewProducts = () => {
                         )}
                     </div>
 
-                    <div className="form_group">
-                        <label>Haqqında</label>
-                        <textarea
-                            name="about"
-                            placeholder="Məhsul haqqında məlumat..."
-                            value={formData.about}
-                            onChange={(e) => setFormData(prev => ({ ...prev, about: e.target.value }))}
-                            rows={10}
-                            style={{ whiteSpace: "pre-wrap" }}
-                        />
-                    </div>
+                   {/* <div className="form_group">
+  <label>Haqqında</label>
+  <div
+    contentEditable
+    placeholder="Məhsul haqqında məlumat..."
+    onInput={(e) =>
+      setFormData(prev => ({ ...prev, about: e.currentTarget.innerHTML }))
+    }
+    dangerouslySetInnerHTML={{ __html: formData.about }}
+    style={{
+      minHeight: "150px",
+      border: "1px solid #ccc",
+      padding: "10px",
+      borderRadius: "8px",
+      whiteSpace: "pre-wrap",
+      outline: "none"
+    }}
+  />
+</div> */}
+
+<EditableAboutField
+  value={formData.about}
+  onChange={(newVal) =>
+    setFormData((prev) => ({ ...prev, about: newVal }))
+  }
+/>
+
 
 
                     <div className="form_footer">

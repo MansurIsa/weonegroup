@@ -64,11 +64,11 @@ const FilterProductCard = ({ data }) => {
 
                 <button
                     onClick={() => {
-                        if (!accessToken || +data?.amount > 0) {
+                       
                             addToCart(data);
-                        }
+                       
                     }}
-                    disabled={accessToken && +data?.amount <= 0}
+                    
                 >
                     Səbətə əlavə et
                 </button>

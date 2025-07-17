@@ -7,12 +7,14 @@ import { useDispatch, useSelector } from 'react-redux';
 import { getReturnBackList } from '../../actions/productsTableAction/productsTableAction';
 import { handleAddReturnedModal } from '../../redux/slices/admin/productTableSlice';
 import ProductReturnedModal from '../../components/admin/modals/ProductReturnedModal';
+import ProductReturnUpdateModal from '../../components/admin/modals/ProductReturnUpdateModal';
+import ProductReturnDeleteModal from '../../components/admin/modals/ProductReturnDeleteModal';
 
 const ProductsReturned = () => {
   const dispatch = useDispatch();
   const [filteredList, setFilteredList] = useState([]);
 
-  const { returnBackList,productReturnedModal } = useSelector(state => state.productTable);
+  const { returnBackList,productReturnedModal,productReturnUpdateModal,productReturnDeleteModal } = useSelector(state => state.productTable);
 
   useEffect(() => {
     dispatch(getReturnBackList());
@@ -50,6 +52,8 @@ const ProductsReturned = () => {
       <SearchInpMain onSearch={handleSearch} />
       <ProductsReturnedEnd returnBackList={filteredList} />
       {productReturnedModal && <ProductReturnedModal/>}
+      {productReturnUpdateModal && <ProductReturnUpdateModal/>}
+      {productReturnDeleteModal && <ProductReturnDeleteModal/>}
     </AdminLayout>
   );
 };

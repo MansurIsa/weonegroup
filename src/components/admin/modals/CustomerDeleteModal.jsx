@@ -2,15 +2,15 @@ import React from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import { closeCustomerUpdateModalFunc } from '../../../redux/slices/loginSlices'
-import { deleteCustomer } from '../../../actions/loginAction/loginAction'
+import { deleteCustomer, getUsersList } from '../../../actions/loginAction/loginAction'
 
 const CustomerDeleteModal = () => {
     const dispatch=useDispatch()
     const navigate=useNavigate()
     const {deleteCustomerId}=useSelector(state=>state.login)
-    const handleCustomerDelete=()=>{
-        dispatch(deleteCustomer(deleteCustomerId,navigate))
-        // dispatch(getSalesList());
+    const handleCustomerDelete=async()=>{
+       await dispatch(deleteCustomer(deleteCustomerId,navigate))
+       await dispatch(getUsersList());
     }
     return (
         <div className="modal_overlay" onClick={() => dispatch(closeCustomerUpdateModalFunc())}>

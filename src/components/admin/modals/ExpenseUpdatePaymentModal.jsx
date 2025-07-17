@@ -24,7 +24,7 @@ const ExpenseUpdatePaymentModal = () => {
     }
   }, [expenseUpdatePaymentObj]);
 
-  const handleSubmit = () => {
+  const handleSubmit = async() => {
     const payload = {
       name: expenseName || null,
       amount: expenseAmount || null,
@@ -33,9 +33,9 @@ const ExpenseUpdatePaymentModal = () => {
 
     console.log('Yenilənən xərc:', payload);
 
-    dispatch(updateExpense(payload,expenseUpdatePaymentObj?.id, navigate)); 
-    dispatch(closeIncomeAddPaymentModal());
-    dispatch(getExpenseList());
+   await dispatch(updateExpense(payload,expenseUpdatePaymentObj?.id, navigate)); 
+   await dispatch(closeIncomeAddPaymentModal());
+   await dispatch(getExpenseList());
   };
 
   return (

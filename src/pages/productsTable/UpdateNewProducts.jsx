@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { getBrandList, getCategoryList, getStoreList, updateProduct } from '../../actions/productsAction/productsAction';
 import CustomSelect from './CustomSelect';
+import EditableAboutField from './EditableAboutField';
 
 const UpdateNewProducts = () => {
     const [formData, setFormData] = useState({
@@ -163,14 +164,14 @@ const UpdateNewProducts = () => {
                                     />
                                     {formData.articles.length > 1 && (
                                         <button type="button" onClick={() => removeArticle(index)}>
-                                             <svg width="15" height="15" viewBox="0 0 15 15" fill="none">
+                                            <svg width="15" height="15" viewBox="0 0 15 15" fill="none">
                                                 <path d="M1.5 7.5C1.5 7.2 1.6 7 1.8 6.8C2 6.6 2.2 6.5 2.5 6.5H12.5C12.8 6.5 13 6.6 13.2 6.8C13.4 7 13.5 7.2 13.5 7.5C13.5 7.8 13.4 8 13.2 8.2C13 8.4 12.8 8.5 12.5 8.5H2.5C2.2 8.5 2 8.4 1.8 8.2C1.6 8 1.5 7.8 1.5 7.5Z" fill="#D60000" />
                                             </svg>
                                         </button>
                                     )}
                                     {index === formData.articles.length - 1 && (
                                         <button type="button" onClick={addArticle}>
-                                             <svg width="15" height="15" viewBox="0 0 15 15" fill="none">
+                                            <svg width="15" height="15" viewBox="0 0 15 15" fill="none">
                                                 <path d="M13.5 8.5H8.5V13.5C8.5 13.8 8.4 14 8.2 14.2C8 14.4 7.8 14.5 7.5 14.5C7.2 14.5 7 14.4 6.8 14.2C6.6 14 6.5 13.8 6.5 13.5V8.5H1.5C1.2 8.5 1 8.4 0.8 8.2C0.6 8 0.5 7.8 0.5 7.5C0.5 7.2 0.6 7 0.8 6.8C1 6.6 1.2 6.5 1.5 6.5H6.5V1.5C6.5 1.2 6.6 1 6.8 0.8C7 0.6 7.2 0.5 7.5 0.5C7.8 0.5 8 0.6 8.2 0.8C8.4 1 8.5 1.2 8.5 1.5V6.5H13.5C13.8 6.5 14 6.6 14.2 6.8C14.4 7 14.5 7.2 14.5 7.5C14.5 7.8 14.4 8 14.2 8.2C14 8.4 13.8 8.5 13.5 8.5Z" fill="#202020" />
                                             </svg>
                                         </button>
@@ -310,16 +311,10 @@ const UpdateNewProducts = () => {
                         )}
                     </div>
 
-                    <div className="form_group">
-                        <label>Haqqında</label>
-                        <textarea
-                            name="about"
-                            rows={6}
-                            value={formData.about}
-                            onChange={(e) => setFormData(prev => ({ ...prev, about: e.target.value }))}
-                            placeholder="Məhsul haqqında məlumat..."
-                        />
-                    </div>
+                  <EditableAboutField
+  value={formData.about}
+  onChange={(html) => setFormData(prev => ({ ...prev, about: html }))}
+/>
 
                     <div className="form_footer">
                         <button type="submit" className="save_btn">Yadda saxla</button>

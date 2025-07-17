@@ -2,15 +2,16 @@ import React from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import { closePurchaseUpdateModalFunc } from '../../../redux/slices/admin/purchaseSlices'
-import { deletePurchase } from '../../../actions/purchaseAction/purchaseAction'
+import { deletePurchase, getPurchaseList } from '../../../actions/purchaseAction/purchaseAction'
 import { closeProductsDeleteModalFunc } from '../../../redux/slices/admin/productTableSlice'
 
 const PurchaseDeleteModal = () => {
     const dispatch=useDispatch()
     const navigate=useNavigate()
     const {purchaseId}=useSelector(state=>state.purchase)
-    const handleProductsDelete=()=>{
-        dispatch(deletePurchase(purchaseId,navigate))
+    const handleProductsDelete=async()=>{
+       await dispatch(deletePurchase(purchaseId,navigate))
+       await dispatch(getPurchaseList())
         // dispatch(getSalesList());
     }
     return (

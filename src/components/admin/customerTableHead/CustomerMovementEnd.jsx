@@ -1,16 +1,20 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import "./css/customerMovement.css";
+import { getCustomerFactureList } from '../../../actions/loginAction/loginAction';
+import { useDispatch } from 'react-redux';
 
 const CustomerMovementEnd = ({ movementList = [] }) => {
   const navigate = useNavigate();
+  const dispatch=useDispatch()
 
   const handleReturn = () => {
     navigate("/customers");
   };
 
-  const handleCustomerFactura = () => {
+  const handleCustomerFactura = (x) => {
     navigate("/customer-movement-facture");
+       dispatch(getCustomerFactureList(x));
   };
 
   const formatDate = (dateStr) => {
@@ -46,7 +50,7 @@ const CustomerMovementEnd = ({ movementList = [] }) => {
                   {item.product_price ? `${item.product_price} ₼` : "-"}
                   {item.product_price && (
                     <svg
-                      onClick={handleCustomerFactura}
+                      onClick={()=>handleCustomerFactura(item?.customer?.id)}
                       style={{ cursor: "pointer", marginLeft: "6px" }}
                       width="24" height="24"
                       viewBox="0 0 24 24"
