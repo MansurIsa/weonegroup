@@ -79,7 +79,11 @@ const adminOnlyPaths = [
   "/customers",
   "/customer-movement",
   "/customer-movement-facture",
-  "/new-customer"
+  "/new-customer",
+  "/update-sales-products-select",
+  "/update-new-purchase",
+  "/update-new-products",
+  "/update-new-customer"
 ];
 
 // Routing
