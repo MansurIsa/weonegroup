@@ -201,7 +201,7 @@ const Cart = () => {
                           </label>
 
                           <img src={item.product.image} alt={item.product.name} style={{ width: '50px', height: '50px', objectFit: 'cover', borderRadius: '4px' }} />
-                          <div>
+                          <div className='cart_product_name_brand'>
                             <h2>{item.product.name}</h2>
                             <p>{item.product.brand.name}</p>
                           </div>
@@ -219,7 +219,7 @@ const Cart = () => {
                             value={item.quantity}
                             onChange={(e) => updateQuantityDirect(item, e.target.value)}
                             style={{
-                              width: '50px',
+                              width: '30px',
                               textAlign: 'center',
                               padding: '4px',
                               borderRadius: '4px',

@@ -211,8 +211,8 @@ input[type="checkbox"] {
 
     .inc_dec {
 
-        gap: 8px;
-        padding: 8px 10px;
+        gap: 5px;
+        padding: 5px;
     }
 
     .inc_dec button {
@@ -220,6 +220,15 @@ input[type="checkbox"] {
     }
     .delete_basket_item{
         font-size: 2.4rem;
+    }
+    .cart_product_name_brand{
+        max-width: 70px;
+    }
+    .cart_product_name_brand h2{
+        font-size: 1.6rem;
+    }
+    .cart_product_name_brand p{
+        font-size: 1.2rem;
     }
 }
 
