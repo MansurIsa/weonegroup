@@ -127,7 +127,7 @@ export const getCustomerMovementList = (id) => async (dispatch) => {
 
 export const getCustomerFactureList = (id) => async (dispatch) => {
   dispatch(startLoading());
-  return await axios.get(`${baseUrl}accounting/invoice-list/${id}/`)
+  return await axios.get(`${baseUrl}accounting/salelist-retrieve/${id}/`)
     .then((resp) => {
         console.log(resp.data);
       dispatch(getCustomerFactureListFunc(resp.data));
@@ -138,6 +138,8 @@ export const getCustomerFactureList = (id) => async (dispatch) => {
       dispatch(stopLoading());
     });;
 };
+
+
 
 
 

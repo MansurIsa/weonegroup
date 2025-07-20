@@ -4,19 +4,20 @@ import { IoMdClose } from 'react-icons/io';
 import { useNavigate } from 'react-router-dom';
 import { getReturnBackList, updateReturnBack } from '../../../actions/productsTableAction/productsTableAction';
 import { handleCloseModal } from '../../../redux/slices/admin/productTableSlice';
-import CustomSalesSelect from './CustomSalesSelect'; // PATH düzəldilməlidir
+import CustomSalesSelect from './CustomSalesSelect';
 
 const ProductReturnUpdateModal = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const { salesList } = useSelector(state => state.sales);
+  const { saleList } = useSelector(state => state.sales);
   const { productReturnUpdateObj } = useSelector(state => state.productTable);
 
   const [selectedSaleId, setSelectedSaleId] = useState('');
   const [returnDate, setReturnDate] = useState('');
   const [reason, setReason] = useState('');
   const [amount, setAmount] = useState('');
+  const [status, setStatus] = useState(''); // yeni status state
 
   useEffect(() => {
     if (productReturnUpdateObj) {
@@ -24,6 +25,7 @@ const ProductReturnUpdateModal = () => {
       setReturnDate(productReturnUpdateObj.date || '');
       setReason(productReturnUpdateObj.reason || '');
       setAmount(productReturnUpdateObj.amount?.toString() || '');
+      setStatus(productReturnUpdateObj.status || ''); // status-u set et
     }
   }, [productReturnUpdateObj]);
 
@@ -33,6 +35,7 @@ const ProductReturnUpdateModal = () => {
       date: returnDate || null,
       reason: reason || null,
       amount: amount || null,
+      status: status || null // status-u payload-a əlavə et
     };
 
     await dispatch(updateReturnBack(payload, productReturnUpdateObj?.id, navigate));
@@ -47,9 +50,8 @@ const ProductReturnUpdateModal = () => {
           <div className="left_box">
             <IoMdClose className='close_icon' onClick={() => dispatch(handleCloseModal())} />
 
-            {/* CustomSalesSelect */}
             <CustomSalesSelect
-              sales={salesList}
+              sales={saleList}
               value={selectedSaleId}
               onChange={setSelectedSaleId}
             />
@@ -81,6 +83,14 @@ const ProductReturnUpdateModal = () => {
                 value={amount}
                 onChange={(e) => setAmount(e.target.value)}
               />
+            </div>
+
+            <div className="form_group">
+              <label>Status</label>
+              <select value={status} onChange={(e) => setStatus(e.target.value)}>
+                <option value="Y">Yararsız</option>
+                <option value="I">İşlək</option>
+              </select>
             </div>
 
             <button className="submit_btn" onClick={handleSubmit}>Yadda saxla</button>

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { IoMdClose } from 'react-icons/io';
 import { useNavigate } from 'react-router-dom';
-import { getSalesList } from '../../../actions/salesAction/salesAction';
+import { getSaleList } from '../../../actions/salesAction/salesAction';
 import { handleCloseModal } from '../../../redux/slices/admin/productTableSlice';
 import { addReturnBack, getReturnBackList } from '../../../actions/productsTableAction/productsTableAction';
 import CustomSalesSelect from './CustomSalesSelect'; // Yol doğru olsun
@@ -15,19 +15,23 @@ const ProductReturnedModal = () => {
   const [returnDate, setReturnDate] = useState('');
   const [reason, setReason] = useState('');
   const [amount, setAmount] = useState('');
+  const [status, setStatus] = useState('Y'); // Default olaraq "Yararsız"
 
   useEffect(() => {
-    dispatch(getSalesList());
+    dispatch(getSaleList());
   }, [dispatch]);
 
-  const { salesList } = useSelector(state => state.sales);
+  const { saleList } = useSelector(state => state.sales);
+  console.log(saleList);
+  
 
   const handleSubmit = async () => {
     const payload = {
       sale: selectedSaleId || null,
       date: returnDate || null,
       reason: reason || null,
-      amount: amount || null
+      amount: amount || null,
+      status: status || null
     };
 
     await dispatch(addReturnBack(payload, navigate));
@@ -43,7 +47,7 @@ const ProductReturnedModal = () => {
             <IoMdClose className='close_icon' onClick={() => dispatch(handleCloseModal())} />
 
             <CustomSalesSelect
-              sales={salesList}
+              sales={saleList}
               value={selectedSaleId}
               onChange={setSelectedSaleId}
             />
@@ -75,6 +79,14 @@ const ProductReturnedModal = () => {
                 value={amount}
                 onChange={(e) => setAmount(e.target.value)}
               />
+            </div>
+
+            <div className="form_group">
+              <label>Status</label>
+              <select value={status} onChange={(e) => setStatus(e.target.value)}>
+                <option value="Y">Yararsız</option>
+                <option value="I">İşlək</option>
+              </select>
             </div>
 
             <button className="submit_btn" onClick={handleSubmit}>Yadda saxla</button>

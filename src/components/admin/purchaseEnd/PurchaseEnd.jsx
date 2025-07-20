@@ -87,7 +87,7 @@ const PurchaseEnd = ({ purchaseList }) => {
                         return (
                             <tr key={index}>
                                 <td>{product.name}</td>
-                                <td>{articleNames}</td>
+                                <td className='table_article_scroll'>{articleNames}</td>
                                 <td>{item.amount}</td>
                                 <td>{product.purchase_price} {currencyMap[product?.currency] || ""}</td>
                                 <td>{product.cost_price} ₼</td>

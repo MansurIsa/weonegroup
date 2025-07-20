@@ -60,13 +60,17 @@ const SalesProductsSelect = () => {
       setStatusValues(prev => ({ ...prev, [productId]: prev[productId] ?? 'G' }));
     }
   };
+const handleQuantityChange = (productId, value, maxAmount) => {
+  const numericValue = value.replace(/^0+/, ''); // əvvəlki sıfırları sil
+  if (numericValue === '' || (!isNaN(numericValue) && +numericValue >= 0)) {
+    setQuantityValues((prev) => ({
+      ...prev,
+      [productId]: numericValue,
+    }));
+  }
+};
 
-  const handleQuantityChange = (productId, value, max) => {
-    const val = +value;
-    if (val >= 0 && val <= max) {
-      setQuantityValues({ ...quantityValues, [productId]: val });
-    }
-  };
+
 
   const handlePriceChange = (productId, value) => {
     const val = +value;
@@ -89,20 +93,35 @@ const SalesProductsSelect = () => {
       return;
     }
 
+    let hasError = false;
+    const invalidProducts = [];
+
     const selectedItems = selectedProductIds.map(productId => {
       const stockItem = stockList.find(item => item.product.id === productId);
       const product = stockItem?.product;
+      const quantity = +quantityValues[productId] || 0;
+      const status = statusValues[productId] || 'G';
+
+      const inStock = stockItem?.amount || 0;
+
+      // ❗ Satılıb və miqdar > anbardakı say
+      if (status === 'S' && quantity > inStock) {
+        hasError = true;
+        invalidProducts.push({ name: product?.name, available: inStock, id: productId });
+      }
 
       return {
         product_id: productId,
-        quantity: +quantityValues[productId] || 0,
+        quantity,
         price: +priceValues[productId] || product?.price,
-        status: statusValues[productId] || 'G'
+        status
       };
     });
 
-    if (selectedItems.some(item => item.quantity < 0)) {
-      toast.error("Miqdar mənfi ola bilməz.");
+    if (hasError) {
+      invalidProducts.forEach(p => {
+        toast.error(`Anbarda ${p.name} üçün yalnız ${p.available} ədəd mövcuddur.`);
+      });
       return;
     }
 
@@ -117,6 +136,7 @@ const SalesProductsSelect = () => {
 
     dispatch(addSale(payload, navigate));
   };
+
 
   return (
     <AdminLayout adminHeaderHide={true}>
@@ -181,7 +201,7 @@ const SalesProductsSelect = () => {
                       />
                     </td>
                     <td>{product?.name}</td>
-                    <td>{product?.articles?.map(a => a.name).join(', ')}</td>
+                    <td className='table_article_scroll'>{product?.articles?.map(a => a.name).join(', ')}</td>
                     <td>{item.amount}</td>
                     <td>{product?.cost_price} ₼</td>
                     <td>
@@ -203,8 +223,13 @@ const SalesProductsSelect = () => {
                           type="number"
                           value={quantityValues[productId] ?? ''}
                           onChange={(e) => handleQuantityChange(productId, e.target.value, item.amount)}
-                          className="quantity_input"
+                          className={`quantity_input ${statusValues[productId] === 'S' &&
+                              +quantityValues[productId] > item.amount
+                              ? 'input-error' // qırmızı border class
+                              : ''
+                            }`}
                         />
+
                       )}
                     </td>
                     <td>

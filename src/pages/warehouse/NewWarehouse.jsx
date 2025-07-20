@@ -151,7 +151,7 @@ const NewWarehouse = () => {
                                             />
                                         </td>
                                         <td>{item.product?.name}</td>
-                                        <td>{item.product?.articles?.map(a => a.name).join(', ')}</td>
+                                        <td className='table_article_scroll'>{item.product?.articles?.map(a => a.name).join(', ')}</td>
                                         <td>{item.amount}</td>
                                         <td>{item.product?.cost_price} ₼</td>
                                         <td>{item.product?.purchase_price} ₼</td>

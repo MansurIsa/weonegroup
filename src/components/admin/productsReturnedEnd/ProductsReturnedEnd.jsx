@@ -66,7 +66,7 @@ const ProductsReturnedEnd = ({ returnBackList = [] }) => {
               <tr key={item.id}>
                 <td>{customer.first_name} {customer.last_name}</td>
                 <td>{product.name || '—'}</td>
-                <td>{articles}</td>
+                <td className='table_article_scroll'>{articles}</td>
                 <td>{dateFormatted}</td>
                 <td>{item.reason || '—'}</td>
                 <td>{item.amount || 0}</td>

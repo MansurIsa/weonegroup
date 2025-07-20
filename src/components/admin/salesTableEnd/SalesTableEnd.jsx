@@ -32,10 +32,23 @@ const SalesTableEnd = () => {
         setFilteredSales(salesList);
     }, [salesList]);
 
-    const handleSalesCustomer = (customerId) => {
-        dispatch(getCustomerFactureList(customerId));
-        navigate(`/customer-movement-facture`);
-    };
+   const handleSalesCustomer = async (customerId) => {
+  if (!customerId) return;
+
+  console.log("Selected Customer ID:", customerId);
+
+  try {
+    // dispatch prosesi tamamlanmadan navigate etmə
+    await dispatch(getCustomerFactureList(customerId));
+
+    // yalnız bütün məlumatlar alındıqdan sonra səhifəni dəyiş
+    navigate(`/customer-movement-facture`);
+  } catch (error) {
+    console.error("Faktura alınarkən xəta baş verdi:", error);
+  }
+};
+
+
 
     const formatDateTime = (datetime) => {
         const date = new Date(datetime);
@@ -48,26 +61,32 @@ const SalesTableEnd = () => {
     };
 
     // Axtarış funksiyası
-    const handleSearch = (query) => {
-        setSearchQuery(query);
+   const handleSearch = (query) => {
+  setSearchQuery(query);
 
-        const lowerQuery = query.toLowerCase();
+  const lowerQuery = query.toLowerCase();
 
-        const filtered = salesList.filter(sale => {
-            const productNameMatch = sale?.product?.name?.toLowerCase().includes(lowerQuery);
-            const articleMatch = sale?.product?.articles?.some(article =>
-                article?.name?.toLowerCase().includes(lowerQuery)
-            );
-            return productNameMatch || articleMatch;
-        });
+  const filtered = salesList.filter(sale => {
+    const customerMatch = sale?.customer?.toLowerCase().includes(lowerQuery);
+    const sellerMatch = sale?.seller?.toLowerCase().includes(lowerQuery);
+    const amountMatch = sale?.total_amount?.toString().includes(lowerQuery);
+    const statusMatch =
+      (sale?.sale_status === "S" && "satılıb".includes(lowerQuery)) ||
+      (sale?.sale_status === "G" && "gözləyir".includes(lowerQuery));
 
-        setFilteredSales(filtered);
-        setCurrentPage(0); // Axtarışdan sonra birinci səhifəyə keç
-    };
+    return customerMatch || sellerMatch || amountMatch || statusMatch;
+  });
+
+  setFilteredSales(filtered);
+  setCurrentPage(0);
+};
+
+console.log(filteredSales);
+
 
     // Tarix filtrası tətbiq et
     const dateFilteredData = filteredSales.filter(item => {
-        const itemDate = new Date(item.datetime);
+        const itemDate = new Date(item.sale_datetime);
         const start = startDate ? new Date(startDate) : null;
         const end = endDate ? new Date(endDate) : null;
 
@@ -80,19 +99,21 @@ const SalesTableEnd = () => {
     const offset = currentPage * ITEMS_PER_PAGE;
     const currentPageData = dateFilteredData.slice(offset, offset + ITEMS_PER_PAGE);
     const pageCount = Math.ceil(dateFilteredData.length / ITEMS_PER_PAGE);
+    console.log(currentPageData);
+    
 
     const handlePageClick = (event) => {
         setCurrentPage(event.selected);
     };
 
-    const deleteSale = (id) => {
-        dispatch(saleUpdateModalFunc(id));
-    };
+    // const deleteSale = (id) => {
+    //     dispatch(saleUpdateModalFunc(id));
+    // };
 
-    const updateSale = (item) => {
-        dispatch(setSaleUpdateObjFunc(item));
-        navigate("/update-sales-products-select");
-    };
+    // const updateSale = (item) => {
+    //     dispatch(setSaleUpdateObjFunc(item));
+    //     navigate("/update-sales-products-select");
+    // };
 
     return (
         <div className='admin_container dashboard_end_container'>
@@ -124,35 +145,35 @@ const SalesTableEnd = () => {
                         <th>Ümumi Məbləğ</th>
                         <th>Satış Tarixi</th>
                         <th>Status</th>
-                        <th>Düzəliş/Sil</th>
+                        {/* <th>Düzəliş/Sil</th> */}
                     </tr>
                 </thead>
                 <tbody>
                     {currentPageData.map((item) => (
                         <tr key={item.id}>
-                            <td onClick={() => handleSalesCustomer(item?.customer?.id)} style={{ cursor: "pointer" }}>
+                            <td onClick={() => handleSalesCustomer(item?.id)} style={{ cursor: "pointer" }}>
                                 <svg width="16" height="16" viewBox="0 0 16 16" fill="none"
                                     xmlns="http://www.w3.org/2000/svg">
                                     <path d="M10 5H6V4H10V5ZM12 14H3V12H4V11H3V8.5H4V7.5H3V5H4V4H3V2H12V15C12.5523 15 13 14.5523 13 14V2C13 1.45 12.55 1 12 1H3C2.45 1 2 1.45 2 2V4H1V5H2V7.5H1V8.5H2V11H1V12H2V14C2 14.55 2.45 15 3 15H12V14ZM10 7.5H6V8.5H10V7.5Z"
                                         fill="#202020" />
                                 </svg>
                             </td>
-                            <td>{item.customer?.username}</td>
-                            <td>{item?.seller?.first_name || "-"} {item?.seller?.last_name || "-"}</td>
-                            <td>{(item.price * item.amount).toFixed(2)} ₼</td>
-                            <td>{formatDateTime(item.datetime)}</td>
+                            <td>{item.customer || "-"}</td>
+                            <td>{item?.seller || "-"}</td>
+                            <td>{item?.total_amount || "-"} ₼</td>
+                            <td>{formatDateTime(item?.sale_datetime)}</td>
                             <td style={{
                                 color:
-                                    item?.status === "S"
+                                    item?.sale_status === "S"
                                         ? "var(--green)"
-                                        : item?.status === "G"
+                                        : item?.sale_status === "G"
                                             ? "var(--yellow)"
                                             : "inherit"
-                            }}>{item?.status === "S" ? "Satılıb" : item?.status === "G" ? "Gözləyir" : "-"}</td>
-                            <td className='table_update'>
+                            }}>{item?.sale_status === "S" ? "Satılıb" : item?.sale_status === "G" ? "Gözləyir" : "-"}</td>
+                            {/* <td className='table_update'>
                                 <FaPenToSquare onClick={() => updateSale(item)} />
                                 <AiTwotoneDelete onClick={() => deleteSale(item?.id)} />
-                            </td>
+                            </td> */}
                         </tr>
                     ))}
                 </tbody>

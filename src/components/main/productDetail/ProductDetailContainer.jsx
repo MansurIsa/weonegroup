@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import "./css/productDetail.css"
 import Img from "../../../assets/images/fixedPr3.png"
 import { Link, useNavigate } from 'react-router-dom'
@@ -11,6 +11,15 @@ const ProductDetailContainer = ({ productObj, userObj }) => {
     const accessToken = localStorage.getItem("accessToken")
     const dispatch = useDispatch()
     const navigate = useNavigate()
+
+    console.log(productObj);
+
+    const [openIndex, setOpenIndex] = useState(null); // hansı başlıq açıqdır?
+
+     const toggleContent = (index) => {
+    setOpenIndex(openIndex === index ? null : index);
+  };
+    
 
 
     const addToCart = (data) => {
@@ -42,7 +51,7 @@ const ProductDetailContainer = ({ productObj, userObj }) => {
                 <div className="product_detail_container_right">
                     <div className="product_detail_container_right_color">
                         <h1>{productObj?.name}</h1>
-                         {
+                        {
                             accessToken ? (
                                 productObj?.amount > 0 ? (
                                     <p className='filter_product_card_content_stock_green'>Stokda var</p>
@@ -52,19 +61,45 @@ const ProductDetailContainer = ({ productObj, userObj }) => {
                             ) : null
                         }
                     </div>
-                    
+
                     <div className='product_detail_container_right_cat'>
-                        <p>{productObj?.category?.name}</p>
-                        <p>{productObj?.brand?.name}</p>
-                        <p>{productObj?.store?.name}</p>
-
-                       
-
+                        <div>
+                            <h2>Kateqoriya</h2>
+                            <p>{productObj?.category?.name}</p>
+                        </div>
+                        <div>
+                            <h2>Marka</h2>
+                            <p>{productObj?.brand?.name}</p>
+                        </div>
+                        <div>
+                            <h2>Brend</h2>
+                            <p>{productObj?.store?.name}</p>
+                        </div>
                     </div>
-                    <div
+                    {/* <div
                         className="product_detail_container_right_detail about_html_content"
                         dangerouslySetInnerHTML={{ __html: productObj?.about }}
-                    />
+                    /> */}
+
+                    <div className="product_detail_about_wrapper">
+            {productObj?.product_abouts?.map((item, index) => (
+              <div key={item.id} className="product_about_item">
+                <div
+                  className="product_about_title"
+                  onClick={() => toggleContent(index)}
+                >
+                  <h3>{item.title}</h3>
+                </div>
+
+                {openIndex === index && (
+                  <div
+                    className="product_about_content about_html_content"
+                    dangerouslySetInnerHTML={{ __html: item.content }}
+                  />
+                )}
+              </div>
+            ))}
+          </div>
 
 
                     {

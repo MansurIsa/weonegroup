@@ -6,7 +6,7 @@ const LoginSlice = createSlice({
       userObj: {},
       usersList: [],
       customerMovementList: [],
-      customerFactureList: [],
+      customerFactureList: {},
       supplierList: [],
 
       updateCustomerObj: {},

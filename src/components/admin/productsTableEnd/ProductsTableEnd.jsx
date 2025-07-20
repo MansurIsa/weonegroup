@@ -62,7 +62,7 @@ const ProductsTableEnd = ({ productsList }) => {
                     {currentPageData?.map((item, index) => (
                         <tr key={index}>
                             <td>{item?.name || "-"}</td>
-                            <td>{item?.articles?.map(article => article.name).join(', ') || "-"}</td>
+                            <td className='table_article_scroll'>{item?.articles?.map(article => article.name).join(', ') || "-"}</td>
                             <td>{item?.amount || "-"}</td>
                             <td>{item?.cost_price + " ₼" || "-"}</td>
                             <td>{item?.purchase_price} {currencyMap[item?.currency] || ""}</td>

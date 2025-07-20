@@ -28,3 +28,10 @@ td select{
   border-radius: 6px;
   font-size: 1.8rem;
 }
+
+.input-error {
+  border: 1px solid var(--red) !important;
+}
+.quantity_input.error_input {
+  border: 2px solid var(--red);
+}

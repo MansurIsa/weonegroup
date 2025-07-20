@@ -24,21 +24,34 @@ const ProductsReturned = () => {
     setFilteredList(returnBackList); // ilk olaraq bütününü göstər
   }, [returnBackList]);
 
+  console.log(returnBackList);
+  
+
   const handleSearch = (query) => {
-    const lowerQuery = query.toLowerCase();
+  const lowerQuery = query.toLowerCase();
 
-    const filtered = returnBackList.filter(item => {
-      const productName = item?.sale?.product?.name || '';
-      const customerName = `${item?.sale?.customer?.first_name || ''} ${item?.sale?.customer?.last_name || ''}`;
-      return (
-        productName.toLowerCase().includes(lowerQuery) ||
-        customerName.toLowerCase().includes(lowerQuery) ||
-        item.reason?.toLowerCase().includes(lowerQuery)
-      );
-    });
+  const filtered = returnBackList.filter(item => {
+    const productName = item?.sale?.product?.name || '';
+    const articles = item?.sale?.product?.articles || [];
+    const customerName = `${item?.sale?.customer?.first_name || ''} ${item?.sale?.customer?.last_name || ''}`;
+    const reason = item?.reason || '';
 
-    setFilteredList(filtered);
-  };
+    // Artikulları yoxla
+    const hasMatchingArticle = articles.some(article =>
+      article.name?.toLowerCase().includes(lowerQuery)
+    );
+
+    return (
+      productName.toLowerCase().includes(lowerQuery) ||
+      customerName.toLowerCase().includes(lowerQuery) ||
+      reason.toLowerCase().includes(lowerQuery) ||
+      hasMatchingArticle
+    );
+  });
+
+  setFilteredList(filtered);
+};
+
 
   const handleClick = () => {
     dispatch(handleAddReturnedModal());

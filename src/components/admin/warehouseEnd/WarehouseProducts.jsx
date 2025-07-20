@@ -46,7 +46,7 @@ const WarehouseProducts = ({ stockList }) => {
                 <td>{category}</td>
                 <td>{brand}</td>
                 <td>{store}</td>
-                <td>{articles}</td>
+                <td className='table_article_scroll'>{articles}</td>
                 <td>{item.amount}</td>
                 <td>{costPrice} ₼</td>
                 {/* <td className="operation">+ Stok əlavə et</td> */}

@@ -107,7 +107,7 @@ const SalesProductsFacturaEnd = () => {
                         <tr key={item.id}>
                             <td>{item.id}</td>
                             <td>{item.productName}</td>
-                            <td>{item.article.join(', ')}</td>
+                            <td className='table_article_scroll'>{item.article.join(', ')}</td>
                             <td>{item.quantity}</td>
                             <td>{item.price}</td>
                             <td>{item.totalAmount}</td>

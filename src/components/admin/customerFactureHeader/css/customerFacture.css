@@ -23,3 +23,16 @@
     display: none; /* Səhifələmə də çapda gizlədilsin */
   }
 }
+
+.table_article_scroll {
+  max-width: 100px;     
+  overflow-x: auto;     /* x oxuna scroll */
+  overflow-y: hidden;   /* y oxuna scroll olmasın */
+  /* display: block;       scroll-un işləməsi üçün vacibdir */
+  white-space: nowrap;  /* mətnin aşağı keçməsinin qarşısını alır */
+}
+
+.table_scroll_wrapper{
+  width: 100%;
+  overflow-x: auto !important;
+}

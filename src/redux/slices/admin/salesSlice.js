@@ -8,11 +8,15 @@ const SalesSlice = createSlice({
         saleDate: null,
         saleUpdateModal: false,
         saleUpdateId: "" ,
-        saleUpdateObj: {}       
+        saleUpdateObj: {}  ,
+        saleList: []     
     },
     reducers: {
         getSalesListFunc: (state, action) => {
             state.salesList = action.payload;
+        },
+         getSaleListFunc: (state, action) => {
+            state.saleList = action.payload;
         },
         setCustomerId: (state, action) => {
             state.customerId = action.payload;
@@ -41,5 +45,6 @@ export const {
     setCustomerId,
     setSaleDate,saleUpdateModalFunc,
     closeSaleUpdateModalFunc,
-    setSaleUpdateObjFunc
+    setSaleUpdateObjFunc,
+    getSaleListFunc
 } = SalesSlice.actions;

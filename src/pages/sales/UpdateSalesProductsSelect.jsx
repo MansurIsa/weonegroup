@@ -18,19 +18,17 @@ const UpdateSalesProductsSelect = () => {
 
   const [selectedCustomerId, setSelectedCustomerId] = useState('');
   const [selectedDateTime, setSelectedDateTime] = useState('');
-  const [selectedRows, setSelectedRows] = useState([0]);
   const [quantityValues, setQuantityValues] = useState({});
   const [priceValues, setPriceValues] = useState({});
   const [statusValues, setStatusValues] = useState({});
-
-  console.log(saleUpdateObj);
-  
+  const [errorIndexes, setErrorIndexes] = useState([]);
 
   useEffect(() => {
     dispatch(getStockList());
     dispatch(getUsersList());
   }, [dispatch]);
 
+  // Sale update info set
   useEffect(() => {
     if (saleUpdateObj) {
       setSelectedCustomerId(saleUpdateObj.customer?.id || '');
@@ -38,49 +36,49 @@ const UpdateSalesProductsSelect = () => {
     }
   }, [saleUpdateObj]);
 
+  // Filter stock to only sale product
   const filtered = stockList?.filter(p => p.product?.id === saleUpdateObj?.product?.id) || [];
 
+  // Initialize inputs values on load
   useEffect(() => {
     if (!saleUpdateObj || filtered.length === 0) return;
-    const index = 0; // yalnız bir məhsul olacaq
-
-    setSelectedRows([index]);
-    setQuantityValues({ [index]: saleUpdateObj.amount });
+    const index = 0; // single product
+    setQuantityValues({ [index]: saleUpdateObj.amount.toString() });
     setPriceValues({ [index]: saleUpdateObj.price });
     setStatusValues({ [index]: saleUpdateObj.status });
+    setErrorIndexes([]);
   }, [saleUpdateObj, filtered.length]);
 
-  const handleCustomerChange = (id) => {
-    setSelectedCustomerId(id);
-  };
+  // Handlers
+  const handleCustomerChange = id => setSelectedCustomerId(id);
+  const handleDateChange = e => setSelectedDateTime(e.target.value);
 
-  const handleQuantityChange = (index, value, max) => {
-    const val = Number(value);
-    if (val >= 0 && val <= max) {
-      setQuantityValues({ ...quantityValues, [index]: val });
+  const handleQuantityChange = (index, value) => {
+    // Remove leading zeros, allow empty string to clear input
+    const numericValue = value.replace(/^0+(?=\d)/, '');
+    if (numericValue === '' || /^\d*$/.test(numericValue)) {
+      setQuantityValues(prev => ({ ...prev, [index]: numericValue }));
+      // Clear error on change
+      setErrorIndexes(prev => prev.filter(i => i !== index));
     }
   };
 
   const handlePriceChange = (index, value) => {
     const val = Number(value);
     if (val >= 0) {
-      setPriceValues({ ...priceValues, [index]: val });
+      setPriceValues(prev => ({ ...prev, [index]: val }));
     }
   };
 
   const handleStatusChange = (index, value) => {
-    setStatusValues({ ...statusValues, [index]: value });
+    setStatusValues(prev => ({ ...prev, [index]: value }));
+    setErrorIndexes(prev => prev.filter(i => i !== index));
   };
 
-  const handleDateChange = (e) => {
-    setSelectedDateTime(e.target.value);
-  };
+  const returnSales = () => navigate("/customer-movement-facture");
 
-  const returnSales = () => {
-    navigate("/sales");
-  };
-
-  const handleSave = () => {
+  const handleSave = async () => {
+    setErrorIndexes([]);
     if (!selectedCustomerId) {
       toast.error("Zəhmət olmasa müştəri seçin.");
       return;
@@ -91,18 +89,27 @@ const UpdateSalesProductsSelect = () => {
     }
 
     const index = 0;
-    const product = filtered[index]?.product;
+    const item = filtered[index];
+    const product = item?.product;
     if (!product) {
       toast.error("Məhsul tapılmadı.");
       return;
     }
 
-    const quantity = quantityValues[index] || 0;
-    const price = priceValues[index] || product.price;
-    const status = statusValues[index] || 'G';
+    const quantityStr = quantityValues[index] ?? '';
+    const quantity = Number(quantityStr);
 
-    if (quantity <= 0) {
+    if (!quantityStr || quantity <= 0) {
       toast.error("Miqdar sıfırdan böyük olmalıdır.");
+      return;
+    }
+
+    const price = priceValues[index] ?? product.price;
+    const status = statusValues[index] ?? 'G';
+
+    if (status === 'S' && quantity > item.amount) {
+      setErrorIndexes([index]);
+      toast.error(`Satış statusunda olan məhsulun miqdarı anbardakı ${item.amount} ədəd sayından çox ola bilməz.`);
       return;
     }
 
@@ -110,14 +117,13 @@ const UpdateSalesProductsSelect = () => {
       customer: selectedCustomerId,
       product: product.id,
       amount: quantity,
-      price: price,
+      price,
       datetime: selectedDateTime,
-      status: status
+      status,
     };
-    console.log(payload);
-    
 
-    dispatch(updateSale(payload, saleUpdateObj?.id, navigate));
+    await dispatch(updateSale(payload, saleUpdateObj?.id, navigate));
+    navigate("/sales");
   };
 
   return (
@@ -129,7 +135,7 @@ const UpdateSalesProductsSelect = () => {
 
         <div className="left_box left_box_mb">
           <CustomCustomerSelect
-            customers={usersList.filter(user => !user.is_staff)}
+            customers={usersList.filter(u => !u.is_staff)}
             value={selectedCustomerId}
             onChange={handleCustomerChange}
           />
@@ -159,43 +165,46 @@ const UpdateSalesProductsSelect = () => {
               </tr>
             </thead>
             <tbody>
-              {filtered.map((item, index) => (
-                <tr key={index}>
-                  <td><input type="checkbox" checked readOnly /></td>
-                  <td>{item.product?.name}</td>
-                  <td>{item.product?.articles?.map(a => a.name).join(', ')}</td>
-                  <td>{item.amount}</td>
-                  <td>{item.product?.cost_price} ₼</td>
-                  <td>
-                    <input
-                      type="number"
-                      className="price_input"
-                      value={priceValues[index] ?? item.product?.price}
-                      onChange={e => handlePriceChange(index, e.target.value)}
-                    />
-                  </td>
-                  <td>{item.product?.discount_price ?? '-'} ₼</td>
-                  <td>
-                    <input
-                      type="number"
-                      className="quantity_input"
-                      min={0}
-                      max={item.amount}
-                      value={quantityValues[index] ?? ''}
-                      onChange={e => handleQuantityChange(index, e.target.value, item.amount)}
-                    />
-                  </td>
-                  <td>
-                    <select
-                      value={statusValues[index] ?? 'G'}
-                      onChange={(e) => handleStatusChange(index, e.target.value)}
-                    >
-                      <option value="G">Gözləyir</option>
-                      <option value="S">Satılıb</option>
-                    </select>
-                  </td>
-                </tr>
-              ))}
+              {filtered.map((item, index) => {
+                const product = item.product;
+                return (
+                  <tr key={index}>
+                    <td><input type="checkbox" checked readOnly /></td>
+                    <td>{product?.name}</td>
+                    <td className='table_article_scroll'>{product?.articles?.map(a => a.name).join(', ')}</td>
+                    <td>{item.amount}</td>
+                    <td>{product?.cost_price} ₼</td>
+                    <td>
+                      <input
+                        type="number"
+                        className="price_input"
+                        value={priceValues[index] ?? product?.price}
+                        onChange={e => handlePriceChange(index, e.target.value)}
+                      />
+                    </td>
+                    <td>{product?.discount_price ?? '-'} ₼</td>
+                    <td>
+                      <input
+                        type="text"
+                        inputMode="numeric"
+                        pattern="[0-9]*"
+                        className={`quantity_input ${errorIndexes.includes(index) ? 'error_input' : ''}`}
+                        value={quantityValues[index] ?? ''}
+                        onChange={e => handleQuantityChange(index, e.target.value)}
+                      />
+                    </td>
+                    <td>
+                      <select
+                        value={statusValues[index] ?? 'G'}
+                        onChange={e => handleStatusChange(index, e.target.value)}
+                      >
+                        <option value="G">Gözləyir</option>
+                        <option value="S">Satılıb</option>
+                      </select>
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
 

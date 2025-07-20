@@ -2,14 +2,28 @@ import axios from "axios";
 import { baseUrl } from "../../mainApi/MainApi";
 import { startLoading, stopLoading } from "../../redux/slices/loaderSlice";
 import toast from "react-hot-toast";
-import { closeSaleUpdateModalFunc, getSalesListFunc } from "../../redux/slices/admin/salesSlice";
+import { closeSaleUpdateModalFunc, getSaleListFunc, getSalesListFunc } from "../../redux/slices/admin/salesSlice";
 
 export const getSalesList = () => async (dispatch) => {
+  dispatch(startLoading());
+  return await axios.get(`${baseUrl}accounting/salelist-list/`)
+    .then((resp) => {
+        console.log(resp.data);
+      dispatch(getSalesListFunc(resp.data));
+    })
+    .catch((err) => {
+      console.log(err);
+    }).finally(() => {
+      dispatch(stopLoading());
+    });;
+};
+
+export const getSaleList = () => async (dispatch) => {
   dispatch(startLoading());
   return await axios.get(`${baseUrl}accounting/sale-list/`)
     .then((resp) => {
         console.log(resp.data);
-      dispatch(getSalesListFunc(resp.data));
+      dispatch(getSaleListFunc(resp.data));
     })
     .catch((err) => {
       console.log(err);
@@ -76,7 +90,7 @@ export const updateSale = (data,id,navigate) => async (dispatch) => {
     .then((resp) => {
         console.log(resp);
         toast.success("Məhsul satışı yeniləndi");
-        navigate("/sales")
+       
     })
     .catch((err) => {
       console.log(err);

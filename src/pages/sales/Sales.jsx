@@ -9,7 +9,7 @@ import SaleDeleteModal from '../../components/admin/modals/SaleDeleteModal'
 import { useNavigate } from 'react-router-dom'
 
 const Sales = () => {
-  const {saleUpdateModal}=useSelector(state=>state.sales)
+
    const navigate = useNavigate()
 
   const handleClick = () => {
@@ -20,7 +20,7 @@ const Sales = () => {
         {/* <SalesTableHead/> */}
         <AdminBigComponentHeader adminHeader={"Satış cədvəli"} hideShowBtn={true} buttonContent="Yeni satış əlave et" onClick={handleClick}/>
         <SalesTableEnd/>
-        {saleUpdateModal && <SaleDeleteModal/>}
+      
     </AdminLayout>
   )
 }

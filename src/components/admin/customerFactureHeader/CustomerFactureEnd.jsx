@@ -1,38 +1,59 @@
 import React, { useState } from 'react';
 import ReactPaginate from 'react-paginate';
 import { useNavigate } from 'react-router-dom';
-import "./css/customerFacture.css"
+import "./css/customerFacture.css";
+import { FaPenToSquare } from 'react-icons/fa6';
+import { AiTwotoneDelete } from 'react-icons/ai';
+import { saleUpdateModalFunc, setSaleUpdateObjFunc } from '../../../redux/slices/admin/salesSlice';
+import { useDispatch } from 'react-redux';
 
 const ITEMS_PER_PAGE = 4;
 
 const CustomerFactureEnd = ({ factureList = [] }) => {
   const [currentPage, setCurrentPage] = useState(0);
   const navigate = useNavigate();
+  console.log(factureList);
+
+  // Faktura içindəki satış siyahısını götür
+  const sales = factureList[0]?.salelist_sales || [];
 
   const offset = currentPage * ITEMS_PER_PAGE;
-  const currentPageData = factureList.slice(offset, offset + ITEMS_PER_PAGE);
-  const pageCount = Math.ceil(factureList.length / ITEMS_PER_PAGE);
+  const currentPageData = sales.slice(offset, offset + ITEMS_PER_PAGE);
+  const pageCount = Math.ceil(sales.length / ITEMS_PER_PAGE);
 
   const handlePageClick = (event) => {
     setCurrentPage(event.selected);
   };
 
   const returnCustomerMovement = () => {
-    navigate("/customer-movement");
+    navigate("/sales");
   };
 
-  // Ümumi məbləğ hesabla
-  const totalAmount = factureList.reduce(
+  const totalAmount = sales.reduce(
     (acc, item) => acc + (item.amount * item.price),
     0
   );
+
   const handlePrint = () => {
     window.print();
+  };
+  const dispatch = useDispatch()
+
+  const deleteSale = (id) => {
+    console.log(id);
+
+    dispatch(saleUpdateModalFunc(id));
+  };
+
+  const updateSale = (item) => {
+    dispatch(setSaleUpdateObjFunc(item));
+    navigate("/update-sales-products-select");
   };
 
   return (
     <div className='admin_container dashboard_end_container'>
-      <table className='custom_table'>
+      <div className="table_scroll_wrapper">
+         <table className='custom_table'>
         <thead>
           <tr>
             <th>N</th>
@@ -40,10 +61,12 @@ const CustomerFactureEnd = ({ factureList = [] }) => {
             <th>Artikl</th>
             <th>Kateqoriya</th>
             <th>Marka</th>
-            <th>Brend</th>
+            {/* <th>Brend</th> */}
             <th>Miqdar</th>
             <th>Satış Qiyməti</th>
             <th>Ümumi məbləğ</th>
+            <th>Status</th> 
+            <th>Düzəliş/Sil</th>
           </tr>
         </thead>
         <tbody>
@@ -51,20 +74,34 @@ const CustomerFactureEnd = ({ factureList = [] }) => {
             <tr key={item.id}>
               <td>{offset + index + 1}</td>
               <td>{item.product?.name || '—'}</td>
-              <td>
+              <td className='table_article_scroll'>
                 {item.product?.articles?.map((art) => art.name).join(', ') || '—'}
               </td>
-               <td>{item.product?.category?.name || '—'}</td>
-               <td>{item.product?.brand?.name || '—'}</td>
-               <td>{item.product?.store?.name || '—'}</td>
+              <td>{item.product?.category?.name || '—'}</td>
+              <td>{item.product?.brand?.name || '—'}</td>
+              {/* <td>{item.product?.store?.name || '—'}</td> */}
               <td>{item.amount}</td>
               <td>{item.price} ₼</td>
               <td>{(item.amount * item.price).toFixed(2)} ₼</td>
+              <td style={{
+                color:
+                  item?.status === "S"
+                    ? "var(--green)"
+                    : item?.status === "G"
+                      ? "var(--yellow)"
+                      : "inherit"
+              }}>{item?.status === "S" ? "Satılıb" : item?.status === "G" ? "Gözləyir" : "-"}</td>
+              <td className='table_update'>
+                <FaPenToSquare onClick={() => updateSale(item)} />
+                <AiTwotoneDelete onClick={() => deleteSale(item?.id)} />
+              </td>
             </tr>
           ))}
         </tbody>
       </table>
 
+      </div>
+     
       <div className="warehouse_summary">
         <div>
           <label>Ümumi gəlir</label>
@@ -74,7 +111,6 @@ const CustomerFactureEnd = ({ factureList = [] }) => {
 
       <div className="warehouse_submit sales_products_factura_btns">
         <button className="save_btn" onClick={handlePrint}>Çap et</button>
-
         <button className="save_btn" onClick={returnCustomerMovement}>
           Geri dön
         </button>
