@@ -148,70 +148,96 @@ const Cart = () => {
                     const isOutOfStock = item.product.amount === 0;
                     return (
                       <div key={item.id} className="cart_left_products_container">
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                          {/* Gizli default checkbox */}
-                          <input
-                            type="checkbox"
-                            checked={isSelected}
-                            disabled={isOutOfStock}
-                            onChange={() => handleCheckboxChange(item)}
-                            style={{ display: 'none' }}
-                            id={`custom-checkbox-${item.id}`}
-                          />
-                          
-                          {/* Özelleşdirilmiş checkbox */}
-                          <label
-                            htmlFor={`custom-checkbox-${item.id}`}
-                            style={{
-                              display: 'flex',
-                              alignItems: 'center',
-                              justifyContent: 'center',
-                              width: '20px',
-                              height: '20px',
-                              border: '2px solid #333',
-                              borderRadius: '4px',
-                              cursor: isOutOfStock ? 'not-allowed' : 'pointer',
-                              backgroundColor: isSelected ? '#4caf50' : 'transparent',
-                              position: 'relative',
-                              color: 'white',
-                              userSelect: 'none',
-                            }}
-                            onClick={(e) => {
-                              // prevent label click if disabled
-                              if (isOutOfStock) e.preventDefault();
-                            }}
-                            title={isOutOfStock ? "Məhsul stokda yoxdur" : isSelected ? "Seçildi" : "Seçilməyib"}
-                          >
-                            {isOutOfStock ? (
-                              <AiOutlineClose color="red" size={16} />
-                            ) : (
-                              isSelected && (
-                                <svg
-                                  width="12"
-                                  height="10"
-                                  viewBox="0 0 12 10"
-                                  fill="none"
-                                  xmlns="http://www.w3.org/2000/svg"
-                                  style={{ stroke: 'white', strokeWidth: 2 }}
-                                >
-                                  <polyline points="1 5.5 4 9 11 1" />
-                                </svg>
-                              )
-                            )}
-                          </label>
+                        <div className="flex_dir">
 
-                          <img src={item.product.image} alt={item.product.name} style={{ width: '50px', height: '50px', objectFit: 'cover', borderRadius: '4px' }} />
-                          <div className='cart_product_name_brand'>
-                            <h2>{item.product.name}</h2>
-                            <p>{item.product.brand.name}</p>
+
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                            {/* Gizli default checkbox */}
+                            <input
+                              type="checkbox"
+                              checked={isSelected}
+                              disabled={isOutOfStock}
+                              onChange={() => handleCheckboxChange(item)}
+                              style={{ display: 'none' }}
+                              id={`custom-checkbox-${item.id}`}
+                            />
+
+                            {/* Özelleşdirilmiş checkbox */}
+                            <label
+                              htmlFor={`custom-checkbox-${item.id}`}
+                              style={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                width: '20px',
+                                height: '20px',
+                                border: '2px solid #333',
+                                borderRadius: '4px',
+                                cursor: isOutOfStock ? 'not-allowed' : 'pointer',
+                                backgroundColor: isSelected ? '#4caf50' : 'transparent',
+                                position: 'relative',
+                                color: 'white',
+                                userSelect: 'none',
+                              }}
+                              onClick={(e) => {
+                                // prevent label click if disabled
+                                if (isOutOfStock) e.preventDefault();
+                              }}
+                              title={isOutOfStock ? "Məhsul stokda yoxdur" : isSelected ? "Seçildi" : "Seçilməyib"}
+                            >
+                              {isOutOfStock ? (
+                                <AiOutlineClose color="red" size={16} />
+                              ) : (
+                                isSelected && (
+                                  <svg
+                                    width="12"
+                                    height="10"
+                                    viewBox="0 0 12 10"
+                                    fill="none"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    style={{ stroke: 'white', strokeWidth: 2 }}
+                                  >
+                                    <polyline points="1 5.5 4 9 11 1" />
+                                  </svg>
+                                )
+                              )}
+                            </label>
+
+                            <img src={item.product.image} alt={item.product.name} style={{ width: '50px', height: '50px', objectFit: 'cover', borderRadius: '4px' }} />
+                            <div className='cart_product_name_brand'>
+                              <h2>{item.product.name}</h2>
+                              <p>{item.product.brand.name}</p>
+                            </div>
                           </div>
+
+                          <span className="cart_left_first_price">
+                            {getPrice(item)} AZN
+                          </span>
+
+                          <div className="inc_dec">
+                            <button onClick={() => decCartEl(item)}>-</button>
+                            <input
+                              type="number"
+                              min={0}
+                              value={item.quantity}
+                              onChange={(e) => updateQuantityDirect(item, e.target.value)}
+                              style={{
+                                width: '30px',
+                                textAlign: 'center',
+                                padding: '4px',
+                                borderRadius: '4px',
+                                border: '1px solid #ccc'
+                              }}
+                            />
+                            <button onClick={() => incCartEl(item)}>+</button>
+                          </div>
+
+                          <AiOutlineDelete
+                            onClick={() => deleteBasketItem(item?.id)}
+                            className='delete_basket_item'
+                          />
                         </div>
-
-                        <span className="cart_left_first_price">
-                          {getPrice(item)} AZN
-                        </span>
-
-                        <div className="inc_dec">
+                        <div className="inc_dec inc_dec_resp">
                           <button onClick={() => decCartEl(item)}>-</button>
                           <input
                             type="number"
@@ -228,11 +254,6 @@ const Cart = () => {
                           />
                           <button onClick={() => incCartEl(item)}>+</button>
                         </div>
-
-                        <AiOutlineDelete
-                          onClick={() => deleteBasketItem(item?.id)}
-                          className='delete_basket_item'
-                        />
                       </div>
                     );
                   })}

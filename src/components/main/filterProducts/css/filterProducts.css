@@ -215,6 +215,46 @@
      margin-bottom: 10px;
 }
 
+.inc_dec_pr {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 10px 0;
+  gap: 6px;
+}
+
+.inc_dec_pr button {
+  width: 32px;
+  height: 32px;
+  font-size: 20px;
+  border: none;
+  background-color: #00aaff;
+  color: white;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.inc_dec_pr button:hover {
+  background-color: #008ecc;
+}
+
+.inc_dec_pr input {
+  width: 50px;
+  height: 32px;
+  text-align: center;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  outline: none;
+}
+.inc_dec_pr .add_to_cart_pr{
+    background: none;
+}
+.inc_dec_pr .add_to_cart_pr:hover{
+    background: var(--yellow);
+}
+
 @media screen and (max-width: 650px) {
     .filter_products_serach_btn {
         flex-direction: column;

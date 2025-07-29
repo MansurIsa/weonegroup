@@ -6,7 +6,9 @@ const PurchaseSlice = createSlice({
         purchaseList: [],
         purchaseUpdateModal: false,
         purchaseId: "",
-        updatePurchaseObj: {}
+        updatePurchaseObj: {},
+        purchaseListList: [],
+        supplierPurchaseObj: {}
      
     },
     reducers: {
@@ -23,9 +25,17 @@ const PurchaseSlice = createSlice({
         setUpdatePurchaseObjFunc: (state,action)=>{
             state.updatePurchaseObj=action.payload
         },
+        getPurchaseListListFunc: (state,action)=>{
+            state.purchaseListList=action.payload
+        },
+        getPurchaseSupplierObjFunc: (state,action)=>{
+            state.supplierPurchaseObj=action.payload
+        }
     
     }
 });
 
 export const PurchaseReducer = PurchaseSlice.reducer;
-export const {getPurchaseListFunc,closePurchaseUpdateModalFunc,purchaseUpdateModalFunc,setUpdatePurchaseObjFunc} = PurchaseSlice.actions;
+export const {getPurchaseListFunc,closePurchaseUpdateModalFunc,purchaseUpdateModalFunc,setUpdatePurchaseObjFunc,
+    getPurchaseListListFunc,getPurchaseSupplierObjFunc
+} = PurchaseSlice.actions;

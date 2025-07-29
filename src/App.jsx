@@ -37,6 +37,8 @@ import UpdateSalesProductsSelect from './pages/sales/UpdateSalesProductsSelect';
 import UpdateNewPurchase from './pages/purchase/UpdateNewPurchase';
 import UpdateNewProducts from './pages/productsTable/UpdateNewProducts';
 import UpdateNewCustomer from './pages/customers/UpdateNewCustomer';
+import SupplierPurchase from './pages/purchase/SupplierPurchase';
+import Supplier from './pages/supplier/Supplier';
 
 // Token yoxlama funksiyası
 const isTokenExpired = (token) => {
@@ -116,6 +118,7 @@ const App = () => {
     { path: "/products-returned", element: <ProductsReturned />, isProtected: true },
     { path: "/income", element: <Income />, isProtected: true },
     { path: "/expense", element: <Expense />, isProtected: true },
+    { path: "/supplier", element: <Supplier />, isProtected: true },
     { path: "/sales", element: <Sales />, isProtected: true },
     // { path: "/product-sales-customer", element: <SalesProductsCustomer />, isProtected: true },
     { path: "/sales-products-select", element: <SalesProductsSelect />, isProtected: true },
@@ -129,6 +132,8 @@ const App = () => {
      { path: "/update-new-purchase", element: <UpdateNewPurchase />, isProtected: true },
      { path: "/update-new-products", element: <UpdateNewProducts />, isProtected: true },
      { path: "/update-new-customer", element: <UpdateNewCustomer />, isProtected: true },
+
+     { path: "/supplier-purchase", element: <SupplierPurchase />, isProtected: true },
   ];
 
   return (

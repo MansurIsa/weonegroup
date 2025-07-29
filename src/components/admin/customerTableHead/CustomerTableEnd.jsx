@@ -72,7 +72,7 @@ const CustomerTableEnd = ({ usersList }) => {
                                 {
                                     item.status === "S" ? "Satış Qiyməti"
                                         : item.status === "E" ? "Endirimli Qiyməti"
-                                            : item.status === "SE" ? "Satış və Endirimli Qiyməti"
+                                            
                                                 : "—"
                                 }
                             </td>

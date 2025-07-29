@@ -104,8 +104,19 @@ const CustomerFactureEnd = ({ factureList = [] }) => {
      
       <div className="warehouse_summary">
         <div>
-          <label>Ümumi gəlir</label>
-          <span>{totalAmount.toFixed(2)} AZN</span>
+          <label>Köhnə borc:  {factureList[0]?.old_debt}AZN</label>
+        </div>
+          <div>
+          <label>Yeni borc:  {factureList[0]?.new_debt}AZN</label>
+        </div>
+         <div>
+          <label>Müştərinin ümumi ödədiyi:  {factureList[0]?.total_paid_amount}AZN</label>
+        </div>
+         <div>
+          <label>Müştərinin ümumi qalan borcu:  {factureList[0]?.total_debt}AZN</label>
+        </div>
+         <div>
+          <label>Ümumi gəlir:  {factureList[0]?.total_profit}AZN</label>
         </div>
       </div>
 

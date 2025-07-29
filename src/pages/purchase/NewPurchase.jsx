@@ -5,26 +5,28 @@ import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { getBrandList, getCategoryList, getProductsList } from '../../actions/productsAction/productsAction';
 import { addPurchase } from '../../actions/purchaseAction/purchaseAction';
-import CustomProductSelect from './CustomProductSelect ';
 import { getSupplierList } from '../../actions/loginAction/loginAction';
 import CustomSupplierSelect from './CustomSupplierSelect';
+import CustomProductSelect from './CustomProductSelect ';
 
 const NewPurchase = () => {
-    const [formData, setFormData] = useState({
-        brand: '',
-        category: '',
-        productId: '',
-        supplierId: '', // əlavə edildi
-        quantity: '',
-        costPrice: '',
-        purchaseCurrency: '',
-        purchasePriceValue: '',
-        salePrice: '',
-        discountPrice: '',
+    const [generalInfo, setGeneralInfo] = useState({
+        supplierId: '',
+        purchaseDate: '',
         status: 'G',
-        purchaseDate: ''
+        currency: ''
     });
 
+    const [productsData, setProductsData] = useState([
+        {
+            productId: '',
+            quantity: '',
+            costPrice: '',
+            purchasePriceValue: '',
+            salePrice: '',
+            discountPrice: ''
+        }
+    ]);
 
     const navigate = useNavigate();
     const dispatch = useDispatch();
@@ -33,39 +35,56 @@ const NewPurchase = () => {
         dispatch(getBrandList());
         dispatch(getCategoryList());
         dispatch(getProductsList());
-        dispatch(getSupplierList())
+        dispatch(getSupplierList());
     }, [dispatch]);
 
-    const { productsList, categoryList, brandList } = useSelector(state => state.products);
-    const { supplierList } = useSelector(state => state.login)
+    const { productsList } = useSelector(state => state.products);
+    const { supplierList } = useSelector(state => state.login);
 
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-        setFormData(prev => ({
+    const handleAddProduct = () => {
+        setProductsData(prev => [
             ...prev,
-            [name]: value
-        }));
+            {
+                productId: '',
+                quantity: '',
+                costPrice: '',
+                purchasePriceValue: '',
+                salePrice: '',
+                discountPrice: ''
+            }
+        ]);
+    };
+
+    const handleProductChange = (index, name, value) => {
+        const updated = [...productsData];
+        updated[index][name] = value;
+        setProductsData(updated);
+    };
+
+    const handleRemoveProduct = (index) => {
+        if (productsData.length === 1) return;
+        const updated = [...productsData];
+        updated.splice(index, 1);
+        setProductsData(updated);
     };
 
     const handleSubmit = (e) => {
         e.preventDefault();
 
         const payload = {
-            product: +formData.productId,
-            supplier: formData.supplierId ? +formData.supplierId : null,
-            amount: +formData.quantity,
-            date: formData.purchaseDate,
-            status: formData.status,
-            cost_price: parseFloat(formData.costPrice),
-            purchase_price: parseFloat(formData.purchasePriceValue),
-            currency: formData.purchaseCurrency,
-            price: parseFloat(formData.salePrice),
-            discount_price: parseFloat(formData.discountPrice),
-            
+            supplier: generalInfo.supplierId ? +generalInfo.supplierId : null,
+            date: generalInfo.purchaseDate,
+            status: generalInfo.status,
+            currency: generalInfo.currency,
+            products: productsData.map(p => +p.productId),
+            amounts: productsData.map(p => +p.quantity),
+            purchase_prices: productsData.map(p => parseFloat(p.purchasePriceValue)),
+            cost_prices: productsData.map(p => parseFloat(p.costPrice)),
+            prices: productsData.map(p => parseFloat(p.salePrice)),
+            discount_prices: productsData.map(p => parseFloat(p.discountPrice))
         };
 
-
-        console.log("Backend-ə göndəriləcək data:", payload);
+        console.log("Göndərilən Payload:", payload);
         dispatch(addPurchase(payload, navigate));
     };
 
@@ -73,150 +92,176 @@ const NewPurchase = () => {
         navigate("/purchase");
     };
 
-    const filteredProducts = productsList.filter(p =>
-        (!formData.brand || p.brand?.id === +formData.brand) &&
-        (!formData.category || p.category?.id === +formData.category)
-    );
-
     return (
         <AdminLayout adminHeaderHide={true}>
             <div className="admin_container new_purchase_form">
                 <div className="return_btn">
-                    <button onClick={returnPurchase}>Geri dön</button>
+                    <button onClick={returnPurchase}>← Geri dön</button>
                 </div>
 
                 <h2>Yeni alış əlavə et</h2>
+
                 <form onSubmit={handleSubmit}>
-                    <div className="form_grid">
-
-
-
-                        {/* <div className="form_group">
-                            <label>Məhsul</label>
-                            <select name="productId" value={formData.productId} onChange={handleChange}>
-                                <option value="">Məhsul seçin</option>
-                                {filteredProducts?.map((product) => (
-                                    <option key={product.id} value={product.id}>{product.name}</option>
-                                ))}
-                            </select>
-                        </div> */}
-
-
-                        <CustomProductSelect
-                            products={filteredProducts}
-                            value={formData.productId}
-                            onChange={(id) => setFormData(prev => ({ ...prev, productId: id }))}
-                        />
-
-                        <div className="form_group">
-                            <label>Miqdar</label>
-                            <input
-                                type="number"
-                                name="quantity"
-                                placeholder="Miqdarı daxil edin"
-                                value={formData.quantity}
-                                onChange={handleChange}
-                            />
-                        </div>
-
+                    <div className="form_group">
                         <CustomSupplierSelect
                             suppliers={supplierList}
-                            value={formData.supplierId}
-                            onChange={(id) => setFormData(prev => ({ ...prev, supplierId: id }))}
+                            value={generalInfo.supplierId}
+                            onChange={(id) => setGeneralInfo(prev => ({ ...prev, supplierId: id }))}
                         />
+                    </div>
 
+                    <div className="form_group">
+                        <label>Alış tarixi</label>
+                        <input
+                            type="date"
+                            value={generalInfo.purchaseDate}
+                            onChange={(e) => setGeneralInfo(prev => ({ ...prev, purchaseDate: e.target.value }))}
+                            className="form_input"
+                        />
+                    </div>
 
-                        <div className="form_group">
-                            <label>Maya dəyəri (AZN)</label>
-                            <input
-                                type="text"
-                                name="costPrice"
-                                placeholder="Maya dəyərini daxil edin"
-                                value={formData.costPrice}
-                                onChange={handleChange}
-                            />
-                        </div>
+                    <div className="form_group">
+                        <label>Status</label>
+                        <select
+                            value={generalInfo.status}
+                            onChange={(e) => setGeneralInfo(prev => ({ ...prev, status: e.target.value }))}
+                            className="form_input"
+                        >
+                            <option value="G">Gözləyir</option>
+                            <option value="A">Anbarda</option>
+                        </select>
+                    </div>
 
-                        <div className="form_group">
-                            <label>Alış valyutası</label>
-                            <select
-                                name="purchaseCurrency"
-                                value={formData.purchaseCurrency}
-                                onChange={handleChange}
-                            >
-                                <option value="">Valyuta seçin</option>
-                                <option value="M">₼ AZN</option>
-                                <option value="D">$ USD</option>
-                                <option value="R">₽ RUB</option>
-                            </select>
-                        </div>
+                    <div className="form_group">
+                        <label>Valyuta</label>
+                        <select
+                            value={generalInfo.currency}
+                            onChange={(e) => setGeneralInfo(prev => ({ ...prev, currency: e.target.value }))}
+                            className="form_input"
+                        >
+                            <option value="">Valyuta seçin</option>
+                            <option value="M">₼ AZN</option>
+                            <option value="D">$ USD</option>
+                            <option value="R">₽ RUB</option>
+                        </select>
+                    </div>
 
-                        {formData.purchaseCurrency && (
+                    <hr />
+
+                    {productsData.map((item, index) => (
+                        <div key={index} className="product_group" style={{
+                            border: '1px solid #ccc',
+                            padding: '15px',
+                            marginBottom: '15px',
+                            borderRadius: '8px',
+                            position: 'relative',
+                            backgroundColor: '#f9f9f9'
+                        }}>
+                            {productsData.length > 1 && (
+                                <button
+                                    type="button"
+                                    onClick={() => handleRemoveProduct(index)}
+                                    style={{
+                                        display: "block",
+                                       marginLeft: "auto",
+                                        background: '#e74c3c',
+                                        color: 'white',
+                                        border: 'none',
+                                        borderRadius: '4px',
+                                        padding: '4px 8px',
+                                        cursor: 'pointer'
+                                    }}
+                                >
+                                    ✕
+                                </button>
+                            )}
+
                             <div className="form_group">
-                                <label>
-                                    Alış qiyməti (
-                                    {formData.purchaseCurrency === 'M'
-                                        ? '₼'
-                                        : formData.purchaseCurrency === 'D'
-                                            ? '$'
-                                            : formData.purchaseCurrency === 'R'
-                                                ? '₽' : ""}
-                                    )
-                                </label>
-                                <input
-                                    type="text"
-                                    name="purchasePriceValue"
-                                    placeholder="Alış qiymətini daxil edin"
-                                    value={formData.purchasePriceValue}
-                                    onChange={handleChange}
+                                <CustomProductSelect
+                                    products={productsList}
+                                    value={item.productId}
+                                    onChange={(id) => handleProductChange(index, 'productId', id)}
                                 />
                             </div>
-                        )}
 
-                        <div className="form_group">
-                            <label>Satış qiyməti (AZN)</label>
-                            <input
-                                type="text"
-                                name="salePrice"
-                                placeholder="Satış qiymətini daxil edin"
-                                value={formData.salePrice}
-                                onChange={handleChange}
-                            />
+                            <div className='flex_purchase_cont'>
+
+
+
+                                <div className="form_group">
+                                    <label>Miqdar</label>
+                                    <input
+                                        type="number"
+                                        className="form_input"
+                                        placeholder="Miqdar"
+                                        value={item.quantity}
+                                        onChange={(e) => handleProductChange(index, 'quantity', e.target.value)}
+                                    />
+                                </div>
+
+                                <div className="form_group">
+                                    <label>Maya dəyəri (AZN)</label>
+                                    <input
+                                        type="text"
+                                        className="form_input"
+                                        placeholder="Maya dəyəri"
+                                        value={item.costPrice}
+                                        onChange={(e) => handleProductChange(index, 'costPrice', e.target.value)}
+                                    />
+                                </div>
+
+                                <div className="form_group">
+                                    <label>Alış qiyməti ({generalInfo.currency || 'valyuta'})</label>
+                                    <input
+                                        type="text"
+                                        className="form_input"
+                                        placeholder="Alış qiyməti"
+                                        value={item.purchasePriceValue}
+                                        onChange={(e) => handleProductChange(index, 'purchasePriceValue', e.target.value)}
+                                    />
+                                </div>
+
+                                <div className="form_group">
+                                    <label>Satış qiyməti (AZN)</label>
+                                    <input
+                                        type="text"
+                                        className="form_input"
+                                        placeholder="Satış qiyməti"
+                                        value={item.salePrice}
+                                        onChange={(e) => handleProductChange(index, 'salePrice', e.target.value)}
+                                    />
+                                </div>
+
+                                <div className="form_group">
+                                    <label>Endirimli qiymət (AZN)</label>
+                                    <input
+                                        type="text"
+                                        className="form_input"
+                                        placeholder="Endirimli qiymət"
+                                        value={item.discountPrice}
+                                        onChange={(e) => handleProductChange(index, 'discountPrice', e.target.value)}
+                                    />
+                                </div>
+                            </div>
                         </div>
+                    ))}
 
-                        <div className="form_group">
-                            <label>Endirimli qiymət (AZN)</label>
-                            <input
-                                type="text"
-                                name="discountPrice"
-                                placeholder="Endirimli qiyməti daxil edin"
-                                value={formData.discountPrice}
-                                onChange={handleChange}
-                            />
-                        </div>
-
-                        <div className="form_group">
-                            <label>Status</label>
-                            <select
-                                name="status"
-                                value={formData.status}
-                                onChange={handleChange}
-                            >
-                                <option value="G">Gözləyir</option>
-                                <option value="A">Anbarda</option>
-                            </select>
-                        </div>
-
-                        <div className="form_group">
-                            <label>Alış tarixi</label>
-                            <input
-                                type="date"
-                                name="purchaseDate"
-                                value={formData.purchaseDate}
-                                onChange={handleChange}
-                            />
-                        </div>
-
+                    <div className="form_group">
+                        <button
+                            type="button"
+                            onClick={handleAddProduct}
+                            style={{
+                                backgroundColor: '#3498db',
+                                color: 'white',
+                                padding: '10px 15px',
+                                borderRadius: '6px',
+                                border: 'none',
+                                cursor: 'pointer',
+                                fontWeight: 'bold'
+                            }}
+                        >
+                            + Məhsul əlavə et
+                        </button>
                     </div>
 
                     <div className="form_footer">

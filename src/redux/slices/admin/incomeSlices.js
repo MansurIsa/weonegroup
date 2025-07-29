@@ -17,6 +17,13 @@ const IncomeSlice = createSlice({
         expenseUpdatePaymentModal: false,
         expenseUpdatePaymentObj: {},
         expenseDeletePaymentId: "",
+
+        supplierList: [],
+        supplierAddPaymentModal: false,
+        supplierUpdatePaymentModal: false,
+        supplierUpdatePaymentObj: {},
+        supplierDeletePaymentModal: false,
+        supplierDeletePaymentId: ""
     },
     reducers: {
 
@@ -31,8 +38,11 @@ const IncomeSlice = createSlice({
             state.expenseAddPaymentModal = false
             state.incomeUpdatePaymentModal = false
             state.incomeDeletePaymentModal = false
-            state.expenseUpdatePaymentModal=false
-            state.expenseDeletePaymentModal=false
+            state.expenseUpdatePaymentModal = false
+            state.expenseDeletePaymentModal = false
+            state.supplierAddPaymentModal = false
+            state.supplierUpdatePaymentModal = false
+            state.supplierDeletePaymentModal=false
         },
         getPaymentListFunc: (state, action) => {
             state.paymentList = action.payload
@@ -55,7 +65,22 @@ const IncomeSlice = createSlice({
         deleteExpensePaymentModal: (state, action) => {
             state.expenseDeletePaymentModal = true
             state.expenseDeletePaymentId = action.payload
-        }
+        },
+
+        getSupplierListFunc: (state, action) => {
+            state.supplierList = action.payload
+        },
+        handleSupplierAddPaymentModal: (state, action) => {
+            state.supplierAddPaymentModal = true
+        },
+        handleSupplierUpdatePaymentModal: (state, action) => {
+            state.supplierUpdatePaymentModal = true
+            state.supplierUpdatePaymentObj = action.payload
+        },
+        deleteSupplierPaymentModal: (state, action) => {
+            state.supplierDeletePaymentModal = true
+            state.supplierDeletePaymentId = action.payload
+        },
 
     }
 });
@@ -64,5 +89,6 @@ export const IncomeReducer = IncomeSlice.reducer;
 export const { handleIncomeAddPaymentModal, closeIncomeAddPaymentModal, getPaymentListFunc, handleExpenseAddPaymentModal,
 
     getExpenseListFunc, handleIncomeUpdatePaymentModal, deleteIncomePaymentModal,
-    handleExpenseUpdatePaymentModal,deleteExpensePaymentModal
+    handleExpenseUpdatePaymentModal, deleteExpensePaymentModal, getSupplierListFunc, handleSupplierAddPaymentModal,
+    handleSupplierUpdatePaymentModal,deleteSupplierPaymentModal
 } = IncomeSlice.actions;

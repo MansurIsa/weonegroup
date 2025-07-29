@@ -12,40 +12,43 @@ import './css/salesChart.css';
 import { useDispatch, useSelector } from 'react-redux';
 import { getChartsDashboardList } from '../../../../actions/dashboardAction/dashboardAction';
 import { getUserObj, getUsersList } from '../../../../actions/loginAction/loginAction';
+import { getBrandList } from '../../../../actions/productsAction/productsAction';
 
 const SalesChart = () => {
   const dispatch = useDispatch();
   const [filterType, setFilterType] = useState('A'); // "A" - aylıq, "I" - illik
   const [selectedCustomer, setSelectedCustomer] = useState('');
+ const [selectedBrand, setSelectedBrand] = useState('0'); // default: 0 = bütün markalar
+
 
   const { usersList, userObj } = useSelector(state => state.login);
   const { chartObj } = useSelector(state => state.dashboard);
+  const { brandList } = useSelector(state => state.products);
 
-  // İstifadəçi və user siyahısı yüklə
   useEffect(() => {
     dispatch(getUsersList());
     dispatch(getUserObj());
+    dispatch(getBrandList());
   }, [dispatch]);
 
-  // Superadmin daxil olubsa default olaraq öz ID-si seçilsin
   useEffect(() => {
     if (userObj?.is_superuser) {
       setSelectedCustomer(userObj.id);
     }
   }, [userObj]);
 
-  // Data yüklə
-  useEffect(() => {
-    if (!userObj) return;
+ useEffect(() => {
+  if (!userObj || selectedBrand === '') return;
 
-    const idToSend = userObj.is_superuser && selectedCustomer
+  const idToSend =
+    userObj.is_superuser && selectedCustomer
       ? selectedCustomer
       : userObj.id;
 
-    dispatch(getChartsDashboardList(idToSend, filterType));
-  }, [dispatch, filterType, selectedCustomer, userObj]);
+  dispatch(getChartsDashboardList(idToSend, filterType, selectedBrand));
+}, [dispatch, filterType, selectedCustomer, userObj, selectedBrand]);
 
-  // Chart üçün data hazırla
+
   const salesData = chartObj
     ? Object.entries(chartObj).map(([key, value]) => ({
         label: key,
@@ -60,7 +63,6 @@ const SalesChart = () => {
         <div className="chart_controls">
           {userObj?.is_superuser && (
             <div className="form_group">
-              {/* <label>Admin</label> */}
               <select
                 value={selectedCustomer}
                 onChange={(e) => setSelectedCustomer(e.target.value)}
@@ -76,6 +78,22 @@ const SalesChart = () => {
               </select>
             </div>
           )}
+
+         <div className="form_group">
+  <select
+    value={selectedBrand}
+    onChange={(e) => setSelectedBrand(e.target.value)}
+  >
+    <option value="0">Bütün markalar</option>
+    {brandList?.map(brand => (
+      <option key={brand.id} value={brand.id}>
+        {brand.name}
+      </option>
+    ))}
+  </select>
+</div>
+
+
           <div className="dropdown">
             <span className="calendar_icon">
               <svg

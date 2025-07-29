@@ -8,6 +8,7 @@ import SearchInpMain from '../../components/admin/searchInpMain/SearchInpMain'
 import { useDispatch, useSelector } from 'react-redux'
 import { getPurchaseList } from '../../actions/purchaseAction/purchaseAction'
 import PurchaseDeleteModal from '../../components/admin/modals/PurchaseDeleteModal'
+import PurchaseTableEnd from './PurchaseTableEnd'
 
 const Purchase = () => {
   const navigate = useNavigate()
@@ -16,38 +17,39 @@ const Purchase = () => {
     navigate("/new-purchase")
   }
 
-  const dispatch = useDispatch();
+  // const dispatch = useDispatch();
 
-  useEffect(() => {
-    dispatch(getPurchaseList());
-  }, [dispatch]);
+  // useEffect(() => {
+  //   dispatch(getPurchaseList());
+  // }, [dispatch]);
 
   const { purchaseList,purchaseUpdateModal } = useSelector(state => state.purchase);
-  const [filteredProducts, setFilteredProducts] = useState([])
+  // const [filteredProducts, setFilteredProducts] = useState([])
 
-  const handleSearch = (query) => {
-    const filtered = purchaseList.filter(product => {
-      const nameMatch = product?.product?.name.toLowerCase().includes(query)
-      const articlesMatch = product?.product?.articles.some(article =>
-        article.name.toLowerCase().includes(query)
-      )
-      return nameMatch || articlesMatch
-    })
+  // const handleSearch = (query) => {
+  //   const filtered = purchaseList.filter(product => {
+  //     const nameMatch = product?.product?.name.toLowerCase().includes(query)
+  //     const articlesMatch = product?.product?.articles.some(article =>
+  //       article.name.toLowerCase().includes(query)
+  //     )
+  //     return nameMatch || articlesMatch
+  //   })
 
-    setFilteredProducts(filtered)
-  }
+  //   setFilteredProducts(filtered)
+  // }
 
-  useEffect(() => {
-    setFilteredProducts(purchaseList)
-  }, [purchaseList])
+  // useEffect(() => {
+  //   setFilteredProducts(purchaseList)
+  // }, [purchaseList])
 
 
   return (
     <AdminLayout adminHeader="Məhsul alışı">
       {/* <DashboardFirst /> */}
-      <AdminBigComponentHeader adminHeader={"Alınmış Məhsulların Cədvəli"} hideShowBtn={true} buttonContent="Yeni alış əlave et" onClick={handleClick} />
-      <SearchInpMain onSearch={handleSearch} />
-      <PurchaseEnd purchaseList={filteredProducts} />
+      <AdminBigComponentHeader adminHeader={"Alış Siyahısı"} hideShowBtn={true} buttonContent="Yeni alış əlave et" onClick={handleClick} />
+      {/* <SearchInpMain onSearch={handleSearch} />
+      <PurchaseEnd purchaseList={filteredProducts} /> */}
+      <PurchaseTableEnd/>
       {purchaseUpdateModal && <PurchaseDeleteModal/>}
     </AdminLayout>
   )

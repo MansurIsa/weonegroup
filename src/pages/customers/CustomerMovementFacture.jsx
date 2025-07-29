@@ -18,6 +18,9 @@ const CustomerMovementFacture = () => {
   const { saleUpdateModal } = useSelector(state => state.sales);
   const { customerFactureList } = useSelector(state => state.login);
 
+  console.log(customerFactureList);
+  
+
   // Əgər məlumat yoxdursa və ya salelist_sales boşdursa, heç nə göstərməyək
   if (!customerFactureList || !customerFactureList.salelist_sales) {
     return (

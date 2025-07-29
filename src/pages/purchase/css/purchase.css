@@ -166,3 +166,14 @@
   color: #888;
   font-style: italic;
 }
+
+
+.flex_purchase_cont{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+}
+.flex_purchase_cont .form_group{
+    max-width: 200px !important;
+    min-width: 200px !important;
+}

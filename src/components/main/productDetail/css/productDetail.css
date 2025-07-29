@@ -135,7 +135,12 @@
   margin-top: 10px;
   animation: fadeIn 0.3s ease-in-out;
 }
-
+.price_inc_dec_pr{
+    display: flex;
+    align-items: center;
+    margin-top: 20px;
+    justify-content: space-between;
+}
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(-5px); }
   to { opacity: 1; transform: translateY(0); }

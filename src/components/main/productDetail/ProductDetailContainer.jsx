@@ -1,36 +1,52 @@
 import React, { useState } from 'react'
 import "./css/productDetail.css"
-import Img from "../../../assets/images/fixedPr3.png"
 import { Link, useNavigate } from 'react-router-dom'
 import { addProductToCart } from '../../../actions/productsAction/productsAction'
 import { useDispatch } from 'react-redux'
 
 const ProductDetailContainer = ({ productObj, userObj }) => {
-    console.log(userObj);
-
     const accessToken = localStorage.getItem("accessToken")
     const dispatch = useDispatch()
     const navigate = useNavigate()
 
-    console.log(productObj);
+    const [openIndex, setOpenIndex] = useState(null)
+    const [quantity, setQuantity] = useState(0)
 
-    const [openIndex, setOpenIndex] = useState(null); // hansı başlıq açıqdır?
+    const toggleContent = (index) => {
+        setOpenIndex(openIndex === index ? null : index)
+    }
 
-     const toggleContent = (index) => {
-    setOpenIndex(openIndex === index ? null : index);
-  };
-    
+    const handleIncrement = () => setQuantity(prev => prev + 1)
+    const handleDecrement = () => setQuantity(prev => prev > 0 ? prev - 1 : 0)
+    const handleInputChange = (e) => {
+        let value = e.target.value;
 
+        // Rəqəmdən başqa bir şey daxil olunarsa, icazə vermə
+        if (!/^\d*$/.test(value)) return;
 
-    const addToCart = (data) => {
+        // Əgər boşdursa (backspace ilə silinibsə), sıfır et
+        if (value === "") {
+            setQuantity(0);
+            return;
+        }
+
+        // Əgər başda 0 varsa (məs: 01, 007) → avtomatik təmizlə
+        value = value.replace(/^0+/, '') || '0';
+
+        setQuantity(parseInt(value, 10));
+    };
+
+    const handleInputBlur = () => {
+        if (quantity === "" || quantity < 1) setQuantity(1)
+    }
+
+    const addToCart = () => {
         if (accessToken) {
-            console.log(data);
             dispatch(addProductToCart({
-                quantity: 1,
+                quantity: quantity,
                 user: userObj?.id,
-                product: data?.id
+                product: productObj?.id
             }, navigate))
-
         } else {
             navigate("/login")
         }
@@ -40,9 +56,9 @@ const ProductDetailContainer = ({ productObj, userObj }) => {
         <div className='product_detail_page project_container'>
             <div className="product_detail_page_paths">
                 <Link to={'/products'}>Məhsullar</Link>
-                /
-                <p>{productObj?.name}</p>
+                / <p>{productObj?.name}</p>
             </div>
+
             <div className="product_detail_container">
                 <div className='product_detail_container_img'>
                     <img src={productObj?.image} alt="" />
@@ -51,15 +67,11 @@ const ProductDetailContainer = ({ productObj, userObj }) => {
                 <div className="product_detail_container_right">
                     <div className="product_detail_container_right_color">
                         <h1>{productObj?.name}</h1>
-                        {
-                            accessToken ? (
-                                productObj?.amount > 0 ? (
-                                    <p className='filter_product_card_content_stock_green'>Stokda var</p>
-                                ) : (
-                                    <p className='filter_product_card_content_stock_red'>Stokda bitib</p>
-                                )
-                            ) : null
-                        }
+                        {accessToken && (
+                            productObj?.amount > 0
+                                ? <p className='filter_product_card_content_stock_green'>Stokda var</p>
+                                : <p className='filter_product_card_content_stock_red'>Stokda bitib</p>
+                        )}
                     </div>
 
                     <div className='product_detail_container_right_cat'>
@@ -76,55 +88,51 @@ const ProductDetailContainer = ({ productObj, userObj }) => {
                             <p>{productObj?.store?.name}</p>
                         </div>
                     </div>
-                    {/* <div
-                        className="product_detail_container_right_detail about_html_content"
-                        dangerouslySetInnerHTML={{ __html: productObj?.about }}
-                    /> */}
 
                     <div className="product_detail_about_wrapper">
-            {productObj?.product_abouts?.map((item, index) => (
-              <div key={item.id} className="product_about_item">
-                <div
-                  className="product_about_title"
-                  onClick={() => toggleContent(index)}
-                >
-                  <h3>{item.title}</h3>
-                </div>
-
-                {openIndex === index && (
-                  <div
-                    className="product_about_content about_html_content"
-                    dangerouslySetInnerHTML={{ __html: item.content }}
-                  />
-                )}
-              </div>
-            ))}
-          </div>
-
-
-                    {
-                        accessToken ?
-                            <p className='product_detail_container_right_price'>{userObj?.status === "S" ? productObj?.price : accessToken && "E" ? productObj?.discount_price : null} AZN</p> : null
-                    }
-
-                    <div className="product_detail_container_right_btn">
-                        <button
-                            onClick={() => {
-
-                                addToCart(productObj);
-
-                            }}
-
-                        >
-                            Səbətə əlavə et
-                        </button>
+                        {productObj?.product_abouts?.map((item, index) => (
+                            <div key={item.id} className="product_about_item">
+                                <div className="product_about_title" onClick={() => toggleContent(index)}>
+                                    <h3>{item.title}</h3>
+                                </div>
+                                {openIndex === index && (
+                                    <div className="product_about_content about_html_content" dangerouslySetInnerHTML={{ __html: item.content }} />
+                                )}
+                            </div>
+                        ))}
+                    </div>
+                    <div className='price_inc_dec_pr'>
+                        {accessToken && (
+                            <p className='product_detail_container_right_price'>
+                                {userObj?.status === "S" ? `${productObj?.price===null? 0: productObj?.price} AZN` :
+                                    userObj?.status === "E" ? `${productObj?.discount_price===null? 0: productObj?.discount_price} AZN` : ''}
+                            </p>
+                        )}
+                        <div className="inc_dec_pr">
+                            <button type="button" onClick={handleDecrement}>-</button>
+                            <input
+                                type="text"
+                                inputMode="numeric"
+                                value={quantity}
+                                onChange={handleInputChange}
+                                onBlur={handleInputBlur}
+                            />
+                            <button type="button" onClick={handleIncrement}>+</button>
+                            <button
+                                type="button"
+                                onClick={addToCart}
+                                className='add_to_cart_pr'
+                            >
+                                🛒
+                            </button>
+                        </div>
                     </div>
 
 
+                    {/* ➕➖ Say və səbətə əlavə hissəsi */}
 
                 </div>
             </div>
-
         </div>
     )
 }

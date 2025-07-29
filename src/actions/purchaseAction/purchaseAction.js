@@ -2,7 +2,7 @@ import axios from "axios";
 import { baseUrl } from "../../mainApi/MainApi";
 import { startLoading, stopLoading } from "../../redux/slices/loaderSlice";
 import toast from "react-hot-toast";
-import { closePurchaseUpdateModalFunc, getPurchaseListFunc } from "../../redux/slices/admin/purchaseSlices";
+import { closePurchaseUpdateModalFunc, getPurchaseListFunc, getPurchaseListListFunc, getPurchaseSupplierObjFunc } from "../../redux/slices/admin/purchaseSlices";
 
 export const getPurchaseList = () => async (dispatch) => {
   dispatch(startLoading());
@@ -19,9 +19,30 @@ export const getPurchaseList = () => async (dispatch) => {
 };
 
 
+// export const addPurchase = (data,navigate) => async (dispatch) => {
+//   dispatch(startLoading());
+//   return await axios.post(`${baseUrl}accounting/purchase-create/`,data,{
+//     headers: {
+//           Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+//         }
+//   })
+//     .then((resp) => {
+//         console.log(resp);
+//         toast.success("Alış uğurla edildi");
+//         navigate("/purchase")
+//     })
+//     .catch((err) => {
+//       console.log(err);
+//        toast.error("Xəta baş verdi. Zəhmət olmasa yenidən yoxlayın ❌");
+//     }).finally(() => {
+//       dispatch(stopLoading());
+//     });;
+// };
+
+
 export const addPurchase = (data,navigate) => async (dispatch) => {
   dispatch(startLoading());
-  return await axios.post(`${baseUrl}accounting/purchase-create/`,data,{
+  return await axios.post(`${baseUrl}accounting/bulk-purchase/`,data,{
     headers: {
           Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
         }
@@ -38,7 +59,6 @@ export const addPurchase = (data,navigate) => async (dispatch) => {
       dispatch(stopLoading());
     });;
 };
-
 
 export const deletePurchase = (id,navigate) => async (dispatch) => {
   dispatch(startLoading());
@@ -77,6 +97,37 @@ export const updatePurchase = (data,id,navigate) => async (dispatch) => {
     .catch((err) => {
       console.log(err);
        toast.error("Xəta baş verdi. Zəhmət olmasa yenidən yoxlayın ❌");
+    }).finally(() => {
+      dispatch(stopLoading());
+    });;
+};
+
+
+
+export const getPurchaseListList = () => async (dispatch) => {
+  dispatch(startLoading());
+  return await axios.get(`${baseUrl}accounting/purchaselist-list/`)
+    .then((resp) => {
+        console.log(resp.data);
+      dispatch(getPurchaseListListFunc(resp.data));
+    })
+    .catch((err) => {
+      console.log(err);
+    }).finally(() => {
+      dispatch(stopLoading());
+    });;
+};
+
+
+export const getPurchaseSupplierObj = (id) => async (dispatch) => {
+  dispatch(startLoading());
+  return await axios.get(`${baseUrl}accounting/purchaselist-retrieve/${id}/`)
+    .then((resp) => {
+        console.log(resp.data);
+      dispatch(getPurchaseSupplierObjFunc(resp.data));
+    })
+    .catch((err) => {
+      console.log(err);
     }).finally(() => {
       dispatch(stopLoading());
     });;

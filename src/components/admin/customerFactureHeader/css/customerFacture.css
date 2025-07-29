@@ -1,28 +1,44 @@
 @media print {
+  /* Bu sütunları gizlət */
+  th:nth-child(1),
+  th:nth-child(4),
+  th:nth-child(10),
+  td:nth-child(1),
+  td:nth-child(4),
+  td:nth-child(10) {
+    display: none;
+  }
+
+  /* Artikil scrollunu deaktiv et */
+  .table_article_scroll {
+    white-space: normal !important;
+    overflow: visible !important;
+    max-width: none !important;
+  }
+
+  /* Çap zamanı yalnız əsas table və xülasə hissəsi görünsün */
+  .warehouse_submit,
+  .dashboard_end_pagination {
+    display: none !important;
+  }
+
   body * {
     visibility: hidden;
   }
 
-  .dashboard_end_container,
-  .dashboard_end_container * {
+  .admin_container,
+  .admin_container * {
     visibility: visible;
   }
 
-  .dashboard_end_container {
+  .admin_container {
     position: absolute;
     left: 0;
     top: 0;
     width: 100%;
   }
-
-  .sales_products_factura_btns {
-    display: none; /* Çap zamanı düymələr gizlədilsin */
-  }
-
-  .dashboard_end_pagination {
-    display: none; /* Səhifələmə də çapda gizlədilsin */
-  }
 }
+
 
 .table_article_scroll {
   max-width: 100px;     

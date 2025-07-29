@@ -133,6 +133,7 @@ const Sidebar = () => {
                                 <ul className='submenu'>
                                     <li ><Link className={isActive("/income") ? "sub_active" : ""} to="/income">Gəlir</Link></li>
                                     <li ><Link className={isActive("/expense") ? "sub_active" : ""} to="/expense">Xərc</Link></li>
+                                    <li ><Link className={isActive("/supplier") ? "sub_active" : ""} to="/supplier">Tədarükçü</Link></li>
                                 </ul>
                             )}
                         </>

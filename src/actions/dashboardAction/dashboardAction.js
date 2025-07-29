@@ -50,9 +50,9 @@ export const getStockOutDashboardList = () => async (dispatch) => {
 };
 
 
-export const getChartsDashboardList = (id, x) => async (dispatch) => {
+export const getChartsDashboardList = (id, x,y) => async (dispatch) => {
   dispatch(startLoading());
-  return await axios.get(`${baseUrl}accounting/saledynamics/${id}/${x}/`, {
+  return await axios.get(`${baseUrl}accounting/saledynamics/${id}/${x}/${y}/`, {
     headers: {
       Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
     }

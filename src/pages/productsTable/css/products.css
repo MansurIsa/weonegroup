@@ -39,5 +39,22 @@
     border-radius: 6px;
     cursor: pointer;
 }
+.brand_list_buttons{
+    display: flex;
+    gap: 5px;
+    margin-top: 15px !important;
+    flex-wrap: wrap;
+}
+.brand_list_buttons button{
+    background: var(--gray9);
+    padding: 4px 8px;
+    border-radius: 6px;
+    /* color: var(--white); */
+    font-weight: 600;
+}
 
 
+.brand_list_buttons button.active {
+  background-color: var(--yellow);
+ 
+}

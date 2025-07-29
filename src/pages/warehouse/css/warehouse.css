@@ -121,11 +121,12 @@
 /* Məbləğ hissəsi */
 .warehouse_summary {
     display: flex;
-    flex-direction: column;
+    /* flex-direction: column; */
     gap: 12px;
     margin-top: 20px;
     font-size: 14px;
-    align-items: flex-end;
+    /* align-items: flex-end; */
+    flex-wrap: wrap;
 }
 
 .warehouse_summary div {

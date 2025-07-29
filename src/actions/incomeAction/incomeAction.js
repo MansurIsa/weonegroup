@@ -2,7 +2,7 @@ import axios from "axios";
 import { baseUrl } from "../../mainApi/MainApi";
 import { startLoading, stopLoading } from "../../redux/slices/loaderSlice";
 import toast from "react-hot-toast";
-import { closeIncomeAddPaymentModal, getExpenseListFunc, getPaymentListFunc } from "../../redux/slices/admin/incomeSlices";
+import { closeIncomeAddPaymentModal, getExpenseListFunc, getPaymentListFunc, getSupplierListFunc } from "../../redux/slices/admin/incomeSlices";
 
 export const getPaymentList = () => async (dispatch) => {
   dispatch(startLoading());
@@ -149,6 +149,85 @@ export const deleteExpense = (id,navigate) => async (dispatch) => {
         console.log(resp);
         toast.success("Xərc Məlumatları silindi");
         navigate("/expense")
+        dispatch(closeIncomeAddPaymentModal())
+    })
+    .catch((err) => {
+      console.log(err);
+       toast.error("Xəta baş verdi. Zəhmət olmasa yenidən yoxlayın ❌");
+    }).finally(() => {
+      dispatch(stopLoading());
+    });;
+};
+
+
+
+export const getSupplierList = () => async (dispatch) => {
+  dispatch(startLoading());
+  return await axios.get(`${baseUrl}accounting/supplierpayment-list/`)
+    .then((resp) => {
+        console.log(resp.data);
+      dispatch(getSupplierListFunc(resp.data));
+    })
+    .catch((err) => {
+      console.log(err);
+    }).finally(() => {
+      dispatch(stopLoading());
+    });;
+};
+
+
+export const addSupplier = (data,navigate) => async (dispatch) => {
+  dispatch(startLoading());
+  return await axios.post(`${baseUrl}accounting/supplierpayment-create/`,data,{
+    headers: {
+          Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+        }
+  })
+    .then((resp) => {
+        console.log(resp);
+        toast.success("Ödəniş əlavə edildi");
+        navigate("/supplier")
+    })
+    .catch((err) => {
+      console.log(err);
+       toast.error("Xəta baş verdi. Zəhmət olmasa yenidən yoxlayın ❌");
+    }).finally(() => {
+      dispatch(stopLoading());
+    });;
+};
+
+
+export const updateSupplier = (data,id,navigate) => async (dispatch) => {
+  dispatch(startLoading());
+  return await axios.put(`${baseUrl}accounting/supplierpayment-retrieve-update-delete/${id}/`,data,{
+    headers: {
+          Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+        }
+  })
+    .then((resp) => {
+        console.log(resp);
+        toast.success("Tədarükçünün Ödəniş Məlumatları dəyişdirildi");
+        navigate("/supplier")
+    })
+    .catch((err) => {
+      console.log(err);
+       toast.error("Xəta baş verdi. Zəhmət olmasa yenidən yoxlayın ❌");
+    }).finally(() => {
+      dispatch(stopLoading());
+    });;
+};
+
+export const deleteSupplier = (id,navigate) => async (dispatch) => {
+  dispatch(startLoading());
+  return await axios.delete(`${baseUrl}accounting/supplierpayment-retrieve-update-delete/${id}/`,{
+    headers: {
+          Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+        }
+  })
+    .then((resp) => {
+        console.log(resp);
+        toast.success("Tədarükçünün Ödəniş Məlumatları silindi");
+        navigate("/supplier")
         dispatch(closeIncomeAddPaymentModal())
     })
     .catch((err) => {
