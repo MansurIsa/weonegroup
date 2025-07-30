@@ -132,3 +132,26 @@ export const getPurchaseSupplierObj = (id) => async (dispatch) => {
       dispatch(stopLoading());
     });;
 };
+
+
+
+export const deletePurchaseComp = (id,navigate) => async (dispatch) => {
+  dispatch(startLoading());
+  return await axios.delete(`${baseUrl}accounting/purchaselist-delete/${id}/`,{
+    headers: {
+          Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+        }
+  })
+    .then((resp) => {
+        console.log(resp);
+        toast.success("Alış uğurla silindi");
+        navigate("/purchase")
+        dispatch(closePurchaseUpdateModalFunc())
+    })
+    .catch((err) => {
+      console.log(err);
+       toast.error("Xəta baş verdi. Zəhmət olmasa yenidən yoxlayın ❌");
+    }).finally(() => {
+      dispatch(stopLoading());
+    });;
+};

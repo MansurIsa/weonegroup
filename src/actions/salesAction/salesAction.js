@@ -119,3 +119,27 @@ export const updateSaleStatus = (data,id,navigate) => async (dispatch) => {
       dispatch(stopLoading());
     });;
 };
+
+
+
+export const deleteSalesComp = (id,navigate) => async (dispatch) => {
+  dispatch(startLoading());
+  return await axios.delete(`${baseUrl}accounting/salelist-delete/${id}/`,{
+    headers: {
+          Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+        }
+  })
+    .then((resp) => {
+        console.log(resp);
+        toast.success("Məhsul satışı silindi");
+        navigate("/sales")
+        dispatch(closeSaleUpdateModalFunc())
+        
+    })
+    .catch((err) => {
+      console.log(err);
+       toast.error("Xəta baş verdi. Zəhmət olmasa yenidən yoxlayın ❌");
+    }).finally(() => {
+      dispatch(stopLoading());
+    });;
+};

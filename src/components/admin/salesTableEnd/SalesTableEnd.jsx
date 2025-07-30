@@ -7,7 +7,7 @@ import { getSalesList } from '../../../actions/salesAction/salesAction';
 import { getCustomerFactureList } from '../../../actions/loginAction/loginAction';
 import { FaPenToSquare } from 'react-icons/fa6';
 import { AiTwotoneDelete } from 'react-icons/ai';
-import { saleUpdateModalFunc, setSaleUpdateObjFunc } from '../../../redux/slices/admin/salesSlice';
+import { saleDeleteModalFunc, saleUpdateModalFunc, setSaleUpdateObjFunc } from '../../../redux/slices/admin/salesSlice';
 import SearchInpMain from '../searchInpMain/SearchInpMain';
 
 const ITEMS_PER_PAGE = 5;
@@ -106,9 +106,9 @@ console.log(filteredSales);
         setCurrentPage(event.selected);
     };
 
-    // const deleteSale = (id) => {
-    //     dispatch(saleUpdateModalFunc(id));
-    // };
+    const deleteSale = (id) => {
+        dispatch(saleDeleteModalFunc(id));
+    };
 
     // const updateSale = (item) => {
     //     dispatch(setSaleUpdateObjFunc(item));
@@ -145,6 +145,7 @@ console.log(filteredSales);
                         <th>Ümumi Məbləğ</th>
                         <th>Satış Tarixi</th>
                         <th>Status</th>
+                        <th>Sil</th>
                         {/* <th>Düzəliş/Sil</th> */}
                     </tr>
                 </thead>
@@ -170,10 +171,9 @@ console.log(filteredSales);
                                             ? "var(--yellow)"
                                             : "inherit"
                             }}>{item?.sale_status === "S" ? "Satılıb" : item?.sale_status === "G" ? "Gözləyir" : "-"}</td>
-                            {/* <td className='table_update'>
-                                <FaPenToSquare onClick={() => updateSale(item)} />
+                            <td className='table_update'>
                                 <AiTwotoneDelete onClick={() => deleteSale(item?.id)} />
-                            </td> */}
+                            </td>
                         </tr>
                     ))}
                 </tbody>

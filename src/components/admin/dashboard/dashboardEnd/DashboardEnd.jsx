@@ -26,7 +26,8 @@ const DashboardEnd = () => {
 
   return (
     <div className="admin_container dashboard_end_container">
-      <table className="custom_table">
+      <div className="table_wrapper">
+         <table className="custom_table">
         <thead>
           <tr>
             <th>Məhsul Adı</th>
@@ -57,6 +58,8 @@ const DashboardEnd = () => {
           })}
         </tbody>
       </table>
+      </div>
+     
 
       <ReactPaginate
         previousLabel={

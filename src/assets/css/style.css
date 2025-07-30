@@ -55,3 +55,11 @@ input,textarea{
         padding: 0 20px;
     }
 }
+
+@media screen and (max-width: 1500px) {
+    .admin_container {
+        margin: 0 20px;
+    }
+
+   
+}

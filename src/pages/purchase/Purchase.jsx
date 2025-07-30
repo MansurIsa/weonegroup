@@ -9,6 +9,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { getPurchaseList } from '../../actions/purchaseAction/purchaseAction'
 import PurchaseDeleteModal from '../../components/admin/modals/PurchaseDeleteModal'
 import PurchaseTableEnd from './PurchaseTableEnd'
+import PurchaseDeleteModalComp from '../../components/admin/modals/PurchaseDeleteModalComp'
 
 const Purchase = () => {
   const navigate = useNavigate()
@@ -23,7 +24,7 @@ const Purchase = () => {
   //   dispatch(getPurchaseList());
   // }, [dispatch]);
 
-  const { purchaseList,purchaseUpdateModal } = useSelector(state => state.purchase);
+  const { purchaseDeleteModal } = useSelector(state => state.purchase);
   // const [filteredProducts, setFilteredProducts] = useState([])
 
   // const handleSearch = (query) => {
@@ -50,7 +51,8 @@ const Purchase = () => {
       {/* <SearchInpMain onSearch={handleSearch} />
       <PurchaseEnd purchaseList={filteredProducts} /> */}
       <PurchaseTableEnd/>
-      {purchaseUpdateModal && <PurchaseDeleteModal/>}
+      {purchaseDeleteModal && <PurchaseDeleteModalComp/>}
+     
     </AdminLayout>
   )
 }

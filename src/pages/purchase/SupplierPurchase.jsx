@@ -3,10 +3,13 @@ import AdminLayout from '../../layouts/adminLayout/AdminLayout';
 import SearchInpMain from '../../components/admin/searchInpMain/SearchInpMain';
 import PurchaseEnd from '../../components/admin/purchaseEnd/PurchaseEnd';
 import { useSelector } from 'react-redux';
+import PurchaseDeleteModal from '../../components/admin/modals/PurchaseDeleteModal';
 
 const SupplierPurchase = () => {
   const { supplierPurchaseObj } = useSelector(state => state.purchase);
   const [filteredProducts, setFilteredProducts] = useState([]);
+
+  const { purchaseList,purchaseUpdateModal } = useSelector(state => state.purchase);
 
   // Məlumat varsa ilkin olaraq ona uyğun filtered data təyin edilir
   useEffect(() => {
@@ -33,6 +36,7 @@ const SupplierPurchase = () => {
     <AdminLayout adminHeader="Alınmış məhsullar">
       <SearchInpMain onSearch={handleSearch} />
       <PurchaseEnd purchaseList={filteredProducts} />
+       {purchaseUpdateModal && <PurchaseDeleteModal/>}
     </AdminLayout>
   );
 };

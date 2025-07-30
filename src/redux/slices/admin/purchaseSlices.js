@@ -8,7 +8,9 @@ const PurchaseSlice = createSlice({
         purchaseId: "",
         updatePurchaseObj: {},
         purchaseListList: [],
-        supplierPurchaseObj: {}
+        supplierPurchaseObj: {},
+        purchaseDeleteModal: false,
+        purchaseDeleteId: ""
      
     },
     reducers: {
@@ -21,6 +23,7 @@ const PurchaseSlice = createSlice({
         },
         closePurchaseUpdateModalFunc: (state,action)=>{
             state.purchaseUpdateModal=false
+            state.purchaseDeleteModal=false
         },
         setUpdatePurchaseObjFunc: (state,action)=>{
             state.updatePurchaseObj=action.payload
@@ -30,6 +33,10 @@ const PurchaseSlice = createSlice({
         },
         getPurchaseSupplierObjFunc: (state,action)=>{
             state.supplierPurchaseObj=action.payload
+        },
+        purchaseDeleteModalFunc: (state,action)=>{
+            state.purchaseDeleteModal=true
+            state.purchaseDeleteId=action.payload
         }
     
     }
@@ -37,5 +44,5 @@ const PurchaseSlice = createSlice({
 
 export const PurchaseReducer = PurchaseSlice.reducer;
 export const {getPurchaseListFunc,closePurchaseUpdateModalFunc,purchaseUpdateModalFunc,setUpdatePurchaseObjFunc,
-    getPurchaseListListFunc,getPurchaseSupplierObjFunc
+    getPurchaseListListFunc,getPurchaseSupplierObjFunc,purchaseDeleteModalFunc
 } = PurchaseSlice.actions;

@@ -85,7 +85,9 @@ const adminOnlyPaths = [
   "/update-sales-products-select",
   "/update-new-purchase",
   "/update-new-products",
-  "/update-new-customer"
+  "/update-new-customer",
+  "/supplier-purchase",
+  "/supplier"
 ];
 
 // Routing

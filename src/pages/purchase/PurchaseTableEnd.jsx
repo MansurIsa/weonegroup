@@ -4,6 +4,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { getPurchaseListList, getPurchaseSupplierObj } from '../../actions/purchaseAction/purchaseAction';
 import SearchInpMain from '../../components/admin/searchInpMain/SearchInpMain';
 import { useNavigate } from 'react-router-dom';
+import { AiTwotoneDelete } from 'react-icons/ai';
+import { purchaseDeleteModalFunc } from '../../redux/slices/admin/purchaseSlices';
 
 const ITEMS_PER_PAGE = 5;
 
@@ -84,6 +86,12 @@ const PurchaseTableEnd = () => {
         dispatch(getPurchaseSupplierObj(x))
     }
 
+     const deletePurchase=(x)=>{
+       dispatch(purchaseDeleteModalFunc(x))
+    
+       
+    }
+
     return (
         <div className='admin_container dashboard_end_container'>
             {/* <h2>Alış Siyahısı</h2> */}
@@ -107,8 +115,8 @@ const PurchaseTableEnd = () => {
 
 
             <SearchInpMain onSearch={handleSearch} />
-
-            <table className='custom_table custom_table_sales'>
+            <div className="table_wrapper">
+                  <table className='custom_table custom_table_sales'>
                 <thead>
                     <tr>
                         <th></th>
@@ -120,6 +128,7 @@ const PurchaseTableEnd = () => {
                         <th>Satış Qiyməti</th>
                         <th>Endirimli Qiymət</th>
                         <th>Status</th>
+                        <th>Sil</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -148,10 +157,15 @@ const PurchaseTableEnd = () => {
                                         ? <span style={{ color: 'orange' }}>Gözləyir</span>
                                         : '-'}
                             </td>
+                            <td className='table_update'>
+                                <AiTwotoneDelete onClick={() => deletePurchase(item?.id)} />
+                            </td>
                         </tr>
                     ))}
                 </tbody>
             </table>
+            </div>
+          
 
             <ReactPaginate
                 previousLabel={

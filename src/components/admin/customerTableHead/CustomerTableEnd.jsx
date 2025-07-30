@@ -67,13 +67,25 @@ const CustomerTableEnd = ({ usersList }) => {
                             <td>{item.phone_number || "-"}</td>
                             <td>{item.address || "-"}</td>
                             <td>{item?.customer_debt_amount} ₼</td> {/* Bizə borc üçün hazırda dummy dəyər */}
-                            <td>{item?.our_debt_amount} ₼</td> {/* Bizim borc üçün hazırda dummy dəyər */}
+                            <td>
+                                {item?.is_supplier === true && Array.isArray(item?.our_debt_amount) ? (() => {
+                                    const [manat, dollar, rubl] = item.our_debt_amount;
+                                    if (manat !== 0) return `${manat} ₼`;
+                                    if (dollar !== 0) return `${dollar} $`;
+                                    if (rubl !== 0) return `${rubl} ₽`;
+                                    return `0 ₼`; // hamısı 0 olarsa
+                                })() : (
+                                    `${item?.our_debt_amount===null? 0 : item?.our_debt_amount} ₼`
+                                )}
+                            </td>
+
+                            {/* Bizim borc üçün hazırda dummy dəyər */}
                             <td>
                                 {
                                     item.status === "S" ? "Satış Qiyməti"
                                         : item.status === "E" ? "Endirimli Qiyməti"
-                                            
-                                                : "—"
+
+                                            : "—"
                                 }
                             </td>
                             <td className='table_update'>

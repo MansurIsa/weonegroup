@@ -177,3 +177,15 @@
     max-width: 200px !important;
     min-width: 200px !important;
 }
+
+
+.table_wrapper {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.custom_table {
+  width: 100%;
+  min-width: 1000px; /* Burda minimum eni təyin et ki, scroll lazım olsun */
+  border-collapse: collapse;
+}

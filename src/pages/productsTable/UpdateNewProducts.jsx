@@ -11,7 +11,7 @@ const UpdateNewProducts = () => {
     const [formData, setFormData] = useState({
         name: '',
         articles: [''],
-        article_ids: [],
+        article_ids: [null],
         category: '',
         brand: '',
         store: '',
@@ -28,6 +28,8 @@ const UpdateNewProducts = () => {
     });
 
     const [previewUrl, setPreviewUrl] = useState(null);
+
+
 
     const dispatch = useDispatch();
     const navigate = useNavigate();
@@ -50,8 +52,14 @@ const UpdateNewProducts = () => {
         if (productUpdateObj) {
             setFormData({
                 name: productUpdateObj.name || '',
-                articles: productUpdateObj.articles?.map(a => typeof a === 'string' ? a : a.name) || [''],
-                article_ids: productUpdateObj.articles?.map(a => a.id) || [],
+                articles:
+                    productUpdateObj.articles && productUpdateObj.articles.length > 0
+                        ? productUpdateObj.articles.map(a => typeof a === 'string' ? a : a.name)
+                        : [''],  // boş olduqda 1 boş input üçün array
+                article_ids:
+                    productUpdateObj.articles && productUpdateObj.articles.length > 0
+                        ? productUpdateObj.articles.map(a => a.id)
+                        : [null],
                 category: productUpdateObj.category?.id || '',
                 brand: productUpdateObj.brand?.id || '',
                 store: productUpdateObj.store?.id || '',
@@ -71,7 +79,7 @@ const UpdateNewProducts = () => {
     }, [productUpdateObj]);
 
     console.log(productUpdateObj);
-    
+
 
 
     // Handlers
@@ -89,21 +97,22 @@ const UpdateNewProducts = () => {
         setFormData(prev => ({ ...prev, articles: newArticles }));
     };
 
+    const removeArticle = (index) => {
+        const newArticles = formData.articles.filter((_, i) => i !== index);
+        const newArticleIds = formData.article_ids.filter((_, i) => i !== index);
+
+        setFormData(prev => ({
+            ...prev,
+            articles: newArticles.length > 0 ? newArticles : [''],    // boş qalmasın
+            article_ids: newArticleIds.length > 0 ? newArticleIds : [null],
+        }));
+    };
+
     const addArticle = () => {
         setFormData(prev => ({
             ...prev,
             articles: [...prev.articles, ''],
-            article_ids: [...prev.article_ids, null], // keep ids aligned
-        }));
-    };
-
-    const removeArticle = (index) => {
-        const newArticles = formData.articles.filter((_, i) => i !== index);
-        const newArticlesIds = formData.article_ids.filter((_, i) => i !== index);
-        setFormData(prev => ({
-            ...prev,
-            articles: newArticles,
-            article_ids: newArticlesIds,
+            article_ids: [...prev.article_ids, null],
         }));
     };
 
@@ -148,55 +157,56 @@ const UpdateNewProducts = () => {
         }
     };
 
- const handleSubmit = (e) => {
-    e.preventDefault();
+    const handleSubmit = (e) => {
+        e.preventDefault();
 
-    const form = new FormData();
+        const form = new FormData();
 
-    // Articles: bütün adlar
-    const allArticles = formData.articles;
+        // Articles: bütün adlar
+        const allArticles = formData.articles;
 
-    console.log(formData);
-    
-    const existingArticleIds = formData.article_ids.filter(id => id);
+        console.log(formData);
 
-    console.log(existingArticleIds);
-    
+        const existingArticleIds = formData.article_ids.filter(id => id);
 
-  
-    const allTitles = formData.titles;
-    const allContents = formData.contents;
+        console.log(existingArticleIds);
 
-    // About IDs: yalnız mövcud olanlar
-    const existingAboutIds = formData.about_ids.filter(id => id);
 
-    // Form məlumatlarını əlavə et
-    form.append('name', formData.name);
-    form.append('articles', JSON.stringify(allArticles));         // bütün article adları
-    form.append('article_ids', JSON.stringify(existingArticleIds)); // yalnız mövcud ID-lər
 
-    form.append('titles', JSON.stringify(allTitles));             // bütün titles
-    form.append('contents', JSON.stringify(allContents));         // bütün contents
-    form.append('about_ids', JSON.stringify(existingAboutIds));   // yalnız mövcud ID-lər
- 
-    form.append('category', +formData.category);
-    form.append('brand', +formData.brand);
-    form.append('store', +formData.store);
-    form.append('amount', formData.amount);
-    form.append('cost_price', formData.costPrice);
-    form.append('currency', formData.purchaseCurrency);
-    form.append('purchase_price', formData.purchasePrice);
-    form.append('price', formData.salePrice);
-    form.append('discount_price', formData.discountPrice);
+        const allTitles = formData.titles;
+        const allContents = formData.contents;
 
-    if (formData.image) {
-        form.append('image', formData.image);
-    }
+        // About IDs: yalnız mövcud olanlar
+        const existingAboutIds = formData.about_ids.filter(id => id);
 
-    console.log(Object.fromEntries(form.entries()));
+        // Form məlumatlarını əlavə et
+        form.append('name', formData.name);
+        form.append('articles', JSON.stringify(formData.articles));
+        form.append('article_ids', JSON.stringify(formData.article_ids.filter(id => id)));
 
-    dispatch(updateProduct(productUpdateObj?.id, form, navigate));
-};
+
+        form.append('titles', JSON.stringify(allTitles));             // bütün titles
+        form.append('contents', JSON.stringify(allContents));         // bütün contents
+        form.append('about_ids', JSON.stringify(existingAboutIds));   // yalnız mövcud ID-lər
+
+        form.append('category', +formData.category);
+        form.append('brand', +formData.brand);
+        form.append('store', +formData.store);
+        form.append('amount', formData.amount);
+        form.append('cost_price', formData.costPrice);
+        form.append('currency', formData.purchaseCurrency);
+        form.append('purchase_price', formData.purchasePrice);
+        form.append('price', formData.salePrice);
+        form.append('discount_price', formData.discountPrice);
+
+        if (formData.image) {
+            form.append('image', formData.image);
+        }
+
+        console.log(Object.fromEntries(form.entries()));
+
+        dispatch(updateProduct(productUpdateObj?.id, form, navigate));
+    };
 
 
     const returnToProducts = () => {
