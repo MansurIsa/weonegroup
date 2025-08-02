@@ -53,69 +53,74 @@ const CustomerFactureEnd = ({ factureList = [] }) => {
   return (
     <div className='admin_container dashboard_end_container'>
       <div className="table_scroll_wrapper">
-         <table className='custom_table'>
-        <thead>
-          <tr>
-            <th>N</th>
-            <th>Məhsul Adı</th>
-            <th>Artikl</th>
-            <th>Kateqoriya</th>
-            <th>Marka</th>
-            {/* <th>Brend</th> */}
-            <th>Miqdar</th>
-            <th>Satış Qiyməti</th>
-            <th>Ümumi məbləğ</th>
-            <th>Status</th> 
-            <th>Düzəliş/Sil</th>
-          </tr>
-        </thead>
-        <tbody>
-          {currentPageData.map((item, index) => (
-            <tr key={item.id}>
-              <td>{offset + index + 1}</td>
-              <td>{item.product?.name || '—'}</td>
-              <td className='table_article_scroll'>
-                {item.product?.articles?.map((art) => art.name).join(', ') || '—'}
-              </td>
-              <td>{item.product?.category?.name || '—'}</td>
-              <td>{item.product?.brand?.name || '—'}</td>
-              {/* <td>{item.product?.store?.name || '—'}</td> */}
-              <td>{item.amount}</td>
-              <td>{item.price} ₼</td>
-              <td>{(item.amount * item.price).toFixed(2)} ₼</td>
-              <td style={{
-                color:
-                  item?.status === "S"
-                    ? "var(--green)"
-                    : item?.status === "G"
-                      ? "var(--yellow)"
-                      : "inherit"
-              }}>{item?.status === "S" ? "Satılıb" : item?.status === "G" ? "Gözləyir" : "-"}</td>
-              <td className='table_update'>
-                <FaPenToSquare onClick={() => updateSale(item)} />
-                <AiTwotoneDelete onClick={() => deleteSale(item?.id)} />
-              </td>
+        <table className='custom_table'>
+          <thead>
+            <tr>
+              <th>N</th>
+              <th>Məhsul Adı</th>
+              <th>Artikl</th>
+              <th>Kateqoriya</th>
+              <th>Marka</th>
+              {/* <th>Brend</th> */}
+              <th>Miqdar</th>
+              <th>Satış Qiyməti</th>
+              <th>Ümumi məbləğ</th>
+              <th>Status</th>
+              <th>Düzəliş/Sil</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {currentPageData.map((item, index) => (
+              <tr key={item.id}>
+                <td>{offset + index + 1}</td>
+                <td>{item.product?.name || '—'}</td>
+                <td className='table_article_scroll'>
+                  <span className="screen-only">
+                    {item.product?.articles?.map((art) => art.name).join(', ') || '—'}
+                  </span>
+                  <span className="print-only">
+                    {item.product?.articles?.[0]?.name || '—'}
+                  </span>
+                </td>
+                <td>{item.product?.category?.name || '—'}</td>
+                <td>{item.product?.brand?.name || '—'}</td>
+                {/* <td>{item.product?.store?.name || '—'}</td> */}
+                <td>{item.amount}</td>
+                <td>{item.price} ₼</td>
+                <td>{(item.amount * item.price).toFixed(2)} ₼</td>
+                <td style={{
+                  color:
+                    item?.status === "S"
+                      ? "var(--green)"
+                      : item?.status === "G"
+                        ? "var(--yellow)"
+                        : "inherit"
+                }}>{item?.status === "S" ? "Satılıb" : item?.status === "G" ? "Gözləyir" : "-"}</td>
+                <td className='table_update'>
+                  <FaPenToSquare onClick={() => updateSale(item)} />
+                  <AiTwotoneDelete onClick={() => deleteSale(item?.id)} />
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
 
       </div>
-     
+
       <div className="warehouse_summary">
         <div>
           <label>Köhnə borc:  {factureList[0]?.old_debt}AZN</label>
         </div>
-          <div>
+        <div>
           <label>Yeni borc:  {factureList[0]?.new_debt}AZN</label>
         </div>
-         <div>
-          <label>Müştərinin ümumi ödədiyi:  {factureList[0]?.total_paid_amount}AZN</label>
+        <div>
+          <label>Müştərinin ödədiyi:  {factureList[0]?.paid_amount}AZN</label>
         </div>
-         <div>
+        <div>
           <label>Müştərinin ümumi qalan borcu:  {factureList[0]?.total_debt}AZN</label>
         </div>
-         <div>
+        <div>
           <label>Ümumi gəlir:  {factureList[0]?.total_profit}AZN</label>
         </div>
       </div>

@@ -41,10 +41,10 @@ const CustomSupplierSelect = ({ suppliers, value, onChange }) => {
 
   return (
     <div className="form_group custom-select-container" ref={containerRef}>
-      <label>Tədarükçü</label>
+      <label>Tədarükçü/Müştəri</label>
       <input
         type="text"
-        placeholder="Tədarükçü axtar..."
+        placeholder="Tədarükçü/Müştəri axtar..."
         value={searchTerm}
         onChange={(e) => {
           setSearchTerm(e.target.value);

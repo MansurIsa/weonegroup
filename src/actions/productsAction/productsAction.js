@@ -73,7 +73,7 @@ export const addProductToCart = (data,navigate) => async (dispatch) => {
     .then((resp) => {
         console.log(resp);
         toast.success("Məhsul səbətə əlavə edildi");
-        navigate("/cart")
+        // navigate("/cart")
     })
     .catch((err) => {
       console.log(err);

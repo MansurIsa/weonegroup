@@ -189,3 +189,9 @@
   min-width: 1000px; /* Burda minimum eni təyin et ki, scroll lazım olsun */
   border-collapse: collapse;
 }
+
+
+  .number_table{
+    width: 60px !important;
+    min-width: 60px !important;
+  }

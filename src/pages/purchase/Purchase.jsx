@@ -10,6 +10,7 @@ import { getPurchaseList } from '../../actions/purchaseAction/purchaseAction'
 import PurchaseDeleteModal from '../../components/admin/modals/PurchaseDeleteModal'
 import PurchaseTableEnd from './PurchaseTableEnd'
 import PurchaseDeleteModalComp from '../../components/admin/modals/PurchaseDeleteModalComp'
+import PurchaseUpdateModalCommon from '../../components/admin/modals/PurchaseUpdateModalCommon'
 
 const Purchase = () => {
   const navigate = useNavigate()
@@ -24,7 +25,7 @@ const Purchase = () => {
   //   dispatch(getPurchaseList());
   // }, [dispatch]);
 
-  const { purchaseDeleteModal } = useSelector(state => state.purchase);
+  const { purchaseDeleteModal,purchaseUpdateModalCommon } = useSelector(state => state.purchase);
   // const [filteredProducts, setFilteredProducts] = useState([])
 
   // const handleSearch = (query) => {
@@ -52,6 +53,7 @@ const Purchase = () => {
       <PurchaseEnd purchaseList={filteredProducts} /> */}
       <PurchaseTableEnd/>
       {purchaseDeleteModal && <PurchaseDeleteModalComp/>}
+      {purchaseUpdateModalCommon && <PurchaseUpdateModalCommon/>}
      
     </AdminLayout>
   )

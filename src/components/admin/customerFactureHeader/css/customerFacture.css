@@ -1,3 +1,11 @@
+.screen-only {
+  display: inline;
+}
+.print-only {
+  display: none;
+}
+
+
 @media print {
   /* Bu sütunları gizlət */
   th:nth-child(1),
@@ -37,6 +45,20 @@
     top: 0;
     width: 100%;
   }
+   .warehouse_summary div:last-child {
+    display: none !important;
+  }
+  th:nth-child(9),
+  td:nth-child(9) {
+    display: none !important;
+  }
+   .screen-only {
+    display: none !important;
+  }
+  .print-only {
+    display: inline !important;
+  }
+  
 }
 
 

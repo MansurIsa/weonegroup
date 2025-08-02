@@ -14,20 +14,21 @@ const NewCustomer = () => {
         password: '',
         phone: '',
         priceType: '',
-        isSupplier: false // yeni sahə
+        // isSupplier: false // yeni sahə
     });
 
 
     const navigate = useNavigate();
     const dispatch = useDispatch()
 
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-        setFormData(prev => ({
-            ...prev,
-            [name]: name === "isSupplier" ? value === "true" : value
-        }));
-    };
+   const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+        ...prev,
+        [name]: value
+    }));
+};
+
 
 
     const handleSubmit = (e) => {
@@ -42,7 +43,7 @@ const NewCustomer = () => {
             password: formData.password,
             is_staff: false,
             is_superuser: false,
-            is_supplier: formData.isSupplier // əlavə edildi
+            // is_supplier: formData.isSupplier // əlavə edildi
         };
 
         console.log('Form məlumatları:', payload);
@@ -144,7 +145,7 @@ const NewCustomer = () => {
 
                             </select>
                         </div>
-                        <div className="form_group">
+                        {/* <div className="form_group">
                             <label>Müştəri(Tədarükçü)</label>
                             <select
                                 name="isSupplier"
@@ -154,7 +155,7 @@ const NewCustomer = () => {
                                 <option value="false">Müştəri</option>
                                 <option value="true">Tədarükçü</option>
                             </select>
-                        </div>
+                        </div> */}
 
                     </div>
 

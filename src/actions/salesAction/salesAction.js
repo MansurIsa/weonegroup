@@ -143,3 +143,25 @@ export const deleteSalesComp = (id,navigate) => async (dispatch) => {
       dispatch(stopLoading());
     });;
 };
+
+
+
+export const updateSaleCommon = (data,id,navigate) => async (dispatch) => {
+  dispatch(startLoading());
+  return await axios.put(`${baseUrl}accounting/salelist-update/${id}/`,data,{
+    headers: {
+          Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+        }
+  })
+    .then((resp) => {
+        console.log(resp);
+        toast.success("Satış məlumatı uğurla dəyişdirildi");
+        navigate("/sales")
+    })
+    .catch((err) => {
+      console.log(err);
+       toast.error("Xəta baş verdi. Zəhmət olmasa yenidən yoxlayın ❌");
+    }).finally(() => {
+      dispatch(stopLoading());
+    });;
+};

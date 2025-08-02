@@ -14,7 +14,7 @@ const UpdateNewCustomer = () => {
         password: '',
         phone: '',
         priceType: '',
-        isSupplier: false
+        // isSupplier: false
     });
 
     const navigate = useNavigate();
@@ -33,7 +33,7 @@ const UpdateNewCustomer = () => {
                 password: '',
                 phone: updateCustomerObj.phone_number || '',
                 priceType: updateCustomerObj.status || '',
-                isSupplier: updateCustomerObj.is_supplier || false
+                // isSupplier: updateCustomerObj.is_supplier || false
             });
         }
     }, [updateCustomerObj]);
@@ -42,7 +42,7 @@ const UpdateNewCustomer = () => {
         const { name, value } = e.target;
         setFormData(prev => ({
             ...prev,
-            [name]: name === "isSupplier" ? value === "true" : value
+            [name]:  value
         }));
     };
 
@@ -58,7 +58,7 @@ const UpdateNewCustomer = () => {
             password: formData.password,
             is_staff: false,
             is_superuser: false,
-            is_supplier: formData.isSupplier
+            // is_supplier: formData.isSupplier
         };
 
         console.log('Form məlumatları:', payload);
@@ -158,7 +158,7 @@ const UpdateNewCustomer = () => {
                             </select>
                         </div>
 
-                        <div className="form_group">
+                        {/* <div className="form_group">
                             <label>Müştəri(Tədarükçü)</label>
                             <select
                                 name="isSupplier"
@@ -168,7 +168,7 @@ const UpdateNewCustomer = () => {
                                 <option value="false">Müştəri</option>
                                 <option value="true">Tədarükçü</option>
                             </select>
-                        </div>
+                        </div> */}
                     </div>
 
                     <div className="form_footer">

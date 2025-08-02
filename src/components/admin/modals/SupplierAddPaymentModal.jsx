@@ -59,9 +59,9 @@ const currencyLabels = {
 
             {/* Tədarükçü seçimi */}
             <div className="form_group">
-              <label>Tədarükçü</label>
+              <label>Tədarükçü/Müştəri</label>
               <select value={selectedCustomer} onChange={(e) => setSelectedCustomer(e.target.value)}>
-                <option value="">Tədarükçü seçin</option>
+                <option value="">Tədarükçü/Müştəri seçin</option>
                 {usersList?.filter(user => user.is_supplier).map(user => (
                   <option key={user.id} value={user.id}>
                     {user.first_name} {user.last_name} ({user?.username})

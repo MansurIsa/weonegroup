@@ -206,7 +206,7 @@ export const updateSupplier = (data,id,navigate) => async (dispatch) => {
   })
     .then((resp) => {
         console.log(resp);
-        toast.success("Tədarükçünün Ödəniş Məlumatları dəyişdirildi");
+        toast.success("Tədarükçünün/Müştərinin Ödəniş Məlumatları dəyişdirildi");
         navigate("/supplier")
     })
     .catch((err) => {
@@ -226,7 +226,7 @@ export const deleteSupplier = (id,navigate) => async (dispatch) => {
   })
     .then((resp) => {
         console.log(resp);
-        toast.success("Tədarükçünün Ödəniş Məlumatları silindi");
+        toast.success("Tədarükçünün/Müştərinin Ödəniş Məlumatları silindi");
         navigate("/supplier")
         dispatch(closeIncomeAddPaymentModal())
     })

@@ -5,7 +5,8 @@ import { getPurchaseListList, getPurchaseSupplierObj } from '../../actions/purch
 import SearchInpMain from '../../components/admin/searchInpMain/SearchInpMain';
 import { useNavigate } from 'react-router-dom';
 import { AiTwotoneDelete } from 'react-icons/ai';
-import { purchaseDeleteModalFunc } from '../../redux/slices/admin/purchaseSlices';
+import { purchaseDeleteModalFunc, purchaseUpdateModalFuncCommon } from '../../redux/slices/admin/purchaseSlices';
+import { FaPenToSquare } from 'react-icons/fa6';
 
 const ITEMS_PER_PAGE = 5;
 
@@ -92,6 +93,10 @@ const PurchaseTableEnd = () => {
        
     }
 
+    const updatePurchase=(x)=>{
+       dispatch(purchaseUpdateModalFuncCommon(x))      
+    }
+
     return (
         <div className='admin_container dashboard_end_container'>
             {/* <h2>Alış Siyahısı</h2> */}
@@ -119,8 +124,8 @@ const PurchaseTableEnd = () => {
                   <table className='custom_table custom_table_sales'>
                 <thead>
                     <tr>
-                        <th></th>
-                        <th>Tədarükçü</th>
+                        <th className='number_table'></th>
+                        <th>Tədarükçü/Müştəri</th>
                         <th>Alış Tarixi</th>
                         <th>Miqdar</th>
                         <th>Alış Qiyməti</th>
@@ -128,13 +133,13 @@ const PurchaseTableEnd = () => {
                         <th>Satış Qiyməti</th>
                         <th>Endirimli Qiymət</th>
                         <th>Status</th>
-                        <th>Sil</th>
+                        <th>Düzəliş/Sil</th>
                     </tr>
                 </thead>
                 <tbody>
                     {currentPageData.map((item, index) => (
                         <tr key={index}>
-                            <td onClick={() => handlePurchase(item?.id)} style={{ cursor: "pointer" }}>
+                            <td className='number_table' onClick={() => handlePurchase(item?.id)} style={{ cursor: "pointer" }}>
                                 <svg width="16" height="16" viewBox="0 0 16 16" fill="none"
                                     xmlns="http://www.w3.org/2000/svg">
                                     <path d="M10 5H6V4H10V5ZM12 14H3V12H4V11H3V8.5H4V7.5H3V5H4V4H3V2H12V15C12.5523 15 13 14.5523 13 14V2C13 1.45 12.55 1 12 1H3C2.45 1 2 1.45 2 2V4H1V5H2V7.5H1V8.5H2V11H1V12H2V14C2 14.55 2.45 15 3 15H12V14ZM10 7.5H6V8.5H10V7.5Z"
@@ -158,6 +163,7 @@ const PurchaseTableEnd = () => {
                                         : '-'}
                             </td>
                             <td className='table_update'>
+                                <FaPenToSquare onClick={() => updatePurchase(item)} />
                                 <AiTwotoneDelete onClick={() => deletePurchase(item?.id)} />
                             </td>
                         </tr>

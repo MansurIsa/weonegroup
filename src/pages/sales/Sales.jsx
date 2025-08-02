@@ -8,6 +8,7 @@ import { useSelector } from 'react-redux'
 import SaleDeleteModal from '../../components/admin/modals/SaleDeleteModal'
 import { useNavigate } from 'react-router-dom'
 import SaleDeleteModalComp from '../../components/admin/modals/SaleDeleteModalComp'
+import SaleUpdateModalCommon from '../../components/admin/modals/SaleUpdateModalCommon'
 
 const Sales = () => {
 
@@ -16,13 +17,14 @@ const Sales = () => {
   const handleClick = () => {
     navigate("/sales-products-select")
   }
-  const {saleDeleteModal}=useSelector(state=>state.sales)
+  const {saleDeleteModal,saleUpdateModalCommon}=useSelector(state=>state.sales)
   return (
     <AdminLayout adminHeader="Məhsul satışı" dashboardSearch={false}>
         {/* <SalesTableHead/> */}
         <AdminBigComponentHeader adminHeader={"Satış cədvəli"} hideShowBtn={true} buttonContent="Yeni satış əlave et" onClick={handleClick}/>
         <SalesTableEnd/>
         {saleDeleteModal && <SaleDeleteModalComp/>}
+        {saleUpdateModalCommon && <SaleUpdateModalCommon/>}
       
     </AdminLayout>
   )

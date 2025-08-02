@@ -11,7 +11,9 @@ const SalesSlice = createSlice({
         saleUpdateObj: {}  ,
         saleList: [] ,
         saleDeleteModal: false,
-        saleDeleteId: ""    
+        saleDeleteId: "",
+          saleUpdateModalCommon: false,
+        saleUpdateModalCommonObj: {},  
     },
     reducers: {
         getSalesListFunc: (state, action) => {
@@ -33,6 +35,7 @@ const SalesSlice = createSlice({
         closeSaleUpdateModalFunc: (state)=>{
             state.saleUpdateModal=false
              state.saleDeleteModal=false
+              state.saleUpdateModalCommon=false
         },
         setSaleUpdateObjFunc: (state,action)=>{
             state.saleUpdateObj=action.payload
@@ -40,6 +43,10 @@ const SalesSlice = createSlice({
         saleDeleteModalFunc: (state,action)=>{
             state.saleDeleteModal=true,
             state.saleDeleteId=action.payload
+        },
+        saleUpdateModalFuncCommon: (state,action)=>{
+            state.saleUpdateModalCommon=true,
+            state.saleUpdateModalCommonObj=action.payload
         }
 
 
@@ -53,5 +60,6 @@ export const {
     setSaleDate,saleUpdateModalFunc,
     closeSaleUpdateModalFunc,
     setSaleUpdateObjFunc,
-    getSaleListFunc,saleDeleteModalFunc
+    getSaleListFunc,saleDeleteModalFunc,
+    saleUpdateModalFuncCommon
 } = SalesSlice.actions;

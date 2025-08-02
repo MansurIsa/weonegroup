@@ -155,3 +155,24 @@ export const deletePurchaseComp = (id,navigate) => async (dispatch) => {
       dispatch(stopLoading());
     });;
 };
+
+
+export const updatePurchaseCommon = (data,id,navigate) => async (dispatch) => {
+  dispatch(startLoading());
+  return await axios.put(`${baseUrl}accounting/purchaselist-update/${id}/`,data,{
+    headers: {
+          Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+        }
+  })
+    .then((resp) => {
+        console.log(resp);
+        toast.success("Alış məlumatı uğurla dəyişdirildi");
+        navigate("/purchase")
+    })
+    .catch((err) => {
+      console.log(err);
+       toast.error("Xəta baş verdi. Zəhmət olmasa yenidən yoxlayın ❌");
+    }).finally(() => {
+      dispatch(stopLoading());
+    });;
+};
