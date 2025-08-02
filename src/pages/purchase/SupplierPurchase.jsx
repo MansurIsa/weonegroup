@@ -18,6 +18,9 @@ const SupplierPurchase = () => {
     }
   }, [supplierPurchaseObj]);
 
+  console.log(supplierPurchaseObj);
+  
+
   // Axtarış funksiyası: məhsul adı və article-lara görə
   const handleSearch = (query) => {
     const loweredQuery = query.toLowerCase();
@@ -35,7 +38,7 @@ const SupplierPurchase = () => {
   return (
     <AdminLayout adminHeader="Alınmış məhsullar">
       <SearchInpMain onSearch={handleSearch} />
-      <PurchaseEnd purchaseList={filteredProducts} />
+      <PurchaseEnd purchaseList={filteredProducts} supplierPurchaseObj={supplierPurchaseObj}/>
        {purchaseUpdateModal && <PurchaseDeleteModal/>}
     </AdminLayout>
   );

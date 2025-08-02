@@ -9,11 +9,11 @@ import { useNavigate } from 'react-router-dom';
 
 const ITEMS_PER_PAGE = 5;
 
-const PurchaseEnd = ({ purchaseList }) => {
+const PurchaseEnd = ({ purchaseList, supplierPurchaseObj }) => {
 
     const [currentPage, setCurrentPage] = useState(0);
-    const dispatch=useDispatch()
-    const navigate=useNavigate()
+    const dispatch = useDispatch()
+    const navigate = useNavigate()
 
     const offset = currentPage * ITEMS_PER_PAGE;
     const currentPageData = purchaseList.slice(offset, offset + ITEMS_PER_PAGE);
@@ -50,14 +50,14 @@ const PurchaseEnd = ({ purchaseList }) => {
         R: "₽"
     };
 
-    const deletePurchase=(x)=>{
-       dispatch(purchaseUpdateModalFunc(x))
-    
-       
+    const deletePurchase = (x) => {
+        dispatch(purchaseUpdateModalFunc(x))
+
+
     }
-    const updatePurchase=(item)=>{
+    const updatePurchase = (item) => {
         navigate("/update-new-purchase")
-         dispatch(setUpdatePurchaseObjFunc(item))
+        dispatch(setUpdatePurchaseObjFunc(item))
     }
 
     return (
@@ -89,7 +89,14 @@ const PurchaseEnd = ({ purchaseList }) => {
                                 <td>{product.name}</td>
                                 <td className='table_article_scroll'>{articleNames}</td>
                                 <td>{item.amount}</td>
-                                <td>{product.purchase_price} {currencyMap[product?.currency] || ""}</td>
+                                {/* <td>{product.purchase_price} {currencyMap[product?.currency] || ""}</td> */}
+                                <td>{product.purchase_price}  {supplierPurchaseObj?.currency === 'D'
+                                    ? '$'
+                                    : supplierPurchaseObj?.currency === 'M'
+                                        ? '₼'
+                                        : supplierPurchaseObj?.currency === 'R'
+                                            ? '₽'
+                                            : ''}</td>
                                 <td>{product.cost_price} ₼</td>
                                 <td>{product.price} ₼</td>
                                 <td>{product.discount_price} ₼</td>

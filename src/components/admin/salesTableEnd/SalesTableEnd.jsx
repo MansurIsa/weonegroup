@@ -160,7 +160,7 @@ console.log(filteredSales);
                             </td>
                             <td>{item.customer || "-"}</td>
                             <td>{item?.seller || "-"}</td>
-                            <td>{item?.total_amount || "-"} ₼</td>
+                            <td>{item?.total_amount===null? 0: item?.total_amount || "-"} ₼</td>
                             <td>{formatDateTime(item?.sale_datetime)}</td>
                             <td style={{
                                 color:

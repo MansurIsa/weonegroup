@@ -14,7 +14,7 @@ import { customerUpdateModalFunc, setUpdateCustomerObjFunc } from '../../../redu
 
 const ITEMS_PER_PAGE = 3;
 
-const CustomerTableEnd = ({ usersList }) => {
+const  CustomerTableEnd = ({ usersList }) => {
     const [currentPage, setCurrentPage] = useState(0);
 
     const offset = currentPage * ITEMS_PER_PAGE;
@@ -69,14 +69,16 @@ const CustomerTableEnd = ({ usersList }) => {
                             <td>{item?.customer_debt_amount} ₼</td> {/* Bizə borc üçün hazırda dummy dəyər */}
                             <td>
                                 {item?.is_supplier === true && Array.isArray(item?.our_debt_amount) ? (() => {
-                                    const [manat, dollar, rubl] = item.our_debt_amount;
-                                    if (manat !== 0) return `${manat} ₼`;
-                                    if (dollar !== 0) return `${dollar} $`;
-                                    if (rubl !== 0) return `${rubl} ₽`;
-                                    return `0 ₼`; // hamısı 0 olarsa
-                                })() : (
-                                    `${item?.our_debt_amount===null? 0 : item?.our_debt_amount} ₼`
-                                )}
+  const [manat, dollar, rubl] = item.our_debt_amount;
+  const debts = [];
+  if (manat !== 0) debts.push(`${manat} ₼`);
+  if (dollar !== 0) debts.push(`${dollar} $`);
+  if (rubl !== 0) debts.push(`${rubl} ₽`);
+  return debts.length > 0 ? debts.join(' | ') : '0 ₼';
+})() : (
+  `${item?.our_debt_amount === null ? 0 : item?.our_debt_amount} ₼`
+)}
+
                             </td>
 
                             {/* Bizim borc üçün hazırda dummy dəyər */}
