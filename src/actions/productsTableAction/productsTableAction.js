@@ -44,7 +44,7 @@ export const getProductMovementList = (id) => async (dispatch) => {
 
 
 export const getReturnBackList = ({page = 1, search = ""}) => async (dispatch) => {
-  dispatch(startLoading());
+  // dispatch(startLoading());
   return await axios.get(`${baseUrl}accounting/returnback-list/?page=${page}&search=${search}`)
     .then((resp) => {
         console.log(resp.data);
@@ -53,7 +53,7 @@ export const getReturnBackList = ({page = 1, search = ""}) => async (dispatch) =
     .catch((err) => {
       console.log(err);
     }).finally(() => {
-      dispatch(stopLoading());
+      // dispatch(stopLoading());
     });;
 };
 

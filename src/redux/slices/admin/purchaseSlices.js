@@ -21,7 +21,10 @@ const PurchaseSlice = createSlice({
     },
     reducers: {
         getPurchaseListFunc: (state, action) => {
-            state.purchaseList = action.payload
+            state.purchaseList = action.payload.results,
+             state.count = action.payload.count;
+            state.next = action.payload.next;
+            state.previous = action.payload.previous;
         },
         purchaseUpdateModalFunc: (state, action) => {
             state.purchaseUpdateModal = true

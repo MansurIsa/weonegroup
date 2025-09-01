@@ -22,7 +22,7 @@ export const getDashboardList = (id, month, year) => async (dispatch) => {
 };
 
 export const getMostDebtDashboardList = ({page = 1, search = ""}) => async (dispatch) => {
-  dispatch(startLoading());
+  // dispatch(startLoading());
   return await axios.get(`${baseUrl}accounting/mostindebtedcustomers/?page=${page}&search=${search}`)
     .then((resp) => {
       console.log(resp.data);
@@ -31,12 +31,12 @@ export const getMostDebtDashboardList = ({page = 1, search = ""}) => async (disp
     .catch((err) => {
       console.log(err);
     }).finally(() => {
-      dispatch(stopLoading());
+      // dispatch(stopLoading());
     });;
 };
 
 export const getStockOutDashboardList = ({page = 1, search = ""}) => async (dispatch) => {
-  dispatch(startLoading());
+  // dispatch(startLoading());
   return await axios.get(`${baseUrl}accounting/stockoutproducts-list/?page=${page}&search=${search}`)
     .then((resp) => {
       console.log(resp.data);
@@ -45,7 +45,7 @@ export const getStockOutDashboardList = ({page = 1, search = ""}) => async (disp
     .catch((err) => {
       console.log(err);
     }).finally(() => {
-      dispatch(stopLoading());
+      // dispatch(stopLoading());
     });;
 };
 

@@ -32,7 +32,7 @@ export const getSaleList = () => async (dispatch) => {
   return await axios.get(`${baseUrl}accounting/sale-list/`)
     .then((resp) => {
         console.log(resp.data);
-      dispatch(getSaleListFunc(resp.data.results));
+      dispatch(getSaleListFunc(resp.data));
     })
     .catch((err) => {
       console.log(err);

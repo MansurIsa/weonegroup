@@ -1,14 +1,16 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { closeIncomeAddPaymentModal } from '../../../redux/slices/admin/incomeSlices';
 import { IoMdClose } from 'react-icons/io';
 import { getUsersList } from '../../../actions/loginAction/loginAction';
-import { addIncome, getPaymentList, updateIncome } from '../../../actions/incomeAction/incomeAction';
+import { getPaymentList, updateIncome } from '../../../actions/incomeAction/incomeAction';
 import { useNavigate } from 'react-router-dom';
+import CustomCustomerSelect from '../customerTableHead/CustomCustomerSelect';
 
 const IncomeUpdatePaymentModal = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const searchTimeout = useRef(null);
 
   const [selectedCustomer, setSelectedCustomer] = useState('');
   const [selectedDatetime, setSelectedDatetime] = useState('');
@@ -19,7 +21,7 @@ const IncomeUpdatePaymentModal = () => {
 
   // İlkin dəyərləri doldur
   useEffect(() => {
-    dispatch(getUsersList());
+    dispatch(getUsersList(1, ''));
 
     if (incomeUpdatePaymentObj) {
       setSelectedCustomer(incomeUpdatePaymentObj.customer?.id || '');
@@ -28,7 +30,16 @@ const IncomeUpdatePaymentModal = () => {
     }
   }, [dispatch, incomeUpdatePaymentObj]);
 
-  const handleSubmit = async() => {
+  // 🔍 Müştəri axtarışı (debounce ilə backend search)
+  const handleCustomerSearch = (value) => {
+    if (searchTimeout.current) clearTimeout(searchTimeout.current);
+
+    searchTimeout.current = setTimeout(() => {
+      dispatch(getUsersList(1, value));
+    }, 500);
+  };
+
+  const handleSubmit = async () => {
     const payload = {
       datetime: selectedDatetime || null,
       amount: amount || null,
@@ -37,34 +48,31 @@ const IncomeUpdatePaymentModal = () => {
 
     console.log('Göndəriləcək məlumat:', payload);
 
-   await dispatch(updateIncome(payload,incomeUpdatePaymentObj?.id, navigate)); // əgər update üçün ayrıca action varsa, onu istifadə et
-   await dispatch(closeIncomeAddPaymentModal());
-   await dispatch(getPaymentList());
+    await dispatch(updateIncome(payload, incomeUpdatePaymentObj?.id, navigate));
+    await dispatch(closeIncomeAddPaymentModal());
+    await dispatch(getPaymentList());
   };
 
   return (
-    <div className="modal_overlay" onClick={() => dispatch(closeIncomeAddPaymentModal())}>
+    <div
+      className="modal_overlay"
+      onClick={() => dispatch(closeIncomeAddPaymentModal())}
+    >
       <div className="modal_content" onClick={(e) => e.stopPropagation()}>
-
         <div className="modal_inner_container income_add_payment_modal_container">
           <div className="left_box">
-            <IoMdClose className='close_icon' onClick={() => dispatch(closeIncomeAddPaymentModal())} />
+            <IoMdClose
+              className="close_icon"
+              onClick={() => dispatch(closeIncomeAddPaymentModal())}
+            />
 
             <div className="form_group">
-              <label>Müştəri</label>
-              <select
+              <CustomCustomerSelect
+                customers={usersList?.filter(user => !user.is_staff)}
                 value={selectedCustomer}
-                onChange={(e) => setSelectedCustomer(e.target.value)}
-              >
-                <option value="">Müştəri seçin</option>
-                {usersList
-                  ?.filter(user => !user.is_staff)
-                  .map(user => (
-                    <option key={user.id} value={user.id}>
-                      {user.first_name} {user.last_name} ({user.username})
-                    </option>
-                  ))}
-              </select>
+                onChange={setSelectedCustomer}
+                onSearch={handleCustomerSearch}
+              />
             </div>
 
             <div className="form_group">
@@ -91,7 +99,6 @@ const IncomeUpdatePaymentModal = () => {
             </button>
           </div>
         </div>
-
       </div>
     </div>
   );

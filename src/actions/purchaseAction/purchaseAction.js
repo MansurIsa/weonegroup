@@ -4,19 +4,21 @@ import { startLoading, stopLoading } from "../../redux/slices/loaderSlice";
 import toast from "react-hot-toast";
 import { closePurchaseUpdateModalFunc, getPurchaseListFunc, getPurchaseListListFunc, getPurchaseSupplierObjFunc } from "../../redux/slices/admin/purchaseSlices";
 
-export const getPurchaseList = () => async (dispatch) => {
-  dispatch(startLoading());
-  return await axios.get(`${baseUrl}accounting/purchase-list/`)
+export const getPurchaseList = ({ page = 1, search = '' }) => async (dispatch) => {
+  // dispatch(startLoading());
+  return await axios
+    .get(`${baseUrl}accounting/purchase-list/?page=${page}&search=${encodeURIComponent(search)}`)
     .then((resp) => {
-        console.log(resp.data);
       dispatch(getPurchaseListFunc(resp.data));
     })
     .catch((err) => {
       console.log(err);
-    }).finally(() => {
-      dispatch(stopLoading());
-    });;
+    })
+    .finally(() => {
+      // dispatch(stopLoading());
+    });
 };
+
 
 
 // export const addPurchase = (data,navigate) => async (dispatch) => {

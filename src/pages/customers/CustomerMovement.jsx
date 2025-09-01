@@ -25,6 +25,8 @@ const CustomerMovement = () => {
   }, [dispatch, customerId]);
 
   const { customerMovementList } = useSelector(state => state.login);
+  console.log(customerMovementList);
+  
 
   const formatDate = (dateStr) => {
     const d = new Date(dateStr);
@@ -45,16 +47,21 @@ const CustomerMovement = () => {
     return true;
   };
 
-  const filteredMovementList = customerMovementList?.filter(item => {
-    const inDateRange = isDateInRange(item.date, startDate, endDate);
+ const filteredMovementList = customerMovementList?.filter(item => {
+  const inDateRange = isDateInRange(item.date, startDate, endDate);
 
-    const matchesSearch =
-      item.customer?.first_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      item.customer?.last_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      item.product?.name?.toLowerCase().includes(searchTerm.toLowerCase());
+  let matchesSearch = true;
+  if (searchTerm.trim()) {
+    const term = searchTerm.toLowerCase();
+    matchesSearch =
+      item.customer?.first_name?.toLowerCase().includes(term) ||
+      item.customer?.last_name?.toLowerCase().includes(term) ||
+      item.product?.name?.toLowerCase().includes(term);
+  }
 
-    return inDateRange && matchesSearch;
-  });
+  return inDateRange && matchesSearch;
+});
+
 
   return (
     <AdminLayout adminHeaderHide={true}>

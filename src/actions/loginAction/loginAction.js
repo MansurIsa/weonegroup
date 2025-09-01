@@ -2,7 +2,7 @@ import axios from "axios";
 import toast from "react-hot-toast";
 import { baseUrl } from "../../mainApi/MainApi";
 import { startLoading, stopLoading } from "../../redux/slices/loaderSlice";
-import { closeCustomerUpdateModalFunc, getCustomerFactureListFunc, getCustomerMovementListFunc, getSupplierListFunc, getUserObjFunc, getUsersListFunc } from "../../redux/slices/loginSlices";
+import { closeCustomerUpdateModalFunc, getCustomerActionRetriveListFunc, getCustomerFactureListFunc, getCustomerMovementListFunc, getSupplierListFunc, getUserObjFunc, getUsersListFunc } from "../../redux/slices/loginSlices";
 
 export const postLogin = (data, navigate) => async (dispatch) => {
   try {
@@ -86,7 +86,7 @@ export const createUser = (data, navigate) => async (dispatch) => {
 
 
 export const getUsersList = (page = 1, search = "") => async (dispatch) => {
-  dispatch(startLoading());
+  // dispatch(startLoading());
   return await axios.get(`${baseUrl}core/user-list/?page=${page}&search=${search}`,
 
     {
@@ -103,7 +103,7 @@ export const getUsersList = (page = 1, search = "") => async (dispatch) => {
     .catch((err) => {
       console.log(err);
     }).finally(() => {
-      dispatch(stopLoading());
+      // dispatch(stopLoading());
     });;
 };
 
@@ -115,7 +115,7 @@ export const getCustomerMovementList = (id) => async (dispatch) => {
   return await axios.get(`${baseUrl}accounting/customeraction-list/${id}/`)
     .then((resp) => {
         console.log(resp.data);
-      dispatch(getCustomerMovementListFunc(resp.data.results));
+      dispatch(getCustomerMovementListFunc(resp.data));
     })
     .catch((err) => {
       console.log(err);
@@ -124,7 +124,19 @@ export const getCustomerMovementList = (id) => async (dispatch) => {
     });;
 };
 
-
+export const getCustomerActionRetriveList = (id) => async (dispatch) => {
+  dispatch(startLoading());
+  return await axios.get(`${baseUrl}accounting/customeraction-retrieve/${id}/`)
+    .then((resp) => {
+        console.log(resp.data);
+      dispatch(getCustomerActionRetriveListFunc(resp.data));
+    })
+    .catch((err) => {
+      console.log(err);
+    }).finally(() => {
+      dispatch(stopLoading());
+    });;
+};
 export const getCustomerFactureList = (id) => async (dispatch) => {
   dispatch(startLoading());
   return await axios.get(`${baseUrl}accounting/salelist-retrieve/${id}/`)

@@ -39,6 +39,7 @@ import UpdateNewProducts from './pages/productsTable/UpdateNewProducts';
 import UpdateNewCustomer from './pages/customers/UpdateNewCustomer';
 import SupplierPurchase from './pages/purchase/SupplierPurchase';
 import Supplier from './pages/supplier/Supplier';
+import CustomerActionRetrive from './pages/customers/CustomerActionRetrive';
 
 // Token yoxlama funksiyası
 const isTokenExpired = (token) => {
@@ -136,6 +137,9 @@ const App = () => {
      { path: "/update-new-customer", element: <UpdateNewCustomer />, isProtected: true },
 
      { path: "/supplier-purchase", element: <SupplierPurchase />, isProtected: true },
+
+    { path: "/customeraction-retrieve/:id", element: <CustomerActionRetrive />, isProtected: true },
+
   ];
 
   return (

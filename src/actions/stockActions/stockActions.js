@@ -5,7 +5,7 @@ import toast from "react-hot-toast";
 import { getStockListFunc } from "../../redux/slices/admin/stockSlices";
 
 export const getStockList = (page = 1, search = "") => async (dispatch) => {
-  dispatch(startLoading());
+  // dispatch(startLoading());
   return await axios.get(`${baseUrl}accounting/stock-list/?page=${page}&search=${search}`)
     .then((resp) => {
         console.log(resp.data);
@@ -14,7 +14,7 @@ export const getStockList = (page = 1, search = "") => async (dispatch) => {
     .catch((err) => {
       console.log(err);
     }).finally(() => {
-      dispatch(stopLoading());
+      // dispatch(stopLoading());
     });;
 };
 

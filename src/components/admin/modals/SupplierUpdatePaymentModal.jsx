@@ -1,14 +1,16 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { closeIncomeAddPaymentModal } from '../../../redux/slices/admin/incomeSlices';
 import { IoMdClose } from 'react-icons/io';
 import { getUsersList } from '../../../actions/loginAction/loginAction';
 import { getSupplierList, updateSupplier } from '../../../actions/incomeAction/incomeAction';
 import { useNavigate } from 'react-router-dom';
+import CustomCustomerSelect from '../customerTableHead/CustomCustomerSelect';
 
 const SupplierUpdatePaymentModal = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const searchTimeout = useRef(null);
 
   const [selectedCustomer, setSelectedCustomer] = useState('');
   const [selectedDatetime, setSelectedDatetime] = useState('');
@@ -18,20 +20,11 @@ const SupplierUpdatePaymentModal = () => {
   const { usersList } = useSelector(state => state.login);
   const { supplierUpdatePaymentObj } = useSelector(state => state.income);
 
-  const currencySymbols = {
-    M: '₼',
-    D: '$',
-    R: '₽',
-  };
-
-  const currencyLabels = {
-    M: 'manat',
-    D: 'dollar',
-    R: 'rubl',
-  };
+  const currencySymbols = { M: '₼', D: '$', R: '₽' };
+  const currencyLabels = { M: 'manat', D: 'dollar', R: 'rubl' };
 
   useEffect(() => {
-    dispatch(getUsersList());
+    dispatch(getUsersList(1, ''));
 
     if (supplierUpdatePaymentObj) {
       setSelectedCustomer(supplierUpdatePaymentObj.supplier?.id || '');
@@ -41,12 +34,20 @@ const SupplierUpdatePaymentModal = () => {
     }
   }, [dispatch, supplierUpdatePaymentObj]);
 
+  // 🔍 Supplier axtarışı üçün debounce
+  const handleCustomerSearch = (value) => {
+    if (searchTimeout.current) clearTimeout(searchTimeout.current);
+    searchTimeout.current = setTimeout(() => {
+      dispatch(getUsersList(1, value));
+    }, 500);
+  };
+
   const handleSubmit = async () => {
     const payload = {
       datetime: selectedDatetime || null,
       amount: amount || null,
       supplier: selectedCustomer || null,
-      currency: currency || 'M'
+      currency: currency || 'M',
     };
 
     console.log('Göndəriləcək məlumat:', payload);
@@ -61,24 +62,20 @@ const SupplierUpdatePaymentModal = () => {
       <div className="modal_content" onClick={(e) => e.stopPropagation()}>
         <div className="modal_inner_container income_add_payment_modal_container">
           <div className="left_box">
-            <IoMdClose className="close_icon" onClick={() => dispatch(closeIncomeAddPaymentModal())} />
+            <IoMdClose
+              className="close_icon"
+              onClick={() => dispatch(closeIncomeAddPaymentModal())}
+            />
 
-            {/* Tədarükçü */}
+            {/* ✅ Tədarükçü */}
             <div className="form_group">
-              <label>Tədarükçü/Müştəri</label>
-              <select
+              {/* <label>Tədarükçü/Müştəri</label> */}
+              <CustomCustomerSelect
+                customers={usersList?.filter(user => user.is_supplier)}
                 value={selectedCustomer}
-                onChange={(e) => setSelectedCustomer(e.target.value)}
-              >
-                <option value="">Tədarükçü/Müştəri seçin</option>
-                {usersList
-                  ?.filter(user => user.is_supplier)
-                  .map(user => (
-                    <option key={user.id} value={user.id}>
-                      {user.first_name} {user.last_name} ({user.username})
-                    </option>
-                  ))}
-              </select>
+                onChange={setSelectedCustomer}
+                onSearch={handleCustomerSearch}
+              />
             </div>
 
             {/* Tarix */}

@@ -12,3 +12,7 @@
 .new_customer_form_group div label input{
     width: 30px;
 }
+.customer_movement_facture_btn{
+    margin-top: 20px !important;
+
+}

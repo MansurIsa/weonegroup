@@ -59,8 +59,10 @@ const PurchaseEnd = ({ purchaseList, supplierPurchaseObj }) => {
             <table className='custom_table purchase_table_retrive'>
                 <thead>
                     <tr>
+                         <th className="print_column">№</th>
                         <th className="print_column">Məhsul Adı</th>
                         <th className="print_column">Artikl</th>
+                        <th className="print_column">Brend</th>
                         <th className="print_column">Miqdar</th>
                         <th className="print_column">Alış Qiyməti</th>
                         <th className="no-print">Maya Dəyəri</th>
@@ -80,8 +82,10 @@ const PurchaseEnd = ({ purchaseList, supplierPurchaseObj }) => {
 
                         return (
                             <tr key={index}>
+                                <td className="print_column">{index+1}</td>
                                 <td className="print_column">{product.name}</td>
                                 <td className="print_column">{articleNames}</td>
+                                <td className="print_column">{product?.store?.name || "-"}</td>
                                 <td className="print_column">{item.amount}</td>
                                 <td className="print_column">{product.purchase_price} {currencySymbol}</td>
 
@@ -101,13 +105,13 @@ const PurchaseEnd = ({ purchaseList, supplierPurchaseObj }) => {
                 </tbody>
             </table>
 
-           <div className="warehouse_summary">
-    <div className="print_column_summary">
-        <label>
-            Cəm: {totalPurchase} {currencySymbol}
-        </label>
-    </div>
-</div>
+            <div className="warehouse_summary print_column_summary">
+                
+                    <label>
+                        Cəm: {totalPurchase} {currencySymbol}
+                    </label>
+                
+            </div>
 
 
             <div className="warehouse_submit sales_products_factura_btns">
@@ -116,8 +120,8 @@ const PurchaseEnd = ({ purchaseList, supplierPurchaseObj }) => {
             </div>
 
             <ReactPaginate
-                previousLabel={<svg width="8" height="14" viewBox="0 0 8 14" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M7 1L1 7L7 13" stroke="#9F9FA0" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>}
-                nextLabel={<svg width="8" height="14" viewBox="0 0 8 14" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M1 1L7 7L1 13" stroke="#202020" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>}
+                previousLabel={<svg width="8" height="14" viewBox="0 0 8 14" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M7 1L1 7L7 13" stroke="#9F9FA0" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /></svg>}
+                nextLabel={<svg width="8" height="14" viewBox="0 0 8 14" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M1 1L7 7L1 13" stroke="#202020" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /></svg>}
                 pageCount={pageCount}
                 onPageChange={handlePageClick}
                 containerClassName={'dashboard_end_pagination'}

@@ -1,56 +1,75 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { closeIncomeAddPaymentModal } from '../../../redux/slices/admin/incomeSlices';
 import { IoMdClose } from 'react-icons/io';
 import { getUsersList } from '../../../actions/loginAction/loginAction';
-import { addIncome, getPaymentList } from '../../../actions/incomeAction/incomeAction';
+import { addIncome, addIncomeSale, getPaymentList } from '../../../actions/incomeAction/incomeAction';
 import { useNavigate } from 'react-router-dom';
+import CustomCustomerSelect from '../customerTableHead/CustomCustomerSelect';
 
-const IncomeAddPaymentModal = () => {
+const IncomeAddPaymentModal = ({ salesNavigate }) => {
   const dispatch = useDispatch();
-  const navigate=useNavigate()
+  const navigate = useNavigate();
+
   const [selectedCustomer, setSelectedCustomer] = useState('');
   const [selectedDatetime, setSelectedDatetime] = useState('');
   const [amount, setAmount] = useState('');
+  const searchTimeout = useRef(null);
 
   useEffect(() => {
-    dispatch(getUsersList());
+    dispatch(getUsersList(1, ""));
   }, [dispatch]);
 
   const { usersList } = useSelector(state => state.login);
 
-  const handleSubmit = async() => {
+  // 🔍 Müştəri axtarışı (debounce ilə backend search)
+  const handleCustomerSearch = (value) => {
+    if (searchTimeout.current) clearTimeout(searchTimeout.current);
+
+    searchTimeout.current = setTimeout(() => {
+      dispatch(getUsersList(1, value));
+    }, 500);
+  };
+
+  const handleSubmit = async () => {
     const payload = {
       datetime: selectedDatetime || null,
       amount: amount || null,
-      customer: selectedCustomer || null
+      customer: salesNavigate===true? +localStorage.getItem("customerId"): selectedCustomer 
     };
 
     console.log('Göndəriləcək məlumat:', payload);
-    
-   await dispatch(addIncome(payload,navigate)); // <-- Əgər API varsa, buradan göndər
-   await dispatch(closeIncomeAddPaymentModal());
-   await dispatch(getPaymentList())
+    if (salesNavigate) {
+      await dispatch(addIncomeSale(payload, navigate));
+    } else {
+      await dispatch(addIncome(payload, navigate));
+    }
+
+
+    await dispatch(closeIncomeAddPaymentModal());
+    await dispatch(getPaymentList());
   };
 
   return (
     <div className="modal_overlay" onClick={() => dispatch(closeIncomeAddPaymentModal())}>
       <div className="modal_content" onClick={(e) => e.stopPropagation()}>
-
         <div className="modal_inner_container income_add_payment_modal_container">
           <div className="left_box">
-            <IoMdClose className='close_icon' onClick={() => dispatch(closeIncomeAddPaymentModal())} />
+            <IoMdClose
+              className="close_icon"
+              onClick={() => dispatch(closeIncomeAddPaymentModal())}
+            />
 
             <div className="form_group">
-              <label>Müştəri</label>
-              <select value={selectedCustomer} onChange={(e) => setSelectedCustomer(e.target.value)}>
-                <option value="">Müştəri seçin</option>
-                {usersList?.filter(user => !user.is_staff).map(user => (
-                  <option key={user.id} value={user.id}>
-                    {user.first_name} {user.last_name} ({user?.username})
-                  </option>
-                ))}
-              </select>
+              {!salesNavigate? 
+               <CustomCustomerSelect
+                customers={usersList?.filter(user => !user.is_staff)}
+                value={selectedCustomer}
+                onChange={setSelectedCustomer}
+                onSearch={handleCustomerSearch}
+              />: null
+            }
+             
             </div>
 
             <div className="form_group">
@@ -75,7 +94,6 @@ const IncomeAddPaymentModal = () => {
             <button className="submit_btn" onClick={handleSubmit}>Yadda saxla</button>
           </div>
         </div>
-
       </div>
     </div>
   );

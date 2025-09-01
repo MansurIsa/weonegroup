@@ -55,10 +55,11 @@ const SalesTableEnd = () => {
         fetchSales(1, searchQuery, minAmount, maxAmount, startDate, endDate);
     };
 
-    const handleSalesCustomer = async (customerId) => {
-        if (!customerId) return;
-        await dispatch(getCustomerFactureList(customerId));
+    const handleSalesCustomer = async (id,customerId) => {
+        if (!id) return;
+        await dispatch(getCustomerFactureList(id));
         navigate(`/customer-movement-facture`);
+        localStorage.setItem("customerId",customerId)
     };
 
     const formatDateTime = (datetime) => {
@@ -123,7 +124,7 @@ const SalesTableEnd = () => {
                 <tbody>
                     {salesList?.map((item) => (
                         <tr key={item.id}>
-                            <td className='number_table' onClick={() => handleSalesCustomer(item?.id)} style={{ cursor: "pointer" }}>
+                            <td className='number_table' onClick={() => handleSalesCustomer(item?.id,item?.customer_id)} style={{ cursor: "pointer" }}>
                                 <svg width="16" height="16" viewBox="0 0 16 16" fill="none"
                                     xmlns="http://www.w3.org/2000/svg">
                                     <path d="M10 5H6V4H10V5ZM12 14H3V12H4V11H3V8.5H4V7.5H3V5H4V4H3V2H12V15C12.5523 15 13 14.5523 13 14V2C13 1.45 12.55 1 12 1H3C2.45 1 2 1.45 2 2V4H1V5H2V7.5H1V8.5H2V11H1V12H2V14C2 14.55 2.45 15 3 15H12V14ZM10 7.5H6V8.5H10V7.5Z"

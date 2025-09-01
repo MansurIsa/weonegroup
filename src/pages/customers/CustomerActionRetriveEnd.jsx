@@ -1,10 +1,9 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import "./css/customerMovement.css";
-import { getCustomerFactureList } from '../../../actions/loginAction/loginAction';
+import { getCustomerFactureList } from '../../actions/loginAction/loginAction';
 import { useDispatch } from 'react-redux';
 
-const CustomerMovementEnd = ({ movementList = [] }) => {
+const CustomerActionRetriveEnd = ({ movementList = [] }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -121,4 +120,4 @@ const CustomerMovementEnd = ({ movementList = [] }) => {
   );
 };
 
-export default CustomerMovementEnd;
+export default CustomerActionRetriveEnd;
