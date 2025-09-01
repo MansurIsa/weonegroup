@@ -1,91 +1,103 @@
-import React, { useEffect, useState } from 'react';
-import AdminLayout from '../../layouts/adminLayout/AdminLayout';
-import { useNavigate } from 'react-router-dom';
-import { getBrandList, getCategoryList } from '../../actions/productsAction/productsAction';
-import { getStockList } from '../../actions/stockActions/stockActions';
-import { useDispatch, useSelector } from 'react-redux';
-import { addSale } from '../../actions/salesAction/salesAction';
-import toast from 'react-hot-toast';
-import CustomCustomerSelect from '../../components/admin/salesTableHead/CustomCustomerSelect';
-import { getUsersList } from '../../actions/loginAction/loginAction';
+import React, { useEffect, useState, useRef } from "react";
+import AdminLayout from "../../layouts/adminLayout/AdminLayout";
+import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { getBrandList, getCategoryList } from "../../actions/productsAction/productsAction";
+import { getStockList } from "../../actions/stockActions/stockActions";
+import { getUsersList } from "../../actions/loginAction/loginAction";
+import { addSale } from "../../actions/salesAction/salesAction";
+import toast from "react-hot-toast";
+import CustomCustomerSelect from "../../components/admin/salesTableHead/CustomCustomerSelect";
+import ReactPaginate from "react-paginate";
 
 const SalesProductsSelect = () => {
-  const [search, setSearch] = useState('');
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const { stockList, count, next, previous } = useSelector((state) => state.stock);
+  const { usersList } = useSelector((state) => state.login);
+
   const [selectedProductIds, setSelectedProductIds] = useState([]);
   const [quantityValues, setQuantityValues] = useState({});
   const [priceValues, setPriceValues] = useState({});
   const [statusValues, setStatusValues] = useState({});
+  const [selectedCustomerId, setSelectedCustomerId] = useState("");
+  const [selectedDateTime, setSelectedDateTime] = useState("");
+  const [searchTerm, setSearchTerm] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
 
-  const navigate = useNavigate();
-  const dispatch = useDispatch();
+  const searchTimeout = useRef(null);
+  const itemsPerPage = 10; // göstərəcəyimiz hər səhifədə item sayı (frontend üçün info)
 
-  const { stockList } = useSelector(state => state.stock);
-  const { usersList } = useSelector(state => state.login);
-
-  const [selectedCustomerId, setSelectedCustomerId] = useState('');
-  const [selectedDateTime, setSelectedDateTime] = useState('');
-
+  // initial fetch
   useEffect(() => {
     dispatch(getBrandList());
     dispatch(getCategoryList());
-    dispatch(getStockList());
     dispatch(getUsersList());
+    fetchStock(1, "");
   }, [dispatch]);
 
-  const returnSales = () => navigate("/sales");
+  const fetchStock = (page = 1, search = "") => {
+    dispatch(getStockList(page, search));
+    setCurrentPage(page);
+  };
 
-  const filtered = stockList?.filter(p =>
-    p.product?.name?.toLowerCase().includes(search.toLowerCase()) ||
-    p.product?.articles?.some(a => a.name.toLowerCase().includes(search.toLowerCase()))
-  ) || [];
+  const handleStockSearch = (e) => {
+    const value = e.target.value;
+    setSearchTerm(value);
+
+    if (searchTimeout.current) clearTimeout(searchTimeout.current);
+
+    searchTimeout.current = setTimeout(() => {
+      fetchStock(1, value);
+    }, 500);
+  };
 
   const toggleRow = (productId, product, stockAmount) => {
     const isSelected = selectedProductIds.includes(productId);
 
     if (isSelected) {
-      setSelectedProductIds(prev => prev.filter(id => id !== productId));
-      setQuantityValues(prev => {
-        const copy = { ...prev }; delete copy[productId]; return copy;
+      setSelectedProductIds((prev) => prev.filter((id) => id !== productId));
+      setQuantityValues((prev) => {
+        const copy = { ...prev };
+        delete copy[productId];
+        return copy;
       });
-      setPriceValues(prev => {
-        const copy = { ...prev }; delete copy[productId]; return copy;
+      setPriceValues((prev) => {
+        const copy = { ...prev };
+        delete copy[productId];
+        return copy;
       });
-      setStatusValues(prev => {
-        const copy = { ...prev }; delete copy[productId]; return copy;
+      setStatusValues((prev) => {
+        const copy = { ...prev };
+        delete copy[productId];
+        return copy;
       });
     } else {
-      setSelectedProductIds(prev => [...prev, productId]);
-      setQuantityValues(prev => ({ ...prev, [productId]: prev[productId] ?? 1 }));
-      setPriceValues(prev => ({ ...prev, [productId]: prev[productId] ?? product?.price }));
-      setStatusValues(prev => ({ ...prev, [productId]: prev[productId] ?? 'G' }));
+      setSelectedProductIds((prev) => [...prev, productId]);
+      setQuantityValues((prev) => ({ ...prev, [productId]: 1 }));
+      setPriceValues((prev) => ({ ...prev, [productId]: product?.price }));
+      setStatusValues((prev) => ({ ...prev, [productId]: "G" }));
     }
   };
-const handleQuantityChange = (productId, value, maxAmount) => {
-  const numericValue = value.replace(/^0+/, ''); // əvvəlki sıfırları sil
-  if (numericValue === '' || (!isNaN(numericValue) && +numericValue >= 0)) {
-    setQuantityValues((prev) => ({
-      ...prev,
-      [productId]: numericValue,
-    }));
-  }
-};
 
-
+  const handleQuantityChange = (productId, value) => {
+    const numericValue = value.replace(/^0+/, "");
+    if (numericValue === "" || (!isNaN(numericValue) && +numericValue >= 0)) {
+      setQuantityValues((prev) => ({ ...prev, [productId]: numericValue }));
+    }
+  };
 
   const handlePriceChange = (productId, value) => {
     const val = +value;
-    if (val >= 0) {
-      setPriceValues({ ...priceValues, [productId]: val });
-    }
+    if (val >= 0) setPriceValues((prev) => ({ ...prev, [productId]: val }));
   };
 
   const handleStatusChange = (productId, value) => {
-    setStatusValues({ ...statusValues, [productId]: value });
+    setStatusValues((prev) => ({ ...prev, [productId]: value }));
   };
 
-  const handleDateChange = (e) => {
-    setSelectedDateTime(e.target.value);
-  };
+  const handleDateChange = (e) => setSelectedDateTime(e.target.value);
 
   const handleSave = () => {
     if (!selectedCustomerId || !selectedDateTime) {
@@ -96,47 +108,46 @@ const handleQuantityChange = (productId, value, maxAmount) => {
     let hasError = false;
     const invalidProducts = [];
 
-    const selectedItems = selectedProductIds.map(productId => {
-      const stockItem = stockList.find(item => item.product.id === productId);
+    const selectedItems = selectedProductIds.map((productId) => {
+      const stockItem = stockList.find((item) => item.product.id === productId);
       const product = stockItem?.product;
       const quantity = +quantityValues[productId] || 0;
-      const status = statusValues[productId] || 'G';
-
+      const status = statusValues[productId] || "G";
       const inStock = stockItem?.amount || 0;
 
-      // ❗ Satılıb və miqdar > anbardakı say
-      if (status === 'S' && quantity > inStock) {
+      if (status === "S" && quantity > inStock) {
         hasError = true;
-        invalidProducts.push({ name: product?.name, available: inStock, id: productId });
+        invalidProducts.push({ name: product?.name, available: inStock });
       }
 
-      return {
-        product_id: productId,
-        quantity,
-        price: +priceValues[productId] || product?.price,
-        status
-      };
+      return { product_id: productId, quantity, price: +priceValues[productId] || product?.price, status };
     });
 
     if (hasError) {
-      invalidProducts.forEach(p => {
-        toast.error(`Anbarda ${p.name} üçün yalnız ${p.available} ədəd mövcuddur.`);
-      });
+      invalidProducts.forEach((p) =>
+        toast.error(`Anbarda ${p.name} üçün yalnız ${p.available} ədəd mövcuddur.`)
+      );
       return;
     }
 
     const payload = {
       customer: selectedCustomerId,
-      products: selectedItems.map(p => p.product_id),
-      prices: selectedItems.map(p => p.price),
-      amounts: selectedItems.map(p => p.quantity),
+      products: selectedItems.map((p) => p.product_id),
+      prices: selectedItems.map((p) => p.price),
+      amounts: selectedItems.map((p) => p.quantity),
       datetimes: selectedItems.map(() => selectedDateTime),
-      statuses: selectedItems.map(p => p.status),
+      statuses: selectedItems.map((p) => p.status),
     };
 
     dispatch(addSale(payload, navigate));
   };
 
+  const handlePageClick = (event) => {
+    const selectedPage = event.selected + 1;
+    fetchStock(selectedPage, searchTerm);
+  };
+
+  const returnSales = () => navigate("/sales");
 
   return (
     <AdminLayout adminHeaderHide={true}>
@@ -147,28 +158,20 @@ const handleQuantityChange = (productId, value, maxAmount) => {
 
         <div className="left_box left_box_mb">
           <CustomCustomerSelect
-            customers={usersList.filter(user => !user.is_staff)}
+            customers={usersList.filter((user) => !user.is_staff)}
             value={selectedCustomerId}
-            onChange={(id) => setSelectedCustomerId(id)}
+            onChange={setSelectedCustomerId}
+            onSearch={(search) => dispatch(getUsersList(1, search))}
           />
 
           <div className="form_group form_group_sales_table_head">
             <label>Satış tarixi</label>
-            <input
-              type="datetime-local"
-              value={selectedDateTime}
-              onChange={handleDateChange}
-            />
+            <input type="datetime-local" value={selectedDateTime} onChange={handleDateChange} />
           </div>
         </div>
 
         <div className="admin_header_search project_container">
-          <input
-            type="text"
-            placeholder="Axtar..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-          />
+          <input type="text" placeholder="Axtar..." value={searchTerm} onChange={handleStockSearch} />
         </div>
 
         <div className="warehouse_table_wrapper">
@@ -187,7 +190,7 @@ const handleQuantityChange = (productId, value, maxAmount) => {
               </tr>
             </thead>
             <tbody>
-              {filtered.map((item, index) => {
+              {stockList?.map((item) => {
                 const product = item.product;
                 const productId = product.id;
                 const isSelected = selectedProductIds.includes(productId);
@@ -201,7 +204,7 @@ const handleQuantityChange = (productId, value, maxAmount) => {
                       />
                     </td>
                     <td>{product?.name}</td>
-                    <td className='table_article_scroll'>{product?.articles?.map(a => a.name).join(', ')}</td>
+                    <td>{product?.articles?.map((a) => a.name).join(", ")}</td>
                     <td>{item.amount}</td>
                     <td>{product?.cost_price} ₼</td>
                     <td>
@@ -209,33 +212,32 @@ const handleQuantityChange = (productId, value, maxAmount) => {
                         <input
                           type="number"
                           value={priceValues[productId] ?? product?.price}
-                          onChange={e => handlePriceChange(productId, e.target.value)}
+                          onChange={(e) => handlePriceChange(productId, e.target.value)}
                           className="price_input"
                         />
                       ) : (
                         `${product?.price} ₼`
                       )}
                     </td>
-                    <td>{product?.discount_price ?? '-'} ₼</td>
+                    <td>{product?.discount_price ?? "-"} ₼</td>
                     <td>
                       {isSelected && (
                         <input
                           type="number"
-                          value={quantityValues[productId] ?? ''}
-                          onChange={(e) => handleQuantityChange(productId, e.target.value, item.amount)}
-                          className={`quantity_input ${statusValues[productId] === 'S' &&
-                              +quantityValues[productId] > item.amount
-                              ? 'input-error' // qırmızı border class
-                              : ''
-                            }`}
+                          value={quantityValues[productId] ?? ""}
+                          onChange={(e) => handleQuantityChange(productId, e.target.value)}
+                          className={`quantity_input ${
+                            statusValues[productId] === "S" && +quantityValues[productId] > item.amount
+                              ? "input-error"
+                              : ""
+                          }`}
                         />
-
                       )}
                     </td>
                     <td>
                       {isSelected && (
                         <select
-                          value={statusValues[productId] ?? 'G'}
+                          value={statusValues[productId] ?? "G"}
                           onChange={(e) => handleStatusChange(productId, e.target.value)}
                         >
                           <option value="G">Gözləyir</option>
@@ -249,8 +251,25 @@ const handleQuantityChange = (productId, value, maxAmount) => {
             </tbody>
           </table>
 
+          {count > itemsPerPage && (
+            <ReactPaginate
+              previousLabel={"<"}
+              nextLabel={">"}
+              pageCount={Math.ceil(count / itemsPerPage)}
+              onPageChange={handlePageClick}
+              containerClassName={"dashboard_end_pagination"}
+              pageClassName={"dashboard_end_page"}
+              pageLinkClassName={"dashboard_end_page_link"}
+              previousClassName={"dashboard_end_arrow"}
+              nextClassName={"dashboard_end_arrow"}
+              activeClassName={"dashboard_end_active"}
+            />
+          )}
+
           <div className="warehouse_submit">
-            <button className="save_btn" onClick={handleSave}>Yadda saxla</button>
+            <button className="save_btn" onClick={handleSave}>
+              Yadda saxla
+            </button>
           </div>
         </div>
       </div>

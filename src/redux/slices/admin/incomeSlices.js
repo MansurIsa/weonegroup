@@ -23,7 +23,11 @@ const IncomeSlice = createSlice({
         supplierUpdatePaymentModal: false,
         supplierUpdatePaymentObj: {},
         supplierDeletePaymentModal: false,
-        supplierDeletePaymentId: ""
+        supplierDeletePaymentId: "",
+
+         count: 0,
+        next: null,
+        previous: null,
     },
     reducers: {
 
@@ -45,10 +49,17 @@ const IncomeSlice = createSlice({
             state.supplierDeletePaymentModal=false
         },
         getPaymentListFunc: (state, action) => {
-            state.paymentList = action.payload
+            state.paymentList = action.payload.results;
+             state.count = action.payload.count;
+            state.next = action.payload.next;
+            state.previous = action.payload.previous;
+
         },
         getExpenseListFunc: (state, action) => {
-            state.expenseList = action.payload
+            state.expenseList = action.payload.results;
+            state.count = action.payload.count;
+            state.next = action.payload.next;
+            state.previous = action.payload.previous;
         },
         handleIncomeUpdatePaymentModal: (state, action) => {
             state.incomeUpdatePaymentModal = true
@@ -68,7 +79,10 @@ const IncomeSlice = createSlice({
         },
 
         getSupplierListFunc: (state, action) => {
-            state.supplierList = action.payload
+            state.supplierList = action.payload.results;
+            state.count = action.payload.count;
+            state.next = action.payload.next;
+            state.previous = action.payload.previous;
         },
         handleSupplierAddPaymentModal: (state, action) => {
             state.supplierAddPaymentModal = true

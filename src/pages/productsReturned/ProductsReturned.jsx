@@ -12,46 +12,29 @@ import ProductReturnDeleteModal from '../../components/admin/modals/ProductRetur
 
 const ProductsReturned = () => {
   const dispatch = useDispatch();
-  const [filteredList, setFilteredList] = useState([]);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
 
-  const { returnBackList,productReturnedModal,productReturnUpdateModal,productReturnDeleteModal } = useSelector(state => state.productTable);
+  const {
+    returnBackList,
+    count,
+    productReturnedModal,
+    productReturnUpdateModal,
+    productReturnDeleteModal
+  } = useSelector(state => state.productTable);
+
+  const fetchReturnBacks = (page = 1, search = '') => {
+    dispatch(getReturnBackList({ page, search }));
+  };
 
   useEffect(() => {
-    dispatch(getReturnBackList());
-  }, [dispatch]);
-
-  useEffect(() => {
-    setFilteredList(returnBackList); // ilk olaraq bütününü göstər
-  }, [returnBackList]);
-
-  console.log(returnBackList);
-  
+    fetchReturnBacks(currentPage, searchTerm);
+  }, [dispatch, currentPage, searchTerm]);
 
   const handleSearch = (query) => {
-  const lowerQuery = query.toLowerCase();
-
-  const filtered = returnBackList.filter(item => {
-    const productName = item?.sale?.product?.name || '';
-    const articles = item?.sale?.product?.articles || [];
-    const customerName = `${item?.sale?.customer?.first_name || ''} ${item?.sale?.customer?.last_name || ''}`;
-    const reason = item?.reason || '';
-
-    // Artikulları yoxla
-    const hasMatchingArticle = articles.some(article =>
-      article.name?.toLowerCase().includes(lowerQuery)
-    );
-
-    return (
-      productName.toLowerCase().includes(lowerQuery) ||
-      customerName.toLowerCase().includes(lowerQuery) ||
-      reason.toLowerCase().includes(lowerQuery) ||
-      hasMatchingArticle
-    );
-  });
-
-  setFilteredList(filtered);
-};
-
+    setSearchTerm(query);
+    setCurrentPage(1); // search zamanı səhifəni 1-ə qaytarırıq
+  };
 
   const handleClick = () => {
     dispatch(handleAddReturnedModal());
@@ -59,14 +42,22 @@ const ProductsReturned = () => {
 
   return (
     <AdminLayout adminHeader="Məhsullar">
-      <AdminBigComponentHeader adminHeader="Geri qaytarılanların cədvəli" hideShowBtn={true}
+      <AdminBigComponentHeader
+        adminHeader="Geri qaytarılanların cədvəli"
+        hideShowBtn={true}
         buttonContent="Geri qaytarılma əlavə et"
-        onClick={handleClick}/>
+        onClick={handleClick}
+      />
       <SearchInpMain onSearch={handleSearch} />
-      <ProductsReturnedEnd returnBackList={filteredList} />
-      {productReturnedModal && <ProductReturnedModal/>}
-      {productReturnUpdateModal && <ProductReturnUpdateModal/>}
-      {productReturnDeleteModal && <ProductReturnDeleteModal/>}
+      <ProductsReturnedEnd
+        returnBackList={returnBackList}
+        count={count}
+        fetchReturnBacks={fetchReturnBacks}
+        searchTerm={searchTerm}
+      />
+      {productReturnedModal && <ProductReturnedModal />}
+      {productReturnUpdateModal && <ProductReturnUpdateModal />}
+      {productReturnDeleteModal && <ProductReturnDeleteModal />}
     </AdminLayout>
   );
 };

@@ -21,9 +21,9 @@ export const getDashboardList = (id, month, year) => async (dispatch) => {
     });;
 };
 
-export const getMostDebtDashboardList = () => async (dispatch) => {
+export const getMostDebtDashboardList = ({page = 1, search = ""}) => async (dispatch) => {
   dispatch(startLoading());
-  return await axios.get(`${baseUrl}accounting/mostindebtedcustomers/`)
+  return await axios.get(`${baseUrl}accounting/mostindebtedcustomers/?page=${page}&search=${search}`)
     .then((resp) => {
       console.log(resp.data);
       dispatch(getMostDebtDashboardListFunc(resp.data));
@@ -35,9 +35,9 @@ export const getMostDebtDashboardList = () => async (dispatch) => {
     });;
 };
 
-export const getStockOutDashboardList = () => async (dispatch) => {
+export const getStockOutDashboardList = ({page = 1, search = ""}) => async (dispatch) => {
   dispatch(startLoading());
-  return await axios.get(`${baseUrl}accounting/stockoutproducts-list/`)
+  return await axios.get(`${baseUrl}accounting/stockoutproducts-list/?page=${page}&search=${search}`)
     .then((resp) => {
       console.log(resp.data);
       dispatch(getStockOutDashboardListFunc(resp.data));

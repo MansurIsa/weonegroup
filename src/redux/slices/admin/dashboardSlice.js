@@ -6,7 +6,11 @@ const DashboardSlice = createSlice({
       dashboardList: {},
       mostDebtObj: {},
       stockOutList: [],
-      chartObj: {}
+      chartObj: {},
+
+       count: 0,
+        next: null,
+        previous: null,
         
     },
     reducers: {
@@ -14,10 +18,16 @@ const DashboardSlice = createSlice({
             state.dashboardList=action.payload
         },
         getMostDebtDashboardListFunc: (state,action)=>{
-            state.mostDebtObj=action.payload
+            state.mostDebtObj=action.payload.results
+            state.count = action.payload.count;
+            state.next = action.payload.next;
+            state.previous = action.payload.previous;
         },
         getStockOutDashboardListFunc: (state,action)=>{
-            state.stockOutList=action.payload
+            state.stockOutList=action.payload.results
+             state.count = action.payload.count;
+            state.next = action.payload.next;
+            state.previous = action.payload.previous;
         },
         getChartsDashboardListFunc: (state,action)=>{
             state.chartObj=action.payload

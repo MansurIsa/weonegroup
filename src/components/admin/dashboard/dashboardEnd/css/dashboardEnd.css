@@ -67,3 +67,7 @@
 .runs_out {
     color: var(--yellow);
 }
+
+.dashboard_end_table{
+    margin-top: 20px;
+}

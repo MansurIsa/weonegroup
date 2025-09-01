@@ -7,7 +7,23 @@
     position: fixed;
     top: 0;
     left: 0;
+    overflow-y: auto; /* <- bu əlavə olundu */
+    scrollbar-width: thin; /* Firefox üçün */
+    scrollbar-color: rgba(255,255,255,0.5) transparent; /* Firefox üçün */
 }
+
+/* Optional: Chrome, Edge, Safari üçün scroll görünüşü */
+.sidebar_container::-webkit-scrollbar {
+    width: 6px;
+}
+.sidebar_container::-webkit-scrollbar-thumb {
+    background-color: rgba(255,255,255,0.5);
+    border-radius: 3px;
+}
+.sidebar_container::-webkit-scrollbar-track {
+    background: transparent;
+}
+
 
 .sidebar_menu {
     margin-top: 48px;
@@ -78,4 +94,10 @@
     justify-content: flex-start !important;
     gap: 14px;
     cursor: pointer;
+}
+
+@media screen and (max-width: 1540px){
+    .sidebar_container{
+        width: 200px;
+    }
 }

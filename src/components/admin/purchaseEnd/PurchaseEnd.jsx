@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import ReactPaginate from 'react-paginate';
-import "./css/purchaseEnd.css"
+import "./css/purchaseEnd.css";
 import { FaPenToSquare } from 'react-icons/fa6';
 import { AiTwotoneDelete } from 'react-icons/ai';
 import { useDispatch } from 'react-redux';
@@ -10,19 +10,27 @@ import { useNavigate } from 'react-router-dom';
 const ITEMS_PER_PAGE = 5;
 
 const PurchaseEnd = ({ purchaseList, supplierPurchaseObj }) => {
-
     const [currentPage, setCurrentPage] = useState(0);
-    const dispatch = useDispatch()
-    const navigate = useNavigate()
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
 
     const offset = currentPage * ITEMS_PER_PAGE;
     const currentPageData = purchaseList.slice(offset, offset + ITEMS_PER_PAGE);
     const pageCount = Math.ceil(purchaseList.length / ITEMS_PER_PAGE);
 
-    const handlePageClick = (event) => {
-        setCurrentPage(event.selected);
-    };
+    const handlePageClick = (event) => setCurrentPage(event.selected);
 
+    const currencyMap = { D: "$", M: "₼", R: "₽" };
+    const currencySymbol = supplierPurchaseObj?.currency ? (currencyMap[supplierPurchaseObj.currency] || "") : "";
+
+    const deletePurchase = (id) => dispatch(purchaseUpdateModalFunc(id));
+    const updatePurchase = (item) => {
+        navigate("/update-new-purchase");
+        dispatch(setUpdatePurchaseObjFunc(item));
+    };
+    const returnCustomerMovement = () => navigate("/purchase");
+
+    // Status helpers
     const getStatusLabel = (code) => {
         switch (code) {
             case 'A': return 'Anbarda';
@@ -30,7 +38,6 @@ const PurchaseEnd = ({ purchaseList, supplierPurchaseObj }) => {
             default: return 'Naməlum';
         }
     };
-
     const getStatusClass = (code) => {
         switch (code) {
             case 'A': return 'stocked';
@@ -39,70 +46,52 @@ const PurchaseEnd = ({ purchaseList, supplierPurchaseObj }) => {
         }
     };
 
-    const formatDate = (dateStr) => {
-        const date = new Date(dateStr);
-        return date.toLocaleDateString('az-AZ');
-    };
+    // Cəmləri hesabla
+    const totalPurchase = purchaseList.reduce(
+        (sum, item) => sum + item.amount * item.product.purchase_price,
+        0
+    );
 
-    const currencyMap = {
-        D: "$",
-        M: "₼",
-        R: "₽"
-    };
-
-    const deletePurchase = (x) => {
-        dispatch(purchaseUpdateModalFunc(x))
-
-
-    }
-    const updatePurchase = (item) => {
-        navigate("/update-new-purchase")
-        dispatch(setUpdatePurchaseObjFunc(item))
-    }
+    const handlePrint = () => window.print();
 
     return (
         <div className='admin_container dashboard_end_container'>
-            <table className='custom_table'>
+            <table className='custom_table purchase_table_retrive'>
                 <thead>
                     <tr>
-                        <th>Məhsul Adı</th>
-                        <th>Artikl</th>
-                        <th>Miqdar</th>
-                        <th>Alış Qiyməti</th>
-                        <th>Maya Dəyəri</th>
-                        <th>Satış Qiyməti</th>
-                        <th>Endirimli Qiymət</th>
-                        <th>Status</th>
-                        <th>Alış Tarixi</th>
-                        <th>Düzəliş/Sil</th>
+                        <th className="print_column">Məhsul Adı</th>
+                        <th className="print_column">Artikl</th>
+                        <th className="print_column">Miqdar</th>
+                        <th className="print_column">Alış Qiyməti</th>
+                        <th className="no-print">Maya Dəyəri</th>
+                        <th className="no-print">Satış Qiyməti</th>
+                        <th className="no-print">Endirimli Qiymət</th>
+                        <th className="no-print">Status</th>
+                        <th className="no-print">Alış Tarixi</th>
+                        <th className="no-print">Düzəliş/Sil</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {currentPageData?.map((item, index) => {
+                    {currentPageData.map((item, index) => {
                         const product = item.product;
-                        const articleNames = product.articles?.map(article => article.name).join(', ') || "-";
+                        const articleNames = product.articles?.map(a => a.name).join(', ') || "-";
                         const statusText = getStatusLabel(item.status);
                         const statusClass = getStatusClass(item.status);
 
                         return (
                             <tr key={index}>
-                                <td>{product.name}</td>
-                                <td className='table_article_scroll'>{articleNames}</td>
-                                <td>{item.amount}</td>
-                                {/* <td>{product.purchase_price} {currencyMap[product?.currency] || ""}</td> */}
-                                <td>{product.purchase_price}  {supplierPurchaseObj?.currency === 'D'
-                                    ? '$'
-                                    : supplierPurchaseObj?.currency === 'M'
-                                        ? '₼'
-                                        : supplierPurchaseObj?.currency === 'R'
-                                            ? '₽'
-                                            : ''}</td>
-                                <td>{product.cost_price} ₼</td>
-                                <td>{product.price} ₼</td>
-                                <td>{product.discount_price} ₼</td>
-                                <td className={`status ${statusClass}`}>{statusText}</td>
-                                <td>{formatDate(item.date)}</td>
-                                <td className='table_update'>
+                                <td className="print_column">{product.name}</td>
+                                <td className="print_column">{articleNames}</td>
+                                <td className="print_column">{item.amount}</td>
+                                <td className="print_column">{product.purchase_price} {currencySymbol}</td>
+
+                                {/* Normal görünüş üçün əlavə sütunlar */}
+                                <td className="no-print">{product.cost_price} ₼</td>
+                                <td className="no-print">{product.price} ₼</td>
+                                <td className="no-print">{product.discount_price} ₼</td>
+                                <td className={`status no-print ${statusClass}`}>{statusText}</td>
+                                <td className="no-print">{new Date(item.date).toLocaleDateString('az-AZ')}</td>
+                                <td className="no-print table_update">
                                     <FaPenToSquare onClick={() => updatePurchase(item)} />
                                     <AiTwotoneDelete onClick={() => deletePurchase(item?.id)} />
                                 </td>
@@ -112,13 +101,23 @@ const PurchaseEnd = ({ purchaseList, supplierPurchaseObj }) => {
                 </tbody>
             </table>
 
+           <div className="warehouse_summary">
+    <div className="print_column_summary">
+        <label>
+            Cəm: {totalPurchase} {currencySymbol}
+        </label>
+    </div>
+</div>
+
+
+            <div className="warehouse_submit sales_products_factura_btns">
+                <button className="save_btn" onClick={handlePrint}>Çap et</button>
+                <button className="save_btn" onClick={returnCustomerMovement}>Geri dön</button>
+            </div>
+
             <ReactPaginate
-                previousLabel={<svg width="8" height="14" viewBox="0 0 8 14" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M7 1L1 7L7 13" stroke="#9F9FA0" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                </svg>}
-                nextLabel={<svg width="8" height="14" viewBox="0 0 8 14" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M1 1L7 7L1 13" stroke="#202020" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                </svg>}
+                previousLabel={<svg width="8" height="14" viewBox="0 0 8 14" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M7 1L1 7L7 13" stroke="#9F9FA0" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>}
+                nextLabel={<svg width="8" height="14" viewBox="0 0 8 14" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M1 1L7 7L1 13" stroke="#202020" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>}
                 pageCount={pageCount}
                 onPageChange={handlePageClick}
                 containerClassName={'dashboard_end_pagination'}

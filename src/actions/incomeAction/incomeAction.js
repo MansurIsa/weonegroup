@@ -4,9 +4,9 @@ import { startLoading, stopLoading } from "../../redux/slices/loaderSlice";
 import toast from "react-hot-toast";
 import { closeIncomeAddPaymentModal, getExpenseListFunc, getPaymentListFunc, getSupplierListFunc } from "../../redux/slices/admin/incomeSlices";
 
-export const getPaymentList = () => async (dispatch) => {
+export const getPaymentList = ({page = 1, search = ""}) => async (dispatch) => {
   dispatch(startLoading());
-  return await axios.get(`${baseUrl}accounting/payment-list/`)
+  return await axios.get(`${baseUrl}accounting/payment-list/?page=${page}&search=${search}`)
     .then((resp) => {
         console.log(resp.data);
       dispatch(getPaymentListFunc(resp.data));
@@ -60,9 +60,9 @@ export const addExpense = (data,navigate) => async (dispatch) => {
 };
 
 
-export const getExpenseList = () => async (dispatch) => {
+export const getExpenseList = ({page = 1, search = ""}) => async (dispatch) => {
   dispatch(startLoading());
-  return await axios.get(`${baseUrl}accounting/expense-list/`)
+  return await axios.get(`${baseUrl}accounting/expense-list/?page=${page}&search=${search}`)
     .then((resp) => {
         console.log(resp.data);
       dispatch(getExpenseListFunc(resp.data));
@@ -161,9 +161,9 @@ export const deleteExpense = (id,navigate) => async (dispatch) => {
 
 
 
-export const getSupplierList = () => async (dispatch) => {
+export const getSupplierList = ({page = 1, search = ""}) => async (dispatch) => {
   dispatch(startLoading());
-  return await axios.get(`${baseUrl}accounting/supplierpayment-list/`)
+  return await axios.get(`${baseUrl}accounting/supplierpayment-list/?page=${page}&search=${search}`)
     .then((resp) => {
         console.log(resp.data);
       dispatch(getSupplierListFunc(resp.data));

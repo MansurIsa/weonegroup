@@ -5,7 +5,7 @@ import "./css/adminLayout.css"
 
 const AdminLayout = ({ children, adminHeader, adminHeaderHide,dashboardSearch }) => {
   return (
-    <div>
+    <div className='admin_body_container'>
       <Sidebar />
       <div className="admin_content">
         {

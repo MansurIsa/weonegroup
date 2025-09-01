@@ -104,19 +104,18 @@ export const updatePurchase = (data,id,navigate) => async (dispatch) => {
 
 
 
-export const getPurchaseListList = () => async (dispatch) => {
-  dispatch(startLoading());
-  return await axios.get(`${baseUrl}accounting/purchaselist-list/`)
-    .then((resp) => {
-        console.log(resp.data);
-      dispatch(getPurchaseListListFunc(resp.data));
-    })
-    .catch((err) => {
-      console.log(err);
-    }).finally(() => {
-      dispatch(stopLoading());
-    });;
+export const getPurchaseListList = (page = 1, search = "", start_date = "", end_date = "") => async (dispatch) => {
+    // dispatch(startLoading());
+    try {
+        const resp = await axios.get(`${baseUrl}accounting/purchaselist-list/?page=${page}&search=${search}&start_date=${start_date}&end_date=${end_date}`);
+        dispatch(getPurchaseListListFunc(resp.data));
+    } catch (err) {
+        console.log(err);
+    } finally {
+        // dispatch(stopLoading());
+    }
 };
+
 
 
 export const getPurchaseSupplierObj = (id) => async (dispatch) => {

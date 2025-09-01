@@ -1,17 +1,16 @@
-// components/CustomCustomerSelect.js
 import React, { useState, useEffect, useRef } from 'react';
 
-const CustomCustomerSelect = ({ customers, value, onChange }) => {
+const CustomCustomerSelect = ({ customers, value, onChange, onSearch,displayVal }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [isOpen, setIsOpen] = useState(false);
   const containerRef = useRef(null);
-
-  const selectedCustomer = customers.find(c => c.id === +value);
+  const hasSearchedRef = useRef(false); // API çağırılıb çağırılmadığını saxlayır
 
   const handleSelect = (customer) => {
     onChange(customer.id);
     setSearchTerm(`${customer.first_name} ${customer.last_name}`);
     setIsOpen(false);
+    hasSearchedRef.current = false; // seçimdən sonra yenidən search edə bilər
   };
 
   useEffect(() => {
@@ -31,27 +30,35 @@ const CustomCustomerSelect = ({ customers, value, onChange }) => {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  const filteredCustomers = customers.filter(c =>
-    (`${c.first_name} ${c.last_name} ${c.username}`).toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  // yalnız ilk dəfə yazanda API çağır
+  useEffect(() => {
+    if (!onSearch) return;
+    if (!searchTerm.trim()) return;
+
+    if (!hasSearchedRef.current) {
+      onSearch(searchTerm); // backend çağırış
+      hasSearchedRef.current = true; // artıq çağırıldı, loop olmaz
+    }
+  }, [searchTerm, onSearch]);
 
   return (
     <div className="form_group custom-select-container" ref={containerRef}>
-      <label>Müştəri</label>
+      {displayVal===false? "":<label>Müştəri</label> }
       <input
         type="text"
-        placeholder="Müştəri axtar..."
+        placeholder={displayVal===false? "admin axtar...": "Müştəri axtar..."}
         value={searchTerm}
         onChange={(e) => {
           setSearchTerm(e.target.value);
           setIsOpen(true);
+          hasSearchedRef.current = false; // hər dəfə yeni yazılsa, search edilə bilər
         }}
         onFocus={() => setIsOpen(true)}
       />
       {isOpen && (
         <div className="custom-select-dropdown">
-          {filteredCustomers.length > 0 ? (
-            filteredCustomers.map((customer) => (
+          {customers.length > 0 ? (
+            customers.map((customer) => (
               <div
                 key={customer.id}
                 className="custom-select-option"

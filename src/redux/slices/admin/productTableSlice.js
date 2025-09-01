@@ -14,7 +14,11 @@ const ProductTableSlice = createSlice({
         productReturnUpdateObj: {},
         productReturnUpdateModal: false,
         productReturnDeleteModal: false,
-        productReturnDeleteId: ""
+        productReturnDeleteId: "",
+
+         count: 0,
+        next: null,
+        previous: null,
 
     },
     reducers: {
@@ -34,7 +38,10 @@ const ProductTableSlice = createSlice({
             state.productsMovementList = action.payload
         },
         getReturnBackListFunc: (state, action) => {
-            state.returnBackList = action.payload
+            state.returnBackList = action.payload.results;
+ state.count = action.payload.count;
+            state.next = action.payload.next;
+            state.previous = action.payload.previous;
         },
         handleAddReturnedModal: (state, action) => {
             state.productReturnedModal = true

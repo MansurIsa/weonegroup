@@ -43,9 +43,9 @@ export const getProductMovementList = (id) => async (dispatch) => {
 };
 
 
-export const getReturnBackList = () => async (dispatch) => {
+export const getReturnBackList = ({page = 1, search = ""}) => async (dispatch) => {
   dispatch(startLoading());
-  return await axios.get(`${baseUrl}accounting/returnback-list/`)
+  return await axios.get(`${baseUrl}accounting/returnback-list/?page=${page}&search=${search}`)
     .then((resp) => {
         console.log(resp.data);
       dispatch(getReturnBackListFunc(resp.data));

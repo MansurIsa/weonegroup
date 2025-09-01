@@ -61,7 +61,7 @@ const CustomerFactureEnd = ({ factureList = [] }) => {
               <th>Artikl</th>
               <th>Kateqoriya</th>
               <th>Marka</th>
-              {/* <th>Brend</th> */}
+              <th className="print-only">Brend</th>
               <th>Miqdar</th>
               <th>Satış Qiyməti</th>
               <th>Ümumi məbləğ</th>
@@ -84,7 +84,7 @@ const CustomerFactureEnd = ({ factureList = [] }) => {
                 </td>
                 <td>{item.product?.category?.name || '—'}</td>
                 <td>{item.product?.brand?.name || '—'}</td>
-                {/* <td>{item.product?.store?.name || '—'}</td> */}
+                <td className="print-only">{item.product?.store?.name || '—'}</td>
                 <td>{item.amount}</td>
                 <td>{item.price} ₼</td>
                 <td>{(item.amount * item.price).toFixed(2)} ₼</td>

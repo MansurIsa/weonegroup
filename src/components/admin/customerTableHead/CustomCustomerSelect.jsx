@@ -1,11 +1,23 @@
+// CustomCustomerSelect.js
 import React, { useState, useEffect, useRef } from 'react';
 
-const CustomCustomerSelect = ({ customers, value, onChange }) => {
+const CustomCustomerSelect = ({ customers, value, onChange, onSearch }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [isOpen, setIsOpen] = useState(false);
   const containerRef = useRef(null);
 
-  const selectedCustomer = customers.find(c => c.id === +value);
+  useEffect(() => {
+    const selected = customers.find(c => c.id === +value);
+    if (selected) setSearchTerm(`${selected.first_name} ${selected.last_name}`);
+  }, [value, customers]);
+
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (containerRef.current && !containerRef.current.contains(e.target)) setIsOpen(false);
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   const handleSelect = (customer) => {
     onChange(customer.id);
@@ -13,22 +25,11 @@ const CustomCustomerSelect = ({ customers, value, onChange }) => {
     setIsOpen(false);
   };
 
-  useEffect(() => {
-    const selected = customers.find(c => c.id === +value);
-    if (selected) {
-      setSearchTerm(`${selected.first_name} ${selected.last_name}`);
-    }
-  }, [value]);
-
-  useEffect(() => {
-    const handleClickOutside = (e) => {
-      if (containerRef.current && !containerRef.current.contains(e.target)) {
-        setIsOpen(false);
-      }
-    };
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
+  const handleInputChange = (e) => {
+    setSearchTerm(e.target.value);
+    setIsOpen(true);
+    if (onSearch) onSearch(e.target.value); // backend çağırışı
+  };
 
   const filteredCustomers = customers.filter(c =>
     (`${c.first_name} ${c.last_name} ${c.username}`).toLowerCase().includes(searchTerm.toLowerCase())
@@ -41,21 +42,14 @@ const CustomCustomerSelect = ({ customers, value, onChange }) => {
         type="text"
         placeholder="Müştəri axtar..."
         value={searchTerm}
-        onChange={(e) => {
-          setSearchTerm(e.target.value);
-          setIsOpen(true);
-        }}
+        onChange={handleInputChange}
         onFocus={() => setIsOpen(true)}
       />
       {isOpen && (
         <div className="custom-select-dropdown">
           {filteredCustomers.length > 0 ? (
-            filteredCustomers.map((customer) => (
-              <div
-                key={customer.id}
-                className="custom-select-option"
-                onClick={() => handleSelect(customer)}
-              >
+            filteredCustomers.map(customer => (
+              <div key={customer.id} className="custom-select-option" onClick={() => handleSelect(customer)}>
                 {customer.first_name} {customer.last_name} ({customer.username})
               </div>
             ))

@@ -15,30 +15,21 @@ const Warehouse = () => {
     navigate("/new-warehouse")
   }
 
-  useEffect(() => {
-    dispatch(getStockList())
-  }, [dispatch])
-
-  const { stockList } = useSelector(state => state.stock)
-
-  const [filteredStocks, setFilteredStocks] = useState([])
+  const { stockList, count } = useSelector(state => state.stock)
+  const [searchQuery, setSearchQuery] = useState('')
+  const [currentPage, setCurrentPage] = useState(1)
 
   useEffect(() => {
-    setFilteredStocks(stockList)
-  }, [stockList])
+    dispatch(getStockList(currentPage, searchQuery))
+  }, [dispatch, currentPage, searchQuery])
 
   const handleSearch = (query) => {
-    const lowerQuery = query.toLowerCase()
+    setSearchQuery(query)
+    setCurrentPage(1)
+  }
 
-    const filtered = stockList.filter(item => {
-      const nameMatch = item?.product?.name?.toLowerCase().includes(lowerQuery)
-      const articleMatch = item?.product?.articles?.some(article =>
-        article.name.toLowerCase().includes(lowerQuery)
-      )
-      return nameMatch || articleMatch
-    })
-
-    setFilteredStocks(filtered)
+  const handlePageChange = (page) => {
+    setCurrentPage(page)
   }
 
   return (
@@ -50,7 +41,12 @@ const Warehouse = () => {
         onClick={handleClick}
       />
       <SearchInpMain onSearch={handleSearch} />
-      <WarehouseProducts stockList={filteredStocks} />
+      <WarehouseProducts
+        stockList={stockList}
+        currentPage={currentPage}
+        onPageChange={handlePageChange}
+        totalCount={count}
+      />
     </AdminLayout>
   )
 }

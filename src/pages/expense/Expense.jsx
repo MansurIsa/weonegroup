@@ -1,47 +1,53 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import AdminLayout from '../../layouts/adminLayout/AdminLayout';
+import AdminBigComponentHeader from '../../components/admin/adminBigComponentHeader/AdminBigComponentHeader';
+import SearchInpMain from '../../components/admin/searchInpMain/SearchInpMain';
+import ExpenseTableEnd from '../../components/admin/expense/ExpenseTableEnd';
 import {
   handleExpenseAddPaymentModal
 } from '../../redux/slices/admin/incomeSlices';
 import ExpenseAddPaymentModal from '../../components/admin/modals/ExpenseAddPaymentModal';
-import AdminLayout from '../../layouts/adminLayout/AdminLayout';
-import AdminBigComponentHeader from '../../components/admin/adminBigComponentHeader/AdminBigComponentHeader';
-import ExpenseTableHead from '../../components/admin/expense/ExpenseTableHead';
-import SearchInpMain from '../../components/admin/searchInpMain/SearchInpMain';
-import ExpenseTableEnd from '../../components/admin/expense/ExpenseTableEnd';
-import { getExpenseList } from '../../actions/incomeAction/incomeAction';
-import ExpenseDeletePaymentModal from '../../components/admin/modals/ExpenseDeletePaymentModal';
 import ExpenseUpdatePaymentModal from '../../components/admin/modals/ExpenseUpdatePaymentModal';
+import ExpenseDeletePaymentModal from '../../components/admin/modals/ExpenseDeletePaymentModal';
+import { getExpenseList } from '../../actions/incomeAction/incomeAction';
 
 const Expense = () => {
   const dispatch = useDispatch();
+  const { expenseList, expenseAddPaymentModal, expenseUpdatePaymentModal, expenseDeletePaymentModal, count } = useSelector(state => state.income);
   const [searchTerm, setSearchTerm] = useState('');
 
+  const fetchExpenses = (page = 1, search = "") => {
+    dispatch(getExpenseList({ page, search }));
+  };
+
   useEffect(() => {
-    dispatch(getExpenseList());
+    fetchExpenses(); // ilk yükləmə üçün page 1
   }, [dispatch]);
 
-  const { expenseList, expenseAddPaymentModal,expenseDeletePaymentModal,expenseUpdatePaymentModal } = useSelector(state => state.income);
-
-  // 🔍 Filtered list — yalnız adı uyğun gələnlər
-  const filteredExpenseList = expenseList?.filter(item =>
-    item.name?.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const handleSearch = (query) => {
+    setSearchTerm(query);
+    fetchExpenses(1, query); // backend search
+  };
 
   return (
     <AdminLayout adminHeader="Kassa">
-      {/* <ExpenseTableHead /> */}
       <AdminBigComponentHeader
         adminHeader="Xərc cədvəli"
         hideShowBtn={true}
         buttonContent="Xərc əlavə et"
         onClick={() => dispatch(handleExpenseAddPaymentModal())}
       />
-      <SearchInpMain onSearch={setSearchTerm} />
-      <ExpenseTableEnd expenseList={filteredExpenseList} />
+      <SearchInpMain onSearch={handleSearch} />
+      <ExpenseTableEnd
+        expenseList={expenseList}
+        count={count}
+        fetchExpenses={fetchExpenses}
+        searchTerm={searchTerm}
+      />
       {expenseAddPaymentModal && <ExpenseAddPaymentModal />}
-      {expenseDeletePaymentModal && <ExpenseDeletePaymentModal/>}
-      {expenseUpdatePaymentModal && <ExpenseUpdatePaymentModal/>}
+      {expenseUpdatePaymentModal && <ExpenseUpdatePaymentModal />}
+      {expenseDeletePaymentModal && <ExpenseDeletePaymentModal />}
     </AdminLayout>
   );
 };

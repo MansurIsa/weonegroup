@@ -4,26 +4,35 @@ import { startLoading, stopLoading } from "../../redux/slices/loaderSlice";
 import toast from "react-hot-toast";
 import { closeSaleUpdateModalFunc, getSaleListFunc, getSalesListFunc } from "../../redux/slices/admin/salesSlice";
 
-export const getSalesList = () => async (dispatch) => {
-  dispatch(startLoading());
-  return await axios.get(`${baseUrl}accounting/salelist-list/`)
-    .then((resp) => {
-        console.log(resp.data);
-      dispatch(getSalesListFunc(resp.data));
-    })
-    .catch((err) => {
-      console.log(err);
-    }).finally(() => {
-      dispatch(stopLoading());
-    });;
+export const getSalesList = (page = 1, search = '', min = '', max = '', start_date = "", end_date = "") => async (dispatch) => {
+  // dispatch(startLoading());
+  try {
+    const params = new URLSearchParams();
+
+    if (page) params.append("page", page);
+    if (search) params.append("search", search);
+    if (min) params.append("min_total_amount", min);
+    if (max) params.append("max_total_amount", max);
+    if (start_date) params.append("start_date", start_date);
+    if (end_date) params.append("end_date", end_date);
+
+    const resp = await axios.get(`${baseUrl}accounting/salelist-list/?${params.toString()}`);
+
+    dispatch(getSalesListFunc(resp.data));
+  } catch (err) {
+    console.error(err);
+  } finally {
+    // dispatch(stopLoading());
+  }
 };
+
 
 export const getSaleList = () => async (dispatch) => {
   dispatch(startLoading());
   return await axios.get(`${baseUrl}accounting/sale-list/`)
     .then((resp) => {
         console.log(resp.data);
-      dispatch(getSaleListFunc(resp.data));
+      dispatch(getSaleListFunc(resp.data.results));
     })
     .catch((err) => {
       console.log(err);

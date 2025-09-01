@@ -85,9 +85,9 @@ export const createUser = (data, navigate) => async (dispatch) => {
 };
 
 
-export const getUsersList = () => async (dispatch) => {
+export const getUsersList = (page = 1, search = "") => async (dispatch) => {
   dispatch(startLoading());
-  return await axios.get(`${baseUrl}core/user-list/`,
+  return await axios.get(`${baseUrl}core/user-list/?page=${page}&search=${search}`,
 
     {
       headers: {
@@ -115,7 +115,7 @@ export const getCustomerMovementList = (id) => async (dispatch) => {
   return await axios.get(`${baseUrl}accounting/customeraction-list/${id}/`)
     .then((resp) => {
         console.log(resp.data);
-      dispatch(getCustomerMovementListFunc(resp.data));
+      dispatch(getCustomerMovementListFunc(resp.data.results));
     })
     .catch((err) => {
       console.log(err);

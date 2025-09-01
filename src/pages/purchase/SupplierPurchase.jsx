@@ -35,6 +35,9 @@ const SupplierPurchase = () => {
     setFilteredProducts(filtered);
   };
 
+  console.log(filteredProducts);
+  
+
   return (
     <AdminLayout adminHeader="Alınmış məhsullar">
       <SearchInpMain onSearch={handleSearch} />

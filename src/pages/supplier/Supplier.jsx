@@ -11,54 +11,48 @@ import SupplierUpdatePaymentModal from '../../components/admin/modals/SupplierUp
 import SupplierDeletePaymentModal from '../../components/admin/modals/SupplierDeletePaymentModal'
 
 const Supplier = () => {
-     const dispatch = useDispatch();
-  const [filteredPayments, setFilteredPayments] = useState([]);
+  const dispatch = useDispatch();
+  const [searchTerm, setSearchTerm] = useState('');
 
-  const { supplierAddPaymentModal, supplierList,supplierUpdatePaymentModal,
-    supplierDeletePaymentModal
-   } = useSelector(state => state.income);
+  const { supplierList, count, supplierAddPaymentModal, supplierUpdatePaymentModal, supplierDeletePaymentModal } = useSelector(state => state.income);
+
+  const fetchSuppliers = (page = 1, search = '') => {
+    dispatch(getSupplierList({ page, search }));
+  };
 
   useEffect(() => {
-    dispatch(getSupplierList());
+    fetchSuppliers(); // ilk renderdə bütün supplierləri çək
   }, [dispatch]);
-
-  useEffect(() => {
-    setFilteredPayments(supplierList); // ilk olaraq hamısını göstər
-  }, [supplierList]);
 
   const handleClick = () => {
     dispatch(handleSupplierAddPaymentModal());
   };
 
   const handleSearch = (query) => {
-    const lowerQuery = query.toLowerCase();
-
-    const filtered = supplierList.filter(payment => {
-      const supplier = payment.supplier || {};
-      return (
-        supplier.username?.toLowerCase().includes(lowerQuery) ||
-        supplier.first_name?.toLowerCase().includes(lowerQuery) ||
-        supplier.last_name?.toLowerCase().includes(lowerQuery)
-      );
-    });
-
-    setFilteredPayments(filtered);
+    setSearchTerm(query);
+    fetchSuppliers(1, query); // search zamanı backend-ə göndər
   };
-    return (
-        <AdminLayout adminHeader="Kassa">
-            <AdminBigComponentHeader
-                adminHeader="Ödəniş cədvəli"
-                hideShowBtn={true}
-                buttonContent="Ödəniş əlavə et"
-                onClick={handleClick}
-            />
-            <SearchInpMain onSearch={handleSearch} />
-            <SupplierTableEnd paymentList={filteredPayments} />
-            {supplierAddPaymentModal && <SupplierAddPaymentModal/>}
-            {supplierUpdatePaymentModal && <SupplierUpdatePaymentModal/>}
-            {supplierDeletePaymentModal && <SupplierDeletePaymentModal/>}
-        </AdminLayout>
-    )
+
+  return (
+    <AdminLayout adminHeader="Kassa">
+      <AdminBigComponentHeader
+        adminHeader="Ödəniş cədvəli"
+        hideShowBtn={true}
+        buttonContent="Ödəniş əlavə et"
+        onClick={handleClick}
+      />
+      <SearchInpMain onSearch={handleSearch} />
+      <SupplierTableEnd
+        paymentList={supplierList}
+        count={count}
+        fetchSuppliers={fetchSuppliers}
+        searchTerm={searchTerm}
+      />
+      {supplierAddPaymentModal && <SupplierAddPaymentModal/>}
+      {supplierUpdatePaymentModal && <SupplierUpdatePaymentModal/>}
+      {supplierDeletePaymentModal && <SupplierDeletePaymentModal/>}
+    </AdminLayout>
+  )
 }
 
-export default Supplier
+export default Supplier;

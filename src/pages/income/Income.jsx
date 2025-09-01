@@ -7,48 +7,36 @@ import IncomeTableEnd from '../../components/admin/income/IncomeTableEnd';
 import { useDispatch, useSelector } from 'react-redux';
 import { handleIncomeAddPaymentModal } from '../../redux/slices/admin/incomeSlices';
 import IncomeAddPaymentModal from '../../components/admin/modals/IncomeAddPaymentModal';
-import { getPaymentList } from '../../actions/incomeAction/incomeAction';
 import IncomeUpdatePaymentModal from '../../components/admin/modals/IncomeUpdatePaymentModal';
 import IncomeDeletePaymentModal from '../../components/admin/modals/IncomeDeletePaymentModal';
+import { getPaymentList } from '../../actions/incomeAction/incomeAction';
 
 const Income = () => {
   const dispatch = useDispatch();
-  const [filteredPayments, setFilteredPayments] = useState([]);
+  const { incomeAddPaymentModal, paymentList, incomeUpdatePaymentModal, incomeDeletePaymentModal, count } = useSelector(state => state.income);
+  
+  const [searchTerm, setSearchTerm] = useState('');
 
-  const { incomeAddPaymentModal, paymentList,incomeUpdatePaymentModal,
-    incomeDeletePaymentModal
-   } = useSelector(state => state.income);
+  const fetchPayments = (page = 1, search = "") => {
+    dispatch(getPaymentList({ page, search }));
+  };
 
   useEffect(() => {
-    dispatch(getPaymentList());
+    fetchPayments(); // ilk yüklemede page 1
   }, [dispatch]);
-
-  useEffect(() => {
-    setFilteredPayments(paymentList); // ilk olaraq hamısını göstər
-  }, [paymentList]);
 
   const handleClick = () => {
     dispatch(handleIncomeAddPaymentModal());
   };
 
   const handleSearch = (query) => {
-    const lowerQuery = query.toLowerCase();
-
-    const filtered = paymentList.filter(payment => {
-      const customer = payment.customer || {};
-      return (
-        customer.username?.toLowerCase().includes(lowerQuery) ||
-        customer.first_name?.toLowerCase().includes(lowerQuery) ||
-        customer.last_name?.toLowerCase().includes(lowerQuery)
-      );
-    });
-
-    setFilteredPayments(filtered);
+    setSearchTerm(query);
+    fetchPayments(1, query); // search backend çağırışı ilə
   };
 
   return (
     <AdminLayout adminHeader="Kassa">
-      <IncomeTableHead paymentList={paymentList}/>
+      <IncomeTableHead paymentList={paymentList} />
       <AdminBigComponentHeader
         adminHeader="Ödəniş cədvəli"
         hideShowBtn={true}
@@ -56,10 +44,15 @@ const Income = () => {
         onClick={handleClick}
       />
       <SearchInpMain onSearch={handleSearch} />
-      <IncomeTableEnd paymentList={filteredPayments} />
+      <IncomeTableEnd
+        paymentList={paymentList}
+        count={count}
+        fetchPayments={fetchPayments}
+        searchTerm={searchTerm}
+      />
       {incomeAddPaymentModal && <IncomeAddPaymentModal />}
       {incomeUpdatePaymentModal && <IncomeUpdatePaymentModal />}
-      {incomeDeletePaymentModal && <IncomeDeletePaymentModal/>}
+      {incomeDeletePaymentModal && <IncomeDeletePaymentModal />}
     </AdminLayout>
   );
 };

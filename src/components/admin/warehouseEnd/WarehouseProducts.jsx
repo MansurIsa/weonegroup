@@ -1,18 +1,13 @@
-import React, { useState } from 'react';
+import React from 'react';
 import ReactPaginate from 'react-paginate';
-// import "./css/warehouseProducts.css"; // CSS fayl adını uyğunlaşdır
 
-const ITEMS_PER_PAGE = 5;
+const ITEMS_PER_PAGE = 10;
 
-const WarehouseProducts = ({ stockList }) => {
-  const [currentPage, setCurrentPage] = useState(0);
-
-  const offset = currentPage * ITEMS_PER_PAGE;
-  const currentPageData = stockList.slice(offset, offset + ITEMS_PER_PAGE);
-  const pageCount = Math.ceil(stockList.length / ITEMS_PER_PAGE);
+const WarehouseProducts = ({ stockList, currentPage, onPageChange, totalCount }) => {
+  const pageCount = Math.ceil(totalCount / ITEMS_PER_PAGE);
 
   const handlePageClick = (event) => {
-    setCurrentPage(event.selected);
+    onPageChange(event.selected + 1); // backend səhifəsi 1-dən başlayır
   };
 
   return (
@@ -27,11 +22,10 @@ const WarehouseProducts = ({ stockList }) => {
             <th>Artikl</th>
             <th>Miqdar</th>
             <th>Maya dəyəri</th>
-            {/* <th>Əməliyyat</th> */}
           </tr>
         </thead>
         <tbody>
-          {currentPageData?.map((item, index) => {
+          {stockList?.map((item, index) => {
             const product = item.product;
             const brand = product?.brand?.name || "—";
             const category = product?.category?.name || "—";
@@ -49,14 +43,13 @@ const WarehouseProducts = ({ stockList }) => {
                 <td className='table_article_scroll'>{articles}</td>
                 <td>{item.amount}</td>
                 <td>{costPrice} ₼</td>
-                {/* <td className="operation">+ Stok əlavə et</td> */}
               </tr>
             );
           })}
         </tbody>
       </table>
 
-      <ReactPaginate
+     {pageCount > 1 && ( <ReactPaginate
         previousLabel={<svg width="8" height="14" viewBox="0 0 8 14" fill="none" xmlns="http://www.w3.org/2000/svg">
           <path d="M7 1L1 7L7 13" stroke="#9F9FA0" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
         </svg>}
@@ -64,6 +57,7 @@ const WarehouseProducts = ({ stockList }) => {
           <path d="M1 1L7 7L1 13" stroke="#202020" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
         </svg>}
         pageCount={pageCount}
+        forcePage={currentPage - 1} // səhifəni backend ilə sinxron saxlamaq üçün
         onPageChange={handlePageClick}
         containerClassName={'dashboard_end_pagination'}
         pageClassName={'dashboard_end_page'}
@@ -71,7 +65,7 @@ const WarehouseProducts = ({ stockList }) => {
         previousClassName={'dashboard_end_arrow'}
         nextClassName={'dashboard_end_arrow'}
         activeClassName={'dashboard_end_active'}
-      />
+      />)}
     </div>
   );
 };

@@ -13,41 +13,52 @@ import { useDispatch, useSelector } from 'react-redux';
 import { getChartsDashboardList } from '../../../../actions/dashboardAction/dashboardAction';
 import { getUserObj, getUsersList } from '../../../../actions/loginAction/loginAction';
 import { getBrandList } from '../../../../actions/productsAction/productsAction';
+import CustomCustomerSelect from '../../../../components/admin/salesTableHead/CustomCustomerSelect';
 
 const SalesChart = () => {
   const dispatch = useDispatch();
   const [filterType, setFilterType] = useState('A'); // "A" - aylıq, "I" - illik
   const [selectedCustomer, setSelectedCustomer] = useState('');
- const [selectedBrand, setSelectedBrand] = useState('0'); // default: 0 = bütün markalar
-
+  const [selectedBrand, setSelectedBrand] = useState('0'); // default: 0 = bütün markalar
 
   const { usersList, userObj } = useSelector(state => state.login);
   const { chartObj } = useSelector(state => state.dashboard);
   const { brandList } = useSelector(state => state.products);
 
+  // Başlanğıc load
   useEffect(() => {
     dispatch(getUsersList());
     dispatch(getUserObj());
     dispatch(getBrandList());
   }, [dispatch]);
 
+  // Superuser üçün default selected
   useEffect(() => {
     if (userObj?.is_superuser) {
       setSelectedCustomer(userObj.id);
     }
   }, [userObj]);
 
- useEffect(() => {
-  if (!userObj || selectedBrand === '') return;
+  // Chart üçün API çağırış
+  useEffect(() => {
+    if (!userObj || selectedBrand === '') return;
 
-  const idToSend =
-    userObj.is_superuser && selectedCustomer
-      ? selectedCustomer
-      : userObj.id;
+    const idToSend =
+      userObj.is_superuser && selectedCustomer
+        ? selectedCustomer
+        : userObj.id;
 
-  dispatch(getChartsDashboardList(idToSend, filterType, selectedBrand));
-}, [dispatch, filterType, selectedCustomer, userObj, selectedBrand]);
+    dispatch(getChartsDashboardList(idToSend, filterType, selectedBrand));
+  }, [dispatch, filterType, selectedCustomer, userObj, selectedBrand]);
 
+  // Backend search handler
+  const handleSearch = (searchTerm) => {
+    if (!searchTerm.trim()) {
+      dispatch(getUsersList()); // boş input => bütün users
+    } else {
+      dispatch(getUsersList(1, searchTerm)); // backend search
+    }
+  };
 
   const salesData = chartObj
     ? Object.entries(chartObj).map(([key, value]) => ({
@@ -61,41 +72,39 @@ const SalesChart = () => {
       <div className="chart_header">
         <h3>Satışın dinamikası</h3>
         <div className="chart_controls">
+
+          {/* Superuser üçün Customer Select */}
           {userObj?.is_superuser && (
             <div className="form_group">
-              <select
+              <CustomCustomerSelect
+                displayVal={false}
+                customers={usersList.filter(user => user.is_staff)}
                 value={selectedCustomer}
-                onChange={(e) => setSelectedCustomer(e.target.value)}
-              >
-                <option value="">Admin seçin</option>
-                {usersList
-                  ?.filter(user => user.is_staff)
-                  .map(user => (
-                    <option key={user.id} value={user.id}>
-                      {user.first_name} {user.last_name} ({user.username})
-                    </option>
-                  ))}
-              </select>
+                onChange={(id) => setSelectedCustomer(id)}
+                onSearch={handleSearch}
+              />
             </div>
           )}
 
-         <div className="form_group">
-  <select
-    value={selectedBrand}
-    onChange={(e) => setSelectedBrand(e.target.value)}
-  >
-    <option value="0">Bütün markalar</option>
-    {brandList?.map(brand => (
-      <option key={brand.id} value={brand.id}>
-        {brand.name}
-      </option>
-    ))}
-  </select>
-</div>
+          {/* Brand select */}
+          <div className="form_group">
+            <select
+              value={selectedBrand}
+              onChange={(e) => setSelectedBrand(e.target.value)}
+            >
+              <option value="0">Bütün markalar</option>
+              {brandList?.map(brand => (
+                <option key={brand.id} value={brand.id}>
+                  {brand.name}
+                </option>
+              ))}
+            </select>
+          </div>
 
-
+          {/* Filter type: aylıq/illik */}
           <div className="dropdown">
             <span className="calendar_icon">
+              {/* SVG icon */}
               <svg
                 width="18"
                 height="18"

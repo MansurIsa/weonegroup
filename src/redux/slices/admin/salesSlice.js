@@ -13,11 +13,18 @@ const SalesSlice = createSlice({
         saleDeleteModal: false,
         saleDeleteId: "",
           saleUpdateModalCommon: false,
-        saleUpdateModalCommonObj: {},  
+        saleUpdateModalCommonObj: {}, 
+        
+        count: 0,
+        next: null,
+        previous: null,
     },
     reducers: {
         getSalesListFunc: (state, action) => {
-            state.salesList = action.payload;
+            state.salesList = action.payload.results;
+            state.count = action.payload.count;
+            state.next = action.payload.next;
+            state.previous = action.payload.previous;
         },
          getSaleListFunc: (state, action) => {
             state.saleList = action.payload;

@@ -1,10 +1,22 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { getProductsList } from '../../actions/productsAction/productsAction';
 
-
-const CustomProductSelect = ({ products, value, onChange }) => {
+const CustomProductSelect = ({ value, onChange }) => {
     const [searchTerm, setSearchTerm] = useState('');
     const [isOpen, setIsOpen] = useState(false);
     const dropdownRef = useRef();
+    const dispatch = useDispatch();
+    const { productsList } = useSelector(state => state.products);
+
+    // input dəyişdikcə backend-dən sorğu
+    useEffect(() => {
+        const delayDebounce = setTimeout(() => {
+            dispatch(getProductsList(1, searchTerm)); // page 1, search term
+        }, 300); // 300ms gecikmə
+
+        return () => clearTimeout(delayDebounce);
+    }, [searchTerm, dispatch]);
 
     const handleSelect = (product) => {
         onChange(product.id);
@@ -12,16 +24,7 @@ const CustomProductSelect = ({ products, value, onChange }) => {
         setIsOpen(false);
     };
 
-    console.log(products);
-    
-
-   const filtered = products.filter((p) =>
-    p.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    p.articles?.some(article =>
-        article.name.toLowerCase().includes(searchTerm.toLowerCase())
-    )
-);
-
+    const filtered = productsList; // artıq backend search nəticəsini göstərir
 
     useEffect(() => {
         const handleClickOutside = (e) => {
@@ -34,9 +37,9 @@ const CustomProductSelect = ({ products, value, onChange }) => {
     }, []);
 
     useEffect(() => {
-        const selected = products.find(p => p.id === +value);
+        const selected = productsList.find(p => p.id === +value);
         if (selected) setSearchTerm(selected.name);
-    }, [value]);
+    }, [value, productsList]);
 
     return (
         <div className="form_group custom-select-container" ref={dropdownRef}>

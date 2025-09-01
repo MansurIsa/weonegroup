@@ -7,47 +7,80 @@ import {
   getCategoryList,
   getProductsList,
   getStoreList,
+  getRecentProductsList,
 } from '../../../actions/productsAction/productsAction';
+import ReactPaginate from 'react-paginate';
 
 const FilterProducts = () => {
   const dispatch = useDispatch();
   const [brandDropdownOpen, setBrandDropdownOpen] = useState(false);
   const [storeDropdownOpen, setStoreDropdownOpen] = useState(false);
-  const [activeCategory, setActiveCategory] = useState('Hamısı');
-  const [activeBrand, setActiveBrand] = useState('Hamısı');
-  const [activeStore, setActiveStore] = useState('Hamısı');
-  const [searchQuery, setSearchQuery] = useState('');
 
+  // Filter və Pagination state
+  const [currentPage, setCurrentPage] = useState(0);
+  const pageSize = 10;
+
+  const [searchQuery, setSearchQuery] = useState("");
+  const [activeCategory, setActiveCategory] = useState("Hamısı");
+  const [activeBrand, setActiveBrand] = useState("Hamısı");
+  const [activeStore, setActiveStore] = useState("Hamısı");
+
+  const { 
+    productsList, 
+    recentProductsList, 
+    categoryList, 
+    brandList, 
+    storeList, 
+    count, 
+    count1 
+  } = useSelector((state) => state.products);
+
+  // Category, Brand, Store listlərini çəkmək
   useEffect(() => {
-    dispatch(getProductsList());
     dispatch(getCategoryList());
     dispatch(getBrandList());
     dispatch(getStoreList());
   }, [dispatch]);
 
-  const { productsList, categoryList, brandList, storeList } = useSelector(
-    (state) => state.products
-  );
+  // Məhsulları API-dən çəkmək
+useEffect(() => {
+  if (activeCategory === "Yeni gələnlər") {
+    dispatch(
+      getRecentProductsList(
+        currentPage + 1,
+        searchQuery,
+        activeBrand !== "Hamısı" ? activeBrand : "",
+        activeStore !== "Hamısı" ? activeStore : ""
+      )
+    );
+  } else {
+    dispatch(
+      getProductsList(
+        currentPage + 1,
+        searchQuery,
+        activeCategory !== "Hamısı" ? activeCategory : "",
+        activeBrand !== "Hamısı" ? activeBrand : "",
+        activeStore !== "Hamısı" ? activeStore : ""
+      )
+    );
+  }
+}, [dispatch, currentPage, searchQuery, activeCategory, activeBrand, activeStore]);
 
-  // ✅ Məhsulları filterlə
-  const filteredProducts = productsList?.filter((product) => {
-    const matchesCategory =
-      activeCategory === 'Hamısı' || product.category?.name === activeCategory;
-    const matchesBrand =
-      activeBrand === 'Hamısı' || product.brand?.name === activeBrand;
-    const matchesStore =
-      activeStore === 'Hamısı' || product.store?.name === activeStore;
-    const matchesSearch =
-      product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      product.articles?.some((article) =>
-        article.name.toLowerCase().includes(searchQuery.toLowerCase())
-      );
 
-    return matchesCategory && matchesBrand && matchesStore && matchesSearch;
-  });
+  const handlePageClick = (data) => {
+    setCurrentPage(data.selected);
+  };
+
+  const pageCount = activeCategory === "Yeni gələnlər" ? Math.ceil(count1 / pageSize) : Math.ceil(count / pageSize);
+
+  const getLatestProducts = (arr) => {
+    if (!arr) return [];
+    return arr.length > 300 ? arr.slice(arr.length - 300) : arr;
+  };
 
   return (
     <div className="filter_products_parent_container">
+      {/* Search və Dropdowns */}
       <div className="filter_products_serach_btn">
         <div className="filter_products_serach">
           <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
@@ -137,6 +170,14 @@ const FilterProducts = () => {
         >
           Hamısı
         </button>
+
+        <button
+          onClick={() => setActiveCategory('Yeni gələnlər')}
+          className={activeCategory === 'Yeni gələnlər' ? 'active_category' : ''}
+        >
+          Yeni gələnlər
+        </button>
+
         {categoryList?.map((cat) => (
           <button
             key={cat.id}
@@ -148,16 +189,47 @@ const FilterProducts = () => {
         ))}
       </div>
 
-      {/* Nəticələr */}
-      {filteredProducts?.length === 0 ? (
-        <div className="no_products_found">
-          <p>Məhsul tapılmadı</p>
-        </div>
+      {/* Məhsullar */}
+      {activeCategory === "Yeni gələnlər" ? (
+        recentProductsList?.length === 0 ? (
+          <div className="no_products_found"><p>Məhsul tapılmadı</p></div>
+        ) : (
+          <FilterProductsContainer productsList={getLatestProducts(recentProductsList)} />
+        )
+      ) : productsList?.length === 0 ? (
+        <div className="no_products_found"><p>Məhsul tapılmadı</p></div>
       ) : (
-        <FilterProductsContainer productsList={filteredProducts} />
+        <FilterProductsContainer productsList={productsList} />
+      )}
+
+      {/* Pagination */}
+      {((activeCategory === "Yeni gələnlər" && count1 > pageSize) || (activeCategory !== "Yeni gələnlər" && count > pageSize)) && (
+        <ReactPaginate
+          previousLabel={
+            <svg width="8" height="14" viewBox="0 0 8 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M7 1L1 7L7 13" stroke="#9F9FA0" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          }
+          nextLabel={
+            <svg width="8" height="14" viewBox="0 0 8 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M1 1L7 7L1 13" stroke="#202020" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          }
+          pageCount={pageCount}
+          marginPagesDisplayed={1}
+          pageRangeDisplayed={2}
+          onPageChange={handlePageClick}
+          containerClassName={'dashboard_end_pagination'}
+          pageClassName={'dashboard_end_page'}
+          pageLinkClassName={'dashboard_end_page_link'}
+          previousClassName={'dashboard_end_arrow'}
+          nextClassName={'dashboard_end_arrow'}
+          activeClassName={'dashboard_end_active'}
+        />
       )}
     </div>
   );
 };
 
 export default FilterProducts;
+

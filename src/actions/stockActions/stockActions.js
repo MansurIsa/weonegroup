@@ -4,9 +4,9 @@ import { startLoading, stopLoading } from "../../redux/slices/loaderSlice";
 import toast from "react-hot-toast";
 import { getStockListFunc } from "../../redux/slices/admin/stockSlices";
 
-export const getStockList = () => async (dispatch) => {
+export const getStockList = (page = 1, search = "") => async (dispatch) => {
   dispatch(startLoading());
-  return await axios.get(`${baseUrl}accounting/stock-list/`)
+  return await axios.get(`${baseUrl}accounting/stock-list/?page=${page}&search=${search}`)
     .then((resp) => {
         console.log(resp.data);
       dispatch(getStockListFunc(resp.data));

@@ -1,53 +1,37 @@
-import React, { useEffect, useState } from 'react'
-import AdminLayout from '../../layouts/adminLayout/AdminLayout'
-import CustomerTableHead from '../../components/admin/customerTableHead/CustomerTableHead'
-import AdminBigComponentHeader from '../../components/admin/adminBigComponentHeader/AdminBigComponentHeader'
-import { useNavigate } from 'react-router-dom'
-import SearchInpMain from '../../components/admin/searchInpMain/SearchInpMain'
-import CustomerTableEnd from '../../components/admin/customerTableHead/CustomerTableEnd'
-import { useDispatch, useSelector } from 'react-redux'
-import { getUsersList } from '../../actions/loginAction/loginAction'
-import CustomerDeleteModal from '../../components/admin/modals/CustomerDeleteModal'
+import React, { useEffect, useRef, useState } from 'react';
+import AdminLayout from '../../layouts/adminLayout/AdminLayout';
+import CustomerTableHead from '../../components/admin/customerTableHead/CustomerTableHead';
+import AdminBigComponentHeader from '../../components/admin/adminBigComponentHeader/AdminBigComponentHeader';
+import { useNavigate } from 'react-router-dom';
+import SearchInpMain from '../../components/admin/searchInpMain/SearchInpMain';
+import CustomerTableEnd from '../../components/admin/customerTableHead/CustomerTableEnd';
+import { useDispatch, useSelector } from 'react-redux';
+import { getUsersList } from '../../actions/loginAction/loginAction';
+import CustomerDeleteModal from '../../components/admin/modals/CustomerDeleteModal';
 
 const Customers = () => {
-  const navigate = useNavigate()
-  const dispatch = useDispatch()
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const searchTimeout = useRef(null);
 
-  const [filteredUsers, setFilteredUsers] = useState([])
+  const { usersList, customerDeleteModal } = useSelector(state => state.login);
 
   const handleClick = () => {
-    navigate("/new-customer")
-  }
+    navigate("/new-customer");
+  };
 
+  // İlk dəfə backend-dən istifadəçiləri çəkmək
   useEffect(() => {
-    dispatch(getUsersList())
-  }, [dispatch])
+    dispatch(getUsersList(1, ""));
+  }, [dispatch]);
 
-  const { usersList,customerDeleteModal } = useSelector(state => state.login)
-
-useEffect(() => {
-  // Yalnız is_staff === false olanları saxla
-  const filtered = usersList.filter(user => !user.is_staff);
-  setFilteredUsers(filtered);
-}, [usersList]);
-
-
- const handleSearch = (query) => {
-  const lowerQuery = query.toLowerCase();
-
-  const filtered = usersList
-    .filter(user => !user.is_staff) // burada da is_staff yoxla
-    .filter(user =>
-      user.username.toLowerCase().includes(lowerQuery) ||
-      user.first_name.toLowerCase().includes(lowerQuery) ||
-      user.last_name.toLowerCase().includes(lowerQuery) ||
-      user.phone_number?.toLowerCase().includes(lowerQuery) ||
-      user.address?.toLowerCase().includes(lowerQuery)
-    );
-
-  setFilteredUsers(filtered);
-};
-
+  // Backend search (debounce)
+  const handleSearch = (query) => {
+    if (searchTimeout.current) clearTimeout(searchTimeout.current);
+    searchTimeout.current = setTimeout(() => {
+      dispatch(getUsersList(1, query));
+    }, 500); // 500ms gecikmə
+  };
 
   return (
     <AdminLayout adminHeader="Müştərilər">
@@ -58,11 +42,13 @@ useEffect(() => {
         buttonContent="Yeni müştəri əlavə et"
         onClick={handleClick}
       />
+      {/* Input dəyəri state-də saxlanmır, yalnız onSearch */}
       <SearchInpMain onSearch={handleSearch} />
-      <CustomerTableEnd usersList={filteredUsers} />
-      {customerDeleteModal && <CustomerDeleteModal/>}
+      {/* Yalnız is_staff === false olanlar göstərilir */}
+      <CustomerTableEnd usersList={usersList.filter(user => !user.is_staff)} />
+      {customerDeleteModal && <CustomerDeleteModal />}
     </AdminLayout>
-  )
-}
+  );
+};
 
-export default Customers
+export default Customers;

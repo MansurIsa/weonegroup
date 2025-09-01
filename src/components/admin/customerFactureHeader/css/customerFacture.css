@@ -1,12 +1,14 @@
 .screen-only {
   display: inline;
 }
+
 .print-only {
   display: none;
 }
 
 
 @media print {
+
   /* Bu sütunları gizlət */
   th:nth-child(1),
   th:nth-child(4),
@@ -16,6 +18,9 @@
   td:nth-child(10) {
     display: none;
   }
+
+ 
+
 
   /* Artikil scrollunu deaktiv et */
   .table_article_scroll {
@@ -45,32 +50,43 @@
     top: 0;
     width: 100%;
   }
-   .warehouse_summary div:last-child {
+
+  .warehouse_summary div:last-child {
     display: none !important;
   }
-  th:nth-child(9),
-  td:nth-child(9) {
+
+  th:nth-child(11),
+  td:nth-child(11) {
     display: none !important;
   }
-   .screen-only {
+
+  .screen-only {
     display: none !important;
   }
+
   .print-only {
-    display: inline !important;
+    display: table-cell !important;
+     text-align: center !important;
   }
-  
+
+  .admin_header_search {
+    display: none !important;
+  }
 }
 
 
 .table_article_scroll {
-  max-width: 100px;     
-  overflow-x: auto;     /* x oxuna scroll */
-  overflow-y: hidden;   /* y oxuna scroll olmasın */
+  max-width: 100px;
+  overflow-x: auto;
+  /* x oxuna scroll */
+  overflow-y: hidden;
+  /* y oxuna scroll olmasın */
   /* display: block;       scroll-un işləməsi üçün vacibdir */
-  white-space: nowrap;  /* mətnin aşağı keçməsinin qarşısını alır */
+  white-space: nowrap;
+  /* mətnin aşağı keçməsinin qarşısını alır */
 }
 
-.table_scroll_wrapper{
+.table_scroll_wrapper {
   width: 100%;
   overflow-x: auto !important;
 }

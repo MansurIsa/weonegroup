@@ -1,22 +1,79 @@
 import axios from "axios";
 import { baseUrl } from "../../mainApi/MainApi";
-import { getBrandListFunc, getCategoryListFunc, getProductObjFunc, getProductsListFunc, getStoreListFunc } from "../../redux/slices/productsSlices";
+import { getBrandListFunc, getCategoryListFunc, getProductObjFunc, getProductsListFunc, getRecentProductsListFunc, getStoreListFunc } from "../../redux/slices/productsSlices";
 import { startLoading, stopLoading } from "../../redux/slices/loaderSlice";
 import toast from "react-hot-toast";
 import { closeProductsDeleteModalFunc } from "../../redux/slices/admin/productTableSlice";
 
-export const getProductsList = () => async (dispatch) => {
-  dispatch(startLoading());
-  return await axios.get(`${baseUrl}core/product-list/`)
+// export const getProductsList = (page = 1) => async (dispatch) => {
+//   dispatch(startLoading());
+//   return await axios.get(`${baseUrl}core/product-list/?page=${page}`)
+//     .then((resp) => {
+//         console.log(resp.data);
+//       dispatch(getProductsListFunc(resp.data));
+//     })
+//     .catch((err) => {
+//       console.log(err);
+//     }).finally(() => {
+//       dispatch(stopLoading());
+//     });;
+// };
+
+
+export const getProductsList = (
+  page = 1,
+  search = "",
+  category = "",
+  brand = "",
+  store = ""
+) => async (dispatch) => {
+  // dispatch(startLoading());
+
+  // search string yığılır
+  let searchQuery = search;
+  if (category) searchQuery += ` ${category}`;
+  if (brand) searchQuery += ` ${brand}`;
+  if (store) searchQuery += ` ${store}`;
+
+  return await axios
+    .get(`${baseUrl}core/product-list/?page=${page}&search=${encodeURIComponent(searchQuery.trim())}`)
     .then((resp) => {
-        console.log(resp.data);
       dispatch(getProductsListFunc(resp.data));
     })
     .catch((err) => {
       console.log(err);
-    }).finally(() => {
-      dispatch(stopLoading());
-    });;
+    })
+    .finally(() => {
+      // dispatch(stopLoading());
+    });
+};
+
+
+
+export const getRecentProductsList = (
+  page = 1,
+  search = "",
+  brand = "",
+  store = ""
+) => async (dispatch) => {
+  // dispatch(startLoading());
+
+  // search string yığılır
+  let searchQuery = search;
+  if (brand) searchQuery += ` ${brand}`;
+  if (store) searchQuery += ` ${store}`;
+
+  return await axios
+    .get(`${baseUrl}core/recent-product-list/?page=${page}&search=${encodeURIComponent(searchQuery.trim())}`)
+    .then((resp) => {
+      dispatch(getRecentProductsListFunc(resp.data));
+    })
+    .catch((err) => {
+      console.log(err);
+    })
+    .finally(() => {
+      // dispatch(stopLoading());
+    });
 };
 
 
