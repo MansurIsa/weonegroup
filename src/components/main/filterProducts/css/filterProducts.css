@@ -205,6 +205,18 @@
     margin-left: auto;
     margin-bottom: 10px;
 }
+
+.filter_product_card_content_stock_orange{
+    color: var(--black);
+    background-color: rgb(255, 255, 131);
+    padding: 10px;
+    display: block;
+    width: 110px;
+    margin-left: auto;
+    margin-bottom: 10px;
+    font-size: 1.4rem;
+    
+}
 .filter_product_card_content_stock_green{
     color: var(--green);
     background-color: rgb(228, 255, 228);
@@ -254,7 +266,10 @@
 .inc_dec_pr .add_to_cart_pr:hover{
     background: var(--yellow);
 }
-
+.article_pr_name{
+    font-size: 1.6rem;
+    font-family: Poppins;
+}
 @media screen and (max-width: 650px) {
     .filter_products_serach_btn {
         flex-direction: column;

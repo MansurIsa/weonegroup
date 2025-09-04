@@ -55,6 +55,9 @@ const FilterProductCard = ({ data }) => {
         navigate(`/products/${data?.id}`)
     }
 
+    console.log(data);
+
+
     return (
         <div className='filter_product_card'>
             {/* 🟢 Clicklə açılan hissə */}
@@ -62,16 +65,31 @@ const FilterProductCard = ({ data }) => {
                 <img src={data?.image} alt="" />
                 <div className="filter_product_card_content">
                     {
-                        accessToken &&
-                        <span className={+data?.amount > 0
-                            ? 'filter_product_card_content_stock_green'
-                            : 'filter_product_card_content_stock_red'}>
-                            {+data?.amount > 0 ? 'Stokda var' : 'Stokda bitib'}
-                        </span>
+                        accessToken && (
+                            <span
+                                className={
+                                    +data?.amount > 20
+                                        ? 'filter_product_card_content_stock_green'
+                                        : +data?.amount > 0 && +data?.amount < 21
+                                            ? 'filter_product_card_content_stock_orange'
+                                            : 'filter_product_card_content_stock_red'
+                                }
+                            >
+                                {+data?.amount > 20
+                                    ? 'Stokda var'
+                                    : +data?.amount > 0 && +data?.amount < 21
+                                        ? 'Stokda tükənir'
+                                        : 'Stokda bitib'}
+                            </span>
+                        )
                     }
+
 
                     <h3>{data?.name}</h3>
                     <p>{data?.brand?.name}</p>
+                    <span className='article_pr_name'>
+                        Məhsul kodu: {data?.articles?.map(x => x?.name).join(", ")}
+                    </span>
 
                     <div>
                         {

@@ -88,7 +88,8 @@ const adminOnlyPaths = [
   "/update-new-products",
   "/update-new-customer",
   "/supplier-purchase",
-  "/supplier"
+  "/supplier",
+  "/customeraction-retrieve/:id"
 ];
 
 // Routing
@@ -147,12 +148,15 @@ const App = () => {
       <Routes>
         {routes.map((route, i) => {
           const userIsAdmin = userObj?.is_staff === true;
+           const userIsSuperAdmin = userObj?.is_superuser === true;
           const routeIsAdminOnly = adminOnlyPaths.includes(route.path);
 
           // Token varsa amma əsas səhifəyə gedirsə yönləndir
           if ((route.path === '/' || route.path === '/login') && isAuthenticated()) {
-            return userObj?.is_staff
-              ? <Route key={i} path={route.path} element={<Navigate to="/dashboard" replace />} />
+            return userIsAdmin && userIsSuperAdmin
+              ? <Route key={i} path={route.path} element={<Navigate to="/dashboard" replace />} />:
+              userIsAdmin && !userIsSuperAdmin?
+              <Route key={i} path={route.path} element={<Navigate to="/purchase" replace />} />
               : <Route key={i} path={route.path} element={<Home />} />;
           }
 

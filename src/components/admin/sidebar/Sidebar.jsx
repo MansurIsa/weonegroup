@@ -50,7 +50,9 @@ const Sidebar = () => {
             <Logo />
 
             <ul className='sidebar_menu'>
-                <li className={isActive("/dashboard") ? "active" : ""}><Link to="/dashboard">
+                {
+                    userObj?.is_superuser === true?
+ <li className={isActive("/dashboard") ? "active" : ""}><Link to="/dashboard">
                     <svg width="20" height="21" viewBox="0 0 20 21" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <g clip-path="url(#clip0_9_1808)">
                             <path d="M17.5 15.9532V9.4394C17.5 8.43027 17.0503 7.47454 16.2751 6.83623L12.1084 3.40525C10.8814 2.39486 9.11859 2.39487 7.89155 3.40525L3.72488 6.83623C2.9497 7.47454 2.5 8.43027 2.5 9.4394V15.9532C2.5 17.8094 3.99238 19.3141 5.83333 19.3141H14.1667C16.0076 19.3141 17.5 17.8094 17.5 15.9532Z" stroke="white" stroke-width="1.5" stroke-linejoin="round" />
@@ -62,7 +64,9 @@ const Sidebar = () => {
                             </clipPath>
                         </defs>
                     </svg>
-                    İdarə paneli</Link></li>
+                    İdarə paneli</Link></li>: null
+                }
+               
                 <li className={isActive("/purchase") ? "active" : ""}><Link to="/purchase">
                     <svg width="24" height="25" viewBox="0 0 24 25" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <g clip-path="url(#clip0_308_4769)">

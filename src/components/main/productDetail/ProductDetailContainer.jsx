@@ -67,11 +67,25 @@ const ProductDetailContainer = ({ productObj, userObj }) => {
                 <div className="product_detail_container_right">
                     <div className="product_detail_container_right_color">
                         <h1>{productObj?.name}</h1>
-                        {accessToken && (
-                            productObj?.amount > 0
-                                ? <p className='filter_product_card_content_stock_green'>Stokda var</p>
-                                : <p className='filter_product_card_content_stock_red'>Stokda bitib</p>
-                        )}
+                       {
+                        accessToken && (
+                            <span
+                                className={
+                                    +productObj?.amount > 20
+                                        ? 'filter_product_card_content_stock_green'
+                                        : +productObj?.amount > 0 && +productObj?.amount < 21
+                                            ? 'filter_product_card_content_stock_orange'
+                                            : 'filter_product_card_content_stock_red'
+                                }
+                            >
+                                {+productObj?.amount > 20
+                                    ? 'Stokda var'
+                                    : +productObj?.amount > 0 && +productObj?.amount < 21
+                                        ? 'Stokda tükənir'
+                                        : 'Stokda bitib'}
+                            </span>
+                        )
+                    }
                     </div>
 
                     <div className='product_detail_container_right_cat'>
@@ -88,6 +102,9 @@ const ProductDetailContainer = ({ productObj, userObj }) => {
                             <p>{productObj?.store?.name}</p>
                         </div>
                     </div>
+                     <span className='article_pr_name'>
+                       Məhsul kodu: {productObj?.articles?.map(x => x?.name).join(", ")}
+                    </span>
 
                     <div className="product_detail_about_wrapper">
                         {productObj?.product_abouts?.map((item, index) => (

@@ -10,7 +10,7 @@ import ReactPaginate from 'react-paginate';
 
 const NewWarehouse = () => {
     const [search, setSearch] = useState('');
-    const [selectedRows, setSelectedRows] = useState([]);
+    const [selectedIds, setSelectedIds] = useState([]); // ID-lər ilə işləyirik
     const [selectedBrand, setSelectedBrand] = useState('');
     const [selectedCategory, setSelectedCategory] = useState('');
     const [currentPage, setCurrentPage] = useState(1);
@@ -26,51 +26,42 @@ const NewWarehouse = () => {
         dispatch(getCategoryList());
     }, [dispatch]);
 
-    // 🔥 search string backend-ə brand + category ilə birləşdirilmiş şəkildə göndərilir
     useEffect(() => {
         let fullSearch = search.trim();
-
-        if (selectedBrand) {
-            fullSearch += (fullSearch ? ' ' : '') + selectedBrand;
-        }
-
-        if (selectedCategory) {
-            fullSearch += (fullSearch ? ' ' : '') + selectedCategory;
-        }
+        if (selectedBrand) fullSearch += (fullSearch ? ' ' : '') + selectedBrand;
+        if (selectedCategory) fullSearch += (fullSearch ? ' ' : '') + selectedCategory;
 
         dispatch(getPurchaseList({ page: currentPage, search: fullSearch }));
     }, [dispatch, currentPage, search, selectedBrand, selectedCategory]);
 
-    const toggleRow = (index) => {
-        if (selectedRows.includes(index)) {
-            setSelectedRows(selectedRows.filter((i) => i !== index));
+    // ID əsaslı toggle funksiyası
+    const toggleRow = (id) => {
+        if (selectedIds.includes(id)) {
+            setSelectedIds(selectedIds.filter((itemId) => itemId !== id));
         } else {
-            setSelectedRows([...selectedRows, index]);
+            setSelectedIds([...selectedIds, id]);
         }
     };
 
-    const totalCost = purchaseList.reduce(
+    // Statusu "G" olan məhsulları filtrlə
+    const filteredItems = purchaseList?.filter(item => item?.status === "G") || [];
+
+    const totalCost = filteredItems.reduce(
         (acc, item) => acc + item.amount * item.product.cost_price,
         0
     );
-    const totalProfit = purchaseList.reduce(
-        (acc, item) =>
-            acc + item.amount * (item.product?.price - item?.product?.cost_price),
+    const totalProfit = filteredItems.reduce(
+        (acc, item) => acc + item.amount * (item.product?.price - item?.product?.cost_price),
         0
     );
 
     const handleSave = () => {
-        const selectedItemIds = purchaseList
-            .map((item, index) => (selectedRows.includes(index) ? item.id : null))
-            .filter((id) => id !== null);
-
-        const payload = { item_ids: selectedItemIds };
-
+        const payload = { item_ids: selectedIds };
         console.log('Göndərilən məhsul ID-ləri:', payload);
         dispatch(addStock(payload, navigate));
     };
 
-    const pageSize = 10; // backend-in qaytardığı səhifə ölçüsünə uyğunlaşdır
+    const pageSize = 10;
     const pageCount = Math.ceil(count / pageSize);
 
     return (
@@ -131,13 +122,13 @@ const NewWarehouse = () => {
                                 </tr>
                             </thead>
                             <tbody>
-                                {purchaseList?.map((item, index) => (
-                                    <tr key={index}>
+                                {filteredItems.map((item) => (
+                                    <tr key={item.id}>
                                         <td>
                                             <input
                                                 type="checkbox"
-                                                checked={selectedRows.includes(index)}
-                                                onChange={() => toggleRow(index)}
+                                                checked={selectedIds.includes(item.id)}
+                                                onChange={() => toggleRow(item.id)}
                                             />
                                         </td>
                                         <td>{item.product?.name}</td>
@@ -154,23 +145,25 @@ const NewWarehouse = () => {
                             </tbody>
                         </table>
 
-                           {pageCount > 1 && (<ReactPaginate
-                            previousLabel={<svg width="8" height="14" viewBox="0 0 8 14" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M7 1L1 7L7 13" stroke="#9F9FA0" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                            </svg>}
-                            nextLabel={<svg width="8" height="14" viewBox="0 0 8 14" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M1 1L7 7L1 13" stroke="#202020" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                            </svg>}
-                            pageCount={pageCount}
-                            forcePage={currentPage - 1} // səhifəni backend ilə sinxron saxlamaq üçün
-                            onPageChange={(e) => setCurrentPage(e.selected + 1)}
-                            containerClassName={'dashboard_end_pagination'}
-                            pageClassName={'dashboard_end_page'}
-                            pageLinkClassName={'dashboard_end_page_link'}
-                            previousClassName={'dashboard_end_arrow'}
-                            nextClassName={'dashboard_end_arrow'}
-                            activeClassName={'dashboard_end_active'}
-                        />)}
+                        {pageCount > 1 && (
+                            <ReactPaginate
+                                previousLabel={<svg width="8" height="14" viewBox="0 0 8 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M7 1L1 7L7 13" stroke="#9F9FA0" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                                </svg>}
+                                nextLabel={<svg width="8" height="14" viewBox="0 0 8 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M1 1L7 7L1 13" stroke="#202020" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                                </svg>}
+                                pageCount={pageCount}
+                                forcePage={currentPage - 1}
+                                onPageChange={(e) => setCurrentPage(e.selected + 1)}
+                                containerClassName={'dashboard_end_pagination'}
+                                pageClassName={'dashboard_end_page'}
+                                pageLinkClassName={'dashboard_end_page_link'}
+                                previousClassName={'dashboard_end_arrow'}
+                                nextClassName={'dashboard_end_arrow'}
+                                activeClassName={'dashboard_end_active'}
+                            />
+                        )}
 
                         {/* 📊 Summary */}
                         <div className="warehouse_summary">
@@ -190,11 +183,6 @@ const NewWarehouse = () => {
                                 Yadda saxla
                             </button>
                         </div>
-
-                        {/* 🔢 Pagination */}
-
-
-                       
                     </div>
                 </div>
             </div>

@@ -4,7 +4,7 @@ const DashboardSlice = createSlice({
     name: 'dashboard',
     initialState: {
       dashboardList: {},
-      mostDebtObj: {},
+      mostDebtObj: [],
       stockOutList: [],
       chartObj: {},
 

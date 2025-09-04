@@ -14,10 +14,12 @@ const ProductMovementEnd = ({ movementList = [] }) => {
 
     const handleProductsMovementCustomer = (x) => {
         
-         dispatch(getCustomerFactureList(x));
+        //  dispatch(getCustomerFactureList(x));
+
          console.log(x);
 
-         navigate("/customer-movement-facture");
+        //  navigate("/customer-movement-facture");
+        navigate(`/customer-movement?customerId=${x}`)
          
     };
 

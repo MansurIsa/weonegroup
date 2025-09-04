@@ -20,6 +20,7 @@ const NewPurchase = () => {
     const [productsData, setProductsData] = useState([
         {
             productId: '',
+            productData: null, // Əlavə etdik: bütün məhsul məlumatlarını saxlayacaq
             quantity: '',
             costPrice: '',
             purchasePriceValue: '',
@@ -34,7 +35,6 @@ const NewPurchase = () => {
     useEffect(() => {
         dispatch(getBrandList());
         dispatch(getCategoryList());
-        dispatch(getProductsList());
         dispatch(getSupplierList());
     }, [dispatch]);
 
@@ -46,6 +46,7 @@ const NewPurchase = () => {
             ...prev,
             {
                 productId: '',
+                productData: null,
                 quantity: '',
                 costPrice: '',
                 purchasePriceValue: '',
@@ -58,6 +59,22 @@ const NewPurchase = () => {
     const handleProductChange = (index, name, value) => {
         const updated = [...productsData];
         updated[index][name] = value;
+        setProductsData(updated);
+    };
+
+    // Məhsul seçildikdə məlumatları avtomatik doldur
+    const handleProductSelect = (index, product) => {
+        const updated = [...productsData];
+        updated[index].productId = product.id;
+        updated[index].productData = product;
+        
+        // Məhsul məlumatlarını avtomatik doldur
+        updated[index].costPrice = product.cost_price || '';
+        updated[index].purchasePriceValue = product.purchase_price || '';
+        updated[index].salePrice = product.price || '';
+        updated[index].discountPrice = product.discount_price || '';
+        updated[index].quantity = product.amount > 0 ? '1' : ''; // Əgər varsa 1, yoxsa boş
+        
         setProductsData(updated);
     };
 
@@ -163,7 +180,7 @@ const NewPurchase = () => {
                                     onClick={() => handleRemoveProduct(index)}
                                     style={{
                                         display: "block",
-                                       marginLeft: "auto",
+                                        marginLeft: "auto",
                                         background: '#e74c3c',
                                         color: 'white',
                                         border: 'none',
@@ -178,16 +195,12 @@ const NewPurchase = () => {
 
                             <div className="form_group">
                                 <CustomProductSelect
-                                    products={productsList}
                                     value={item.productId}
-                                    onChange={(id) => handleProductChange(index, 'productId', id)}
+                                    onChange={(product) => handleProductSelect(index, product)}
                                 />
                             </div>
 
                             <div className='flex_purchase_cont'>
-
-
-
                                 <div className="form_group">
                                     <label>Miqdar</label>
                                     <input

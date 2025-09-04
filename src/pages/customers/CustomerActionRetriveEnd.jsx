@@ -8,7 +8,8 @@ const CustomerActionRetriveEnd = ({ movementList = [] }) => {
   const dispatch = useDispatch();
 
   const handleReturn = () => {
-    navigate("/customers");
+    // navigate("/customers");
+    navigate(`/customer-movement?${localStorage.getItem("customerMove")}`)
   };
 
   const handleCustomerFactura = (customerId) => {

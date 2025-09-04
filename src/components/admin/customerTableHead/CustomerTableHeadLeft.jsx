@@ -37,6 +37,9 @@ const CustomerTableHeadLeft = () => {
     if (endDate) queryParams.append('end', endDate);
     if (selectedCustomer) queryParams.append('customerId', selectedCustomer);
     navigate(`/customer-movement?${queryParams.toString()}`);
+    console.log(queryParams.toString());
+    localStorage.setItem("customerMove",queryParams.toString())
+    
   };
 
   return (
