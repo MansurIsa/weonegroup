@@ -78,7 +78,7 @@ const CustomerFactureEnd = ({ factureList = [] }) => {
                   <span className="screen-only">
                     {item.product?.articles?.map((art) => art.name).join(', ') || '—'}
                   </span>
-                  <span className="print-only">
+                  <span className="print-only print-only-arc">
                     {item.product?.articles?.[0]?.name || '—'}
                   </span>
                 </td>

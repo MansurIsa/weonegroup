@@ -19,7 +19,10 @@
     display: none;
   }
 
- 
+ td{
+  padding: 0 !important;
+  height: 0 !important;
+ }
 
 
   /* Artikil scrollunu deaktiv et */
@@ -67,6 +70,9 @@
   .print-only {
     display: table-cell !important;
      text-align: center !important;
+  }
+  .print-only-arc{
+    display: inline !important;
   }
 
   .admin_header_search {
