@@ -18,6 +18,7 @@ const SalesSlice = createSlice({
         count: 0,
         next: null,
         previous: null,
+        plusSalesObj: {}
     },
     reducers: {
         getSalesListFunc: (state, action) => {
@@ -54,6 +55,9 @@ const SalesSlice = createSlice({
         saleUpdateModalFuncCommon: (state,action)=>{
             state.saleUpdateModalCommon=true,
             state.saleUpdateModalCommonObj=action.payload
+        },
+        plusSalesFunc: (state,action)=>{
+            state.plusSalesObj=action.payload
         }
 
 
@@ -68,5 +72,6 @@ export const {
     closeSaleUpdateModalFunc,
     setSaleUpdateObjFunc,
     getSaleListFunc,saleDeleteModalFunc,
-    saleUpdateModalFuncCommon
+    saleUpdateModalFuncCommon,
+    plusSalesFunc
 } = SalesSlice.actions;

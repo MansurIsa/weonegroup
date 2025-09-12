@@ -21,9 +21,9 @@ export const getDashboardList = (id, month, year) => async (dispatch) => {
     });;
 };
 
-export const getMostDebtDashboardList = ({page = 1, search = ""}) => async (dispatch) => {
+export const getMostDebtDashboardList = ({page = 1}) => async (dispatch) => {
   // dispatch(startLoading());
-  return await axios.get(`${baseUrl}accounting/mostindebtedcustomers/?page=${page}&search=${search}`)
+  return await axios.get(`${baseUrl}accounting/mostindebtedcustomers/?page=${page}`)
     .then((resp) => {
       console.log(resp.data);
       dispatch(getMostDebtDashboardListFunc(resp.data));

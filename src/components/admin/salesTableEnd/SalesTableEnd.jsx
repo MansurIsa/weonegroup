@@ -7,8 +7,9 @@ import { getSalesList } from '../../../actions/salesAction/salesAction';
 import { getCustomerFactureList } from '../../../actions/loginAction/loginAction';
 import { FaPenToSquare } from 'react-icons/fa6';
 import { AiTwotoneDelete } from 'react-icons/ai';
-import { saleDeleteModalFunc, saleUpdateModalFunc, saleUpdateModalFuncCommon, setSaleUpdateObjFunc } from '../../../redux/slices/admin/salesSlice';
+import { plusSalesFunc, saleDeleteModalFunc, saleUpdateModalFunc, saleUpdateModalFuncCommon, setSaleUpdateObjFunc } from '../../../redux/slices/admin/salesSlice';
 import SearchInpMain from '../searchInpMain/SearchInpMain';
+import { FaPlus } from 'react-icons/fa';
 
 
 const ITEMS_PER_PAGE = 10;
@@ -28,8 +29,8 @@ const SalesTableEnd = () => {
 
 
     useEffect(() => {
-  fetchSales(currentPage, searchQuery, minAmount, maxAmount, startDate, endDate);
-}, [currentPage, searchQuery, minAmount, maxAmount, startDate, endDate]);
+        fetchSales(currentPage, searchQuery, minAmount, maxAmount, startDate, endDate);
+    }, [currentPage, searchQuery, minAmount, maxAmount, startDate, endDate]);
 
 
     const fetchSales = (page = 1, search = searchQuery, min = minAmount, max = maxAmount, start_date = startDate, end_date = endDate) => {
@@ -55,11 +56,11 @@ const SalesTableEnd = () => {
         fetchSales(1, searchQuery, minAmount, maxAmount, startDate, endDate);
     };
 
-    const handleSalesCustomer = async (id,customerId) => {
+    const handleSalesCustomer = async (id, customerId) => {
         if (!id) return;
         await dispatch(getCustomerFactureList(id));
         navigate(`/customer-movement-facture`);
-        localStorage.setItem("customerId",customerId)
+        localStorage.setItem("customerId", customerId)
     };
 
     const formatDateTime = (datetime) => {
@@ -76,22 +77,29 @@ const SalesTableEnd = () => {
 
     const pageCount = Math.ceil(count / ITEMS_PER_PAGE);
 
+    const plusUpdateSale = async (item) => {
+        console.log(item);
+        navigate("/sales-products-select")
+        await dispatch(plusSalesFunc(item))
+        await dispatch(getCustomerFactureList(item?.id));
+    }
+
     return (
         <div className='admin_container dashboard_end_container'>
             <div className="form_group sales_dates_inputs">
                 <label>Tarix aralığı</label>
                 <div className="date_range">
-                   <input
-  type="date"
-  value={startDate}
-  onChange={(e) => setStartDate(e.target.value)}
-/>
--
-<input
-  type="date"
-  value={endDate}
-  onChange={(e) => setEndDate(e.target.value)}
-/>
+                    <input
+                        type="date"
+                        value={startDate}
+                        onChange={(e) => setStartDate(e.target.value)}
+                    />
+                    -
+                    <input
+                        type="date"
+                        value={endDate}
+                        onChange={(e) => setEndDate(e.target.value)}
+                    />
 
                 </div>
             </div>
@@ -124,7 +132,7 @@ const SalesTableEnd = () => {
                 <tbody>
                     {salesList?.map((item) => (
                         <tr key={item.id}>
-                            <td className='number_table' onClick={() => handleSalesCustomer(item?.id,item?.customer_id)} style={{ cursor: "pointer" }}>
+                            <td className='number_table' onClick={() => handleSalesCustomer(item?.id, item?.customer_id)} style={{ cursor: "pointer" }}>
                                 <svg width="16" height="16" viewBox="0 0 16 16" fill="none"
                                     xmlns="http://www.w3.org/2000/svg">
                                     <path d="M10 5H6V4H10V5ZM12 14H3V12H4V11H3V8.5H4V7.5H3V5H4V4H3V2H12V15C12.5523 15 13 14.5523 13 14V2C13 1.45 12.55 1 12 1H3C2.45 1 2 1.45 2 2V4H1V5H2V7.5H1V8.5H2V11H1V12H2V14C2 14.55 2.45 15 3 15H12V14ZM10 7.5H6V8.5H10V7.5Z"
@@ -141,6 +149,7 @@ const SalesTableEnd = () => {
                             <td className='table_update'>
                                 <FaPenToSquare onClick={() => updateSale(item)} />
                                 <AiTwotoneDelete onClick={() => deleteSale(item?.id)} />
+                                <FaPlus onClick={() => plusUpdateSale(item)} />
                             </td>
                         </tr>
                     ))}

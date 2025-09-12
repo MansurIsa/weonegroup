@@ -6,7 +6,7 @@ import AdminBigComponentHeader from "../../adminBigComponentHeader/AdminBigCompo
 
 const DashboardThirdLeft = () => {
   const dispatch = useDispatch();
-  const { mostDebtObj, count } = useSelector((state) => state.dashboard);
+  const { mostDebtObj, count1 } = useSelector((state) => state.dashboard);
 
   const [currentPage, setCurrentPage] = useState(1);
 
@@ -20,7 +20,7 @@ const DashboardThirdLeft = () => {
     setCurrentPage(event.selected + 1); // react-paginate 0-dan başlayır
   };
 
-  const pageCount = Math.ceil(count / pageSize);
+  const pageCount = Math.ceil(count1 / pageSize);
 
   return (
     <div className="admin_container dashboard_end_container">

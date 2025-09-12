@@ -23,10 +23,14 @@ const UpdateSalesProductsSelect = () => {
   const [statusValues, setStatusValues] = useState({});
   const [errorIndexes, setErrorIndexes] = useState([]);
 
-  useEffect(() => {
+ useEffect(() => {
     dispatch(getStockList());
-    dispatch(getUsersList());
+    dispatch(getUsersList(1, "")); 
   }, [dispatch]);
+
+    const handleCustomerSearch = (searchTerm) => {
+    dispatch(getUsersList(1, searchTerm));
+  };
 
   // Sale update info set
   useEffect(() => {
@@ -134,10 +138,11 @@ const UpdateSalesProductsSelect = () => {
         </div>
 
         <div className="left_box left_box_mb">
-          <CustomCustomerSelect
+         <CustomCustomerSelect
             customers={usersList.filter(u => !u.is_staff)}
             value={selectedCustomerId}
-            onChange={handleCustomerChange}
+            onChange={setSelectedCustomerId}
+            onSearch={handleCustomerSearch}   // 🔹 Burda search-i bağladıq
           />
           <div className="form_group form_group_sales_table_head">
             <label>Satış tarixi</label>

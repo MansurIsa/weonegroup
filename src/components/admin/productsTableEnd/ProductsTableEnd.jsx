@@ -18,6 +18,9 @@ const ProductsTableEnd = ({ productsList }) => {
         navigate("/update-new-products");
     };
 
+    console.log(productsList);
+    
+
     return (
         <div className='admin_container '>
             <table className='custom_table'>
@@ -25,6 +28,7 @@ const ProductsTableEnd = ({ productsList }) => {
                     <tr>
                         <th>Məhsul Adı</th>
                         <th>Artikl</th>
+                        <th>Brend</th>
                         <th>Miqdar</th>
                         <th>Maya Dəyəri</th>
                         <th>Alış Qiyməti</th>
@@ -41,6 +45,7 @@ const ProductsTableEnd = ({ productsList }) => {
                             <td className='table_article_scroll'>
                                 {item?.articles?.map(a => a.name).join(', ') || "-"}
                             </td>
+                            <td>{item?.store?.name || "-"}</td>
                             <td>{item?.amount || "-"}</td>
                             <td>{item?.cost_price ? item.cost_price + " ₼" : "-"}</td>
                             <td>{item?.purchase_price} {currencyMap[item?.currency] || ""}</td>

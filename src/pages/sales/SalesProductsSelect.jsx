@@ -15,7 +15,8 @@ const SalesProductsSelect = () => {
   const navigate = useNavigate();
 
   const { stockList, count, next, previous } = useSelector((state) => state.stock);
-  const { usersList } = useSelector((state) => state.login);
+  const { usersList, customerFactureList } = useSelector((state) => state.login);
+  const { plusSalesObj } = useSelector(state => state.sales)
 
   const [selectedProductIds, setSelectedProductIds] = useState([]);
   const [quantityValues, setQuantityValues] = useState({});
@@ -149,6 +150,53 @@ const SalesProductsSelect = () => {
 
   const returnSales = () => navigate("/sales");
 
+  console.log(plusSalesObj);
+  console.log(stockList);
+  console.log(customerFactureList);
+
+  useEffect(() => {
+    if (plusSalesObj && Object.keys(plusSalesObj).length > 0 && customerFactureList?.salelist_sales?.length > 0) {
+      // Müştəri seç
+      setSelectedCustomerId(customerFactureList.customer?.toString() || "");
+
+      // İlk məhsulun datetime-ni götür
+      const firstDatetime = customerFactureList.salelist_sales[0]?.datetime;
+      if (firstDatetime) {
+        setSelectedDateTime(firstDatetime.slice(0, 16)); // datetime-local üçün format
+      }
+
+      // Məhsulları seçilmiş kimi göstər
+      const productIds = customerFactureList.salelist_sales.map(s => s.product.id);
+
+      const quantities = {};
+      const prices = {};
+      const statuses = {};
+
+      customerFactureList.salelist_sales.forEach(s => {
+        quantities[s.product.id] = s.amount;
+        prices[s.product.id] = s.price;
+        statuses[s.product.id] = s.status;
+      });
+
+      setSelectedProductIds(productIds);
+      setQuantityValues(quantities);
+      setPriceValues(prices);
+      setStatusValues(statuses);
+    }
+  }, [plusSalesObj, customerFactureList]);
+
+  useEffect(() => {
+    if (selectedCustomerId && usersList.length > 0) {
+      const exists = usersList.some(u => u.id.toString() === selectedCustomerId.toString());
+      if (!exists) {
+        // Əlavə olaraq müştərini usersList-ə push edə bilərsən (əgər gəlməyibsə)
+        dispatch(getUsersList(1, ""));
+      }
+    }
+  }, [selectedCustomerId, usersList, dispatch]);
+
+
+
   return (
     <AdminLayout adminHeaderHide={true}>
       <div className="admin_container warehouse_page">
@@ -158,11 +206,12 @@ const SalesProductsSelect = () => {
 
         <div className="left_box left_box_mb">
           <CustomCustomerSelect
-            customers={usersList.filter((user) => !user.is_staff)}
-            value={selectedCustomerId}
+            customers={usersList.filter(u => !u.is_staff)}
+            value={selectedCustomerId}  // burda artıq açılışda seçilmiş gələcək
             onChange={setSelectedCustomerId}
             onSearch={(search) => dispatch(getUsersList(1, search))}
           />
+
 
           <div className="form_group form_group_sales_table_head">
             <label>Satış tarixi</label>
@@ -178,9 +227,10 @@ const SalesProductsSelect = () => {
           <table className="warehouse_table">
             <thead>
               <tr>
-                <th></th>
+                <th className='number_table'></th>
                 <th>Məhsul Adı</th>
                 <th>Artikl</th>
+                <th>Brend</th>
                 <th>Qalan Say</th>
                 <th>Maya Dəyəri</th>
                 <th>Satış Qiyməti</th>
@@ -196,7 +246,7 @@ const SalesProductsSelect = () => {
                 const isSelected = selectedProductIds.includes(productId);
                 return (
                   <tr key={productId}>
-                    <td>
+                    <td className='number_table'>
                       <input
                         type="checkbox"
                         checked={isSelected}
@@ -205,6 +255,7 @@ const SalesProductsSelect = () => {
                     </td>
                     <td>{product?.name}</td>
                     <td>{product?.articles?.map((a) => a.name).join(", ")}</td>
+                    <td>{product?.store?.name || "-"}</td>
                     <td>{item.amount}</td>
                     <td>{product?.cost_price} ₼</td>
                     <td>
@@ -226,11 +277,10 @@ const SalesProductsSelect = () => {
                           type="number"
                           value={quantityValues[productId] ?? ""}
                           onChange={(e) => handleQuantityChange(productId, e.target.value)}
-                          className={`quantity_input ${
-                            statusValues[productId] === "S" && +quantityValues[productId] > item.amount
-                              ? "input-error"
-                              : ""
-                          }`}
+                          className={`quantity_input ${statusValues[productId] === "S" && +quantityValues[productId] > item.amount
+                            ? "input-error"
+                            : ""
+                            }`}
                         />
                       )}
                     </td>
