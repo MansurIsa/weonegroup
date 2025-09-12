@@ -1,82 +1,108 @@
-import React, { useEffect, useState } from 'react';
-import './css/filterProducts.css';
-import FilterProductsContainer from './FilterProductsContainer';
-import { useDispatch, useSelector } from 'react-redux';
+import React, { useEffect, useState, useMemo } from "react";
+import "./css/filterProducts.css";
+import FilterProductsContainer from "./FilterProductsContainer";
+import { useDispatch, useSelector } from "react-redux";
 import {
   getBrandList,
   getCategoryList,
   getProductsList,
   getStoreList,
   getRecentProductsList,
-} from '../../../actions/productsAction/productsAction';
-import ReactPaginate from 'react-paginate';
+} from "../../../actions/productsAction/productsAction";
+import ReactPaginate from "react-paginate";
+
+// Debounce helper
+const useDebounce = (value, delay) => {
+  const [debounced, setDebounced] = useState(value);
+  useEffect(() => {
+    const handler = setTimeout(() => setDebounced(value), delay);
+    return () => clearTimeout(handler);
+  }, [value, delay]);
+  return debounced;
+};
 
 const FilterProducts = () => {
   const dispatch = useDispatch();
   const [brandDropdownOpen, setBrandDropdownOpen] = useState(false);
   const [storeDropdownOpen, setStoreDropdownOpen] = useState(false);
 
-  // Filter və Pagination state
   const [currentPage, setCurrentPage] = useState(0);
-  const pageSize = 10;
+  const pageSize = 10; // ✅ backend 10 göndərdiyi üçün saxlanıldı
 
   const [searchQuery, setSearchQuery] = useState("");
+  const debouncedSearch = useDebounce(searchQuery, 500);
+
   const [activeCategory, setActiveCategory] = useState("Hamısı");
   const [activeBrand, setActiveBrand] = useState("Hamısı");
   const [activeStore, setActiveStore] = useState("Hamısı");
 
-  const { 
-    productsList, 
-    recentProductsList, 
-    categoryList, 
-    brandList, 
-    storeList, 
-    count, 
-    count1 
+  const {
+    productsList,
+    recentProductsList,
+    categoryList,
+    brandList,
+    storeList,
+    count,
+    count1,
   } = useSelector((state) => state.products);
 
-  // Category, Brand, Store listlərini çəkmək
+  // Listləri yüklə
   useEffect(() => {
     dispatch(getCategoryList());
     dispatch(getBrandList());
     dispatch(getStoreList());
   }, [dispatch]);
 
-  // Məhsulları API-dən çəkmək
-useEffect(() => {
-  if (activeCategory === "Yeni gələnlər") {
-    dispatch(
-      getRecentProductsList(
-        currentPage + 1,
-        searchQuery,
-        activeBrand !== "Hamısı" ? activeBrand : "",
-        activeStore !== "Hamısı" ? activeStore : ""
-      )
-    );
-  } else {
-    dispatch(
-      getProductsList(
-        currentPage + 1,
-        searchQuery,
-        activeCategory !== "Hamısı" ? activeCategory : "",
-        activeBrand !== "Hamısı" ? activeBrand : "",
-        activeStore !== "Hamısı" ? activeStore : ""
-      )
-    );
-  }
-}, [dispatch, currentPage, searchQuery, activeCategory, activeBrand, activeStore]);
-
+  // Məhsulları yüklə
+  useEffect(() => {
+    if (activeCategory === "Yeni gələnlər") {
+      dispatch(
+        getRecentProductsList(
+          currentPage + 1,
+          debouncedSearch,
+          activeBrand !== "Hamısı" ? activeBrand : "",
+          activeStore !== "Hamısı" ? activeStore : ""
+        )
+      );
+    } else {
+      dispatch(
+        getProductsList(
+          currentPage + 1,
+          debouncedSearch,
+          activeCategory !== "Hamısı" ? activeCategory : "",
+          activeBrand !== "Hamısı" ? activeBrand : "",
+          activeStore !== "Hamısı" ? activeStore : ""
+        )
+      );
+    }
+  }, [
+    dispatch,
+    currentPage,
+    debouncedSearch,
+    activeCategory,
+    activeBrand,
+    activeStore,
+  ]);
 
   const handlePageClick = (data) => {
     setCurrentPage(data.selected);
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  const pageCount = activeCategory === "Yeni gələnlər" ? Math.ceil(count1 / pageSize) : Math.ceil(count / pageSize);
+  const pageCount =
+    activeCategory === "Yeni gələnlər"
+      ? Math.ceil(count1 / pageSize)
+      : Math.ceil(count / pageSize);
 
-  const getLatestProducts = (arr) => {
-    if (!arr) return [];
-    return arr.length > 300 ? arr.slice(arr.length - 300) : arr;
-  };
+  // ✅ useMemo ilə optimallaşdırılmış məhsullar
+  const latestProducts = useMemo(() => {
+    if (!recentProductsList) return [];
+    return recentProductsList.length > 100
+      ? recentProductsList.slice(-100)
+      : recentProductsList;
+  }, [recentProductsList]);
+
+  const normalProducts = useMemo(() => productsList || [], [productsList]);
 
   return (
     <div className="filter_products_parent_container">
@@ -100,14 +126,14 @@ useEffect(() => {
         {/* Marka Dropdown */}
         <div className="brand_dropdown_container">
           <button onClick={() => setBrandDropdownOpen((prev) => !prev)}>
-            {activeBrand === 'Hamısı' ? 'Markalar' : activeBrand}
+            {activeBrand === "Hamısı" ? "Markalar" : activeBrand}
           </button>
           {brandDropdownOpen && (
             <div className="brand_dropdown">
               <div
                 className="brand_item"
                 onClick={() => {
-                  setActiveBrand('Hamısı');
+                  setActiveBrand("Hamısı");
                   setBrandDropdownOpen(false);
                 }}
               >
@@ -132,14 +158,14 @@ useEffect(() => {
         {/* Brend (Store) Dropdown */}
         <div className="brand_dropdown_container">
           <button onClick={() => setStoreDropdownOpen((prev) => !prev)}>
-            {activeStore === 'Hamısı' ? 'Brendlər' : activeStore}
+            {activeStore === "Hamısı" ? "Brendlər" : activeStore}
           </button>
           {storeDropdownOpen && (
             <div className="brand_dropdown">
               <div
                 className="brand_item"
                 onClick={() => {
-                  setActiveStore('Hamısı');
+                  setActiveStore("Hamısı");
                   setStoreDropdownOpen(false);
                 }}
               >
@@ -165,15 +191,15 @@ useEffect(() => {
       {/* Kateqoriyalar */}
       <div className="filter_products_categories">
         <button
-          onClick={() => setActiveCategory('Hamısı')}
-          className={activeCategory === 'Hamısı' ? 'active_category' : ''}
+          onClick={() => setActiveCategory("Hamısı")}
+          className={activeCategory === "Hamısı" ? "active_category" : ""}
         >
           Hamısı
         </button>
 
         <button
-          onClick={() => setActiveCategory('Yeni gələnlər')}
-          className={activeCategory === 'Yeni gələnlər' ? 'active_category' : ''}
+          onClick={() => setActiveCategory("Yeni gələnlər")}
+          className={activeCategory === "Yeni gələnlər" ? "active_category" : ""}
         >
           Yeni gələnlər
         </button>
@@ -182,7 +208,7 @@ useEffect(() => {
           <button
             key={cat.id}
             onClick={() => setActiveCategory(cat.name)}
-            className={activeCategory === cat.name ? 'active_category' : ''}
+            className={activeCategory === cat.name ? "active_category" : ""}
           >
             {cat.name}
           </button>
@@ -191,40 +217,57 @@ useEffect(() => {
 
       {/* Məhsullar */}
       {activeCategory === "Yeni gələnlər" ? (
-        recentProductsList?.length === 0 ? (
-          <div className="no_products_found"><p>Məhsul tapılmadı</p></div>
+        latestProducts?.length === 0 ? (
+          <div className="no_products_found">
+            <p>Məhsul tapılmadı</p>
+          </div>
         ) : (
-          <FilterProductsContainer productsList={getLatestProducts(recentProductsList)} />
+          <FilterProductsContainer productsList={latestProducts} />
         )
-      ) : productsList?.length === 0 ? (
-        <div className="no_products_found"><p>Məhsul tapılmadı</p></div>
+      ) : normalProducts?.length === 0 ? (
+        <div className="no_products_found">
+          <p>Məhsul tapılmadı</p>
+        </div>
       ) : (
-        <FilterProductsContainer productsList={productsList} />
+        <FilterProductsContainer productsList={normalProducts} />
       )}
 
       {/* Pagination */}
-      {((activeCategory === "Yeni gələnlər" && count1 > pageSize) || (activeCategory !== "Yeni gələnlər" && count > pageSize)) && (
+      {((activeCategory === "Yeni gələnlər" && count1 > pageSize) ||
+        (activeCategory !== "Yeni gələnlər" && count > pageSize)) && (
         <ReactPaginate
           previousLabel={
-            <svg width="8" height="14" viewBox="0 0 8 14" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M7 1L1 7L7 13" stroke="#9F9FA0" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+            <svg width="8" height="14" viewBox="0 0 8 14" fill="none">
+              <path
+                d="M7 1L1 7L7 13"
+                stroke="#9F9FA0"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
             </svg>
           }
           nextLabel={
-            <svg width="8" height="14" viewBox="0 0 8 14" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M1 1L7 7L1 13" stroke="#202020" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+            <svg width="8" height="14" viewBox="0 0 8 14" fill="none">
+              <path
+                d="M1 1L7 7L1 13"
+                stroke="#202020"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
             </svg>
           }
           pageCount={pageCount}
           marginPagesDisplayed={1}
           pageRangeDisplayed={2}
           onPageChange={handlePageClick}
-          containerClassName={'dashboard_end_pagination'}
-          pageClassName={'dashboard_end_page'}
-          pageLinkClassName={'dashboard_end_page_link'}
-          previousClassName={'dashboard_end_arrow'}
-          nextClassName={'dashboard_end_arrow'}
-          activeClassName={'dashboard_end_active'}
+          containerClassName={"dashboard_end_pagination"}
+          pageClassName={"dashboard_end_page"}
+          pageLinkClassName={"dashboard_end_page_link"}
+          previousClassName={"dashboard_end_arrow"}
+          nextClassName={"dashboard_end_arrow"}
+          activeClassName={"dashboard_end_active"}
         />
       )}
     </div>
@@ -232,4 +275,3 @@ useEffect(() => {
 };
 
 export default FilterProducts;
-

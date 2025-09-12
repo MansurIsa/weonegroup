@@ -101,47 +101,53 @@ const SalesProductsSelect = () => {
   const handleDateChange = (e) => setSelectedDateTime(e.target.value);
 
   const handleSave = () => {
-    if (!selectedCustomerId || !selectedDateTime) {
-      toast.error("Zəhmət olmasa müştəri və satış tarixini seçin.");
-      return;
+  if (!selectedCustomerId || !selectedDateTime) {
+    toast.error("Zəhmət olmasa müştəri və satış tarixini seçin.");
+    return;
+  }
+
+  let hasError = false;
+  const invalidProducts = [];
+
+  const selectedItems = selectedProductIds.map((productId) => {
+    const stockItem = stockList.find((item) => item.product.id === productId);
+    const product = stockItem?.product;
+    const quantity = +quantityValues[productId] || 0;
+    const status = statusValues[productId] || "G";
+    const inStock = stockItem?.amount || 0;
+
+    if (status === "S" && quantity > inStock) {
+      hasError = true;
+      invalidProducts.push({ name: product?.name, available: inStock });
     }
 
-    let hasError = false;
-    const invalidProducts = [];
+    return { product_id: productId, quantity, price: +priceValues[productId] || product?.price, status };
+  });
 
-    const selectedItems = selectedProductIds.map((productId) => {
-      const stockItem = stockList.find((item) => item.product.id === productId);
-      const product = stockItem?.product;
-      const quantity = +quantityValues[productId] || 0;
-      const status = statusValues[productId] || "G";
-      const inStock = stockItem?.amount || 0;
+  if (hasError) {
+    invalidProducts.forEach((p) =>
+      toast.error(`Anbarda ${p.name} üçün yalnız ${p.available} ədəd mövcuddur.`)
+    );
+    return;
+  }
 
-      if (status === "S" && quantity > inStock) {
-        hasError = true;
-        invalidProducts.push({ name: product?.name, available: inStock });
-      }
-
-      return { product_id: productId, quantity, price: +priceValues[productId] || product?.price, status };
-    });
-
-    if (hasError) {
-      invalidProducts.forEach((p) =>
-        toast.error(`Anbarda ${p.name} üçün yalnız ${p.available} ədəd mövcuddur.`)
-      );
-      return;
-    }
-
-    const payload = {
-      customer: selectedCustomerId,
-      products: selectedItems.map((p) => p.product_id),
-      prices: selectedItems.map((p) => p.price),
-      amounts: selectedItems.map((p) => p.quantity),
-      datetimes: selectedItems.map(() => selectedDateTime),
-      statuses: selectedItems.map((p) => p.status),
-    };
-
-    dispatch(addSale(payload, navigate));
+  // payload-u şərti olaraq formalaşdırırıq
+  const basePayload = {
+    customer: selectedCustomerId,
+    products: selectedItems.map((p) => p.product_id),
+    prices: selectedItems.map((p) => p.price),
+    amounts: selectedItems.map((p) => p.quantity),
+    datetimes: selectedItems.map(() => selectedDateTime),
+    statuses: selectedItems.map((p) => p.status),
   };
+
+  const payload = plusSalesObj?.id
+    ? { salelist: plusSalesObj.id, ...basePayload } // update üçün
+    : basePayload; // yeni əlavə üçün
+
+  dispatch(addSale(payload, navigate));
+};
+
 
   const handlePageClick = (event) => {
     const selectedPage = event.selected + 1;
