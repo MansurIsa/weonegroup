@@ -60,37 +60,47 @@ const Cart = () => {
     .reduce((sum, item) => sum + getPrice(item) * item.quantity, 0) || 0;
 
   const handleConfirmOrder = () => {
-    if (selectedItems.length === 0) return;
+  if (selectedItems.length === 0) return;
 
-    const selectedProducts = basketItem.filter(item =>
-      selectedItems.includes(item.id)
+  const selectedProducts = basketItem.filter(item =>
+    selectedItems.includes(item.id)
+  );
+
+  // Stok yoxlaması
+  const insufficientStockItems = selectedProducts.filter(
+    item => item.quantity > item.product.amount
+  );
+
+  if (insufficientStockItems.length > 0) {
+    insufficientStockItems.forEach(item =>
+      toast.error(
+        `"${item.product.name}" üçün sifariş miqdarı stokdan çoxdur. Mövcud stok: ${item.product.amount}`
+      )
     );
+    return; // sifarişi dayandırır
+  }
 
-    const unavailableItems = selectedProducts.filter(item => item.product.amount === 0);
-    if (unavailableItems.length > 0) {
-      unavailableItems.forEach(item =>
-        toast.error(`"${item.product.name}" məhsulu mövcud deyil və sifarişə əlavə olunmadı`)
-      );
-      return;
-    }
+  // Mövcud məhsullarla sifariş davam edir
+  const productIds = selectedProducts.map(item => item.product.id);
+  const quantities = selectedProducts.map(item => item.quantity);
 
-    const productIds = selectedProducts.map(item => item.product.id);
-    const quantities = selectedProducts.map(item => item.quantity);
+  const total = selectedProducts.reduce(
+    (sum, item) => sum + getPrice(item) * item.quantity,
+    0
+  );
 
-    const total = selectedProducts.reduce((sum, item) =>
-      sum + getPrice(item) * item.quantity, 0
-    );
-
-    const payload = {
-      products: productIds,
-      quantities: quantities,
-      amount: total
-    };
-
-    dispatch(orderCreate(payload));
-    const selectedBasketIds = selectedProducts.map(item => item.id);
-    dispatch(basketClear({ item_ids: selectedBasketIds }));
+  const payload = {
+    products: productIds,
+    quantities: quantities,
+    amount: total
   };
+
+  dispatch(orderCreate(payload));
+
+  const selectedBasketIds = selectedProducts.map(item => item.id);
+  dispatch(basketClear({ item_ids: selectedBasketIds }));
+};
+
 
   const incCartEl = (item) => {
     const updatedQuantity = item.quantity + 1;

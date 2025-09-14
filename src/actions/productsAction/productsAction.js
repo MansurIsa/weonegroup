@@ -48,6 +48,35 @@ export const getProductsList = (
     });
 };
 
+//test
+export const getProductsListTest = (
+  page = 1,
+  search = "",
+  category = "",
+  brand = "",
+  store = ""
+) => async (dispatch) => {
+  // dispatch(startLoading());
+
+  // search string yığılır
+  let searchQuery = search;
+  if (category) searchQuery += ` ${category}`;
+  if (brand) searchQuery += ` ${brand}`;
+  if (store) searchQuery += ` ${store}`;
+
+  return await axios
+    .get(`${baseUrl}core/short-product-list/?page=${page}&search=${encodeURIComponent(searchQuery.trim())}`)
+    .then((resp) => {
+      dispatch(getProductsListFunc(resp.data));
+    })
+    .catch((err) => {
+      console.log(err);
+    })
+    .finally(() => {
+      // dispatch(stopLoading());
+    });
+};
+
 
 
 export const getRecentProductsList = (

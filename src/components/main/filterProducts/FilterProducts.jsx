@@ -1,14 +1,15 @@
-import React, { useEffect, useState, useMemo } from "react";
+import React, { useEffect, useState, useMemo, useCallback } from "react";
 import "./css/filterProducts.css";
 import FilterProductsContainer from "./FilterProductsContainer";
 import { useDispatch, useSelector } from "react-redux";
 import {
   getBrandList,
   getCategoryList,
-  getProductsList,
+  getProductsListTest,
   getStoreList,
   getRecentProductsList,
 } from "../../../actions/productsAction/productsAction";
+import { getUserObj } from "../../../actions/loginAction/loginAction";
 import ReactPaginate from "react-paginate";
 
 // Debounce helper
@@ -21,13 +22,16 @@ const useDebounce = (value, delay) => {
   return debounced;
 };
 
+// Memoized FilterProductsContainer
+const MemoizedProductsContainer = React.memo(FilterProductsContainer);
+
 const FilterProducts = () => {
   const dispatch = useDispatch();
   const [brandDropdownOpen, setBrandDropdownOpen] = useState(false);
   const [storeDropdownOpen, setStoreDropdownOpen] = useState(false);
 
   const [currentPage, setCurrentPage] = useState(0);
-  const pageSize = 10; // ✅ backend 10 göndərdiyi üçün saxlanıldı
+  const pageSize = 10;
 
   const [searchQuery, setSearchQuery] = useState("");
   const debouncedSearch = useDebounce(searchQuery, 500);
@@ -46,8 +50,9 @@ const FilterProducts = () => {
     count1,
   } = useSelector((state) => state.products);
 
-  // Listləri yüklə
+  // USER məlumatını və siyahıları yüklə - yalnız bir dəfə!
   useEffect(() => {
+    dispatch(getUserObj());
     dispatch(getCategoryList());
     dispatch(getBrandList());
     dispatch(getStoreList());
@@ -66,7 +71,7 @@ const FilterProducts = () => {
       );
     } else {
       dispatch(
-        getProductsList(
+        getProductsListTest(
           currentPage + 1,
           debouncedSearch,
           activeCategory !== "Hamısı" ? activeCategory : "",
@@ -84,17 +89,17 @@ const FilterProducts = () => {
     activeStore,
   ]);
 
-  const handlePageClick = (data) => {
+  const handlePageClick = useCallback((data) => {
     setCurrentPage(data.selected);
     window.scrollTo({ top: 0, behavior: "smooth" });
-  };
+  }, []);
 
   const pageCount =
     activeCategory === "Yeni gələnlər"
       ? Math.ceil(count1 / pageSize)
       : Math.ceil(count / pageSize);
 
-  // ✅ useMemo ilə optimallaşdırılmış məhsullar
+  // Virtualization üçün memoized siyahılar
   const latestProducts = useMemo(() => {
     if (!recentProductsList) return [];
     return recentProductsList.length > 100
@@ -103,6 +108,38 @@ const FilterProducts = () => {
   }, [recentProductsList]);
 
   const normalProducts = useMemo(() => productsList || [], [productsList]);
+
+  const categoryButtons = useMemo(() => {
+    return (
+      <>
+        <button
+          onClick={() => setActiveCategory("Hamısı")}
+          className={activeCategory === "Hamısı" ? "active_category" : ""}
+        >
+          Hamısı
+        </button>
+
+        <button
+          onClick={() => setActiveCategory("Yeni gələnlər")}
+          className={
+            activeCategory === "Yeni gələnlər" ? "active_category" : ""
+          }
+        >
+          Yeni gələnlər
+        </button>
+
+        {categoryList?.map((cat) => (
+          <button
+            key={cat.id}
+            onClick={() => setActiveCategory(cat.name)}
+            className={activeCategory === cat.name ? "active_category" : ""}
+          >
+            {cat.name}
+          </button>
+        ))}
+      </>
+    );
+  }, [categoryList, activeCategory]);
 
   return (
     <div className="filter_products_parent_container">
@@ -189,31 +226,7 @@ const FilterProducts = () => {
       </div>
 
       {/* Kateqoriyalar */}
-      <div className="filter_products_categories">
-        <button
-          onClick={() => setActiveCategory("Hamısı")}
-          className={activeCategory === "Hamısı" ? "active_category" : ""}
-        >
-          Hamısı
-        </button>
-
-        <button
-          onClick={() => setActiveCategory("Yeni gələnlər")}
-          className={activeCategory === "Yeni gələnlər" ? "active_category" : ""}
-        >
-          Yeni gələnlər
-        </button>
-
-        {categoryList?.map((cat) => (
-          <button
-            key={cat.id}
-            onClick={() => setActiveCategory(cat.name)}
-            className={activeCategory === cat.name ? "active_category" : ""}
-          >
-            {cat.name}
-          </button>
-        ))}
-      </div>
+      <div className="filter_products_categories">{categoryButtons}</div>
 
       {/* Məhsullar */}
       {activeCategory === "Yeni gələnlər" ? (
@@ -222,14 +235,14 @@ const FilterProducts = () => {
             <p>Məhsul tapılmadı</p>
           </div>
         ) : (
-          <FilterProductsContainer productsList={latestProducts} />
+          <MemoizedProductsContainer productsList={latestProducts} />
         )
       ) : normalProducts?.length === 0 ? (
         <div className="no_products_found">
           <p>Məhsul tapılmadı</p>
         </div>
       ) : (
-        <FilterProductsContainer productsList={normalProducts} />
+        <MemoizedProductsContainer productsList={normalProducts} />
       )}
 
       {/* Pagination */}

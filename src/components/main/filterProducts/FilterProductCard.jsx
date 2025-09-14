@@ -1,135 +1,122 @@
-import React, { useEffect, useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
-import { useNavigate } from 'react-router-dom'
-import { addProductToCart } from '../../../actions/productsAction/productsAction'
-import { getUserObj } from '../../../actions/loginAction/loginAction'
-import { FaCartArrowDown } from 'react-icons/fa'
+import React, { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { addProductToCart } from "../../../actions/productsAction/productsAction";
 
 const FilterProductCard = ({ data }) => {
-    const accessToken = localStorage.getItem("accessToken")
-    const navigate = useNavigate()
-    const dispatch = useDispatch()
-    const [quantity, setQuantity] = useState(0)
+  const accessToken = localStorage.getItem("accessToken");
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const [quantity, setQuantity] = useState(0);
 
-    useEffect(() => {
-        dispatch(getUserObj())
-    }, [dispatch])
+  const { userObj } = useSelector((state) => state.login);
 
-    const { userObj } = useSelector(state => state.login)
+  const addToCart = () => {
+    if (accessToken) {
+      if (quantity <= 0) return; // boş səbətə əlavə etmə
+      dispatch(
+        addProductToCart(
+          {
+            quantity,
+            user: userObj?.id,
+            product: data?.id,
+          },
+          navigate
+        )
+      );
+    } else {
+      navigate("/login");
+    }
+  };
 
-    const addToCart = () => {
-        if (accessToken) {
-            dispatch(addProductToCart({
-                quantity: quantity,
-                user: userObj?.id,
-                product: data?.id
-            }, navigate))
-        } else {
-            navigate("/login")
-        }
+  const handleIncrement = () => setQuantity((prev) => prev + 1);
+  const handleDecrement = () => setQuantity((prev) => (prev > 0 ? prev - 1 : 0));
+  const handleInputChange = (e) => {
+    let value = e.target.value;
+
+    // Rəqəmdən başqa şey olmaz
+    if (!/^\d*$/.test(value)) return;
+
+    if (value === "") {
+      setQuantity(0);
+      return;
     }
 
-    const handleIncrement = () => setQuantity(prev => prev + 1)
-    const handleDecrement = () => setQuantity(prev => prev > 0 ? prev - 1 : 0)
-    const handleInputChange = (e) => {
-        let value = e.target.value;
+    value = value.replace(/^0+/, "") || "0";
 
-        // Rəqəmdən başqa bir şey daxil olunarsa, icazə vermə
-        if (!/^\d*$/.test(value)) return;
+    setQuantity(parseInt(value, 10));
+  };
 
-        // Əgər boşdursa (backspace ilə silinibsə), sıfır et
-        if (value === "") {
-            setQuantity(0);
-            return;
-        }
+  const goToDetail = () => {
+    navigate(`/products/${data?.id}`);
+  };
 
-        // Əgər başda 0 varsa (məs: 01, 007) → avtomatik təmizlə
-        value = value.replace(/^0+/, '') || '0';
+  return (
+    <div className="filter_product_card">
+      {/* Click ilə açılan hissə */}
+      <div
+        className="filter_product_card_top"
+        onClick={goToDetail}
+        style={{ cursor: "pointer" }}
+      >
+        <img src={data?.image} alt={data?.name} loading="lazy" />
+        <div className="filter_product_card_content">
+          {accessToken && (
+            <span
+              className={
+                +data?.amount > 20
+                  ? "filter_product_card_content_stock_green"
+                  : +data?.amount > 0 && +data?.amount < 21
+                  ? "filter_product_card_content_stock_orange"
+                  : "filter_product_card_content_stock_red"
+              }
+            >
+              {+data?.amount > 20
+                ? "Stokda var"
+                : +data?.amount > 0 && +data?.amount < 21
+                ? "Stokda tükənir"
+                : "Stokda bitib"}
+            </span>
+          )}
 
-        setQuantity(parseInt(value, 10));
-    };
+          <h3>{data?.name}</h3>
+          <p>{data?.brand?.name}</p>
+          <span className="article_pr_name">
+            Məhsul kodu: {data?.article_names?.join(", ")}
+          </span>
 
+          <div>
+            {accessToken && userObj?.status === "S" && <span>{data?.price} AZN</span>}
 
-
-    const goToDetail = () => {
-        navigate(`/products/${data?.id}`)
-    }
-
-    console.log(data);
-
-
-    return (
-        <div className='filter_product_card'>
-            {/* 🟢 Clicklə açılan hissə */}
-            <div className="filter_product_card_top" onClick={goToDetail} style={{ cursor: 'pointer' }}>
-                <img src={data?.image} alt="" />
-                <div className="filter_product_card_content">
-                    {
-                        accessToken && (
-                            <span
-                                className={
-                                    +data?.amount > 20
-                                        ? 'filter_product_card_content_stock_green'
-                                        : +data?.amount > 0 && +data?.amount < 21
-                                            ? 'filter_product_card_content_stock_orange'
-                                            : 'filter_product_card_content_stock_red'
-                                }
-                            >
-                                {+data?.amount > 20
-                                    ? 'Stokda var'
-                                    : +data?.amount > 0 && +data?.amount < 21
-                                        ? 'Stokda tükənir'
-                                        : 'Stokda bitib'}
-                            </span>
-                        )
-                    }
-
-
-                    <h3>{data?.name}</h3>
-                    <p>{data?.brand?.name}</p>
-                    <span className='article_pr_name'>
-                        Məhsul kodu: {data?.articles?.map(x => x?.name).join(", ")}
-                    </span>
-
-                    <div>
-                        {
-                            accessToken && userObj?.status === "S" &&
-                            <span>{data?.price} AZN</span>
-                        }
-
-                        {
-                            accessToken && userObj?.status === "E" &&
-                            <span>{data?.discount_price} AZN</span>
-                        }
-                    </div>
-                </div>
-            </div>
-
-            {/*  Say və səbətə əlavə hissəsi */}
-            <div className="inc_dec_pr">
-                <button type="button" onClick={handleDecrement}>-</button>
-                <input
-                    type="text"
-                    inputMode="numeric"
-                    value={quantity}
-                    onChange={handleInputChange}
-                />
-
-
-                <button type="button" onClick={handleIncrement}>+</button>
-                <button
-                    type="button"
-                    onClick={addToCart}
-                    className='add_to_cart_pr'
-                >
-                    🛒
-
-                </button>
-            </div>
-
-
+            {accessToken && userObj?.status === "E" && (
+              <span>{data?.discount_price} AZN</span>
+            )}
+          </div>
         </div>
-    )
-}
+      </div>
 
-export default FilterProductCard
+      {/* Say və səbətə əlavə hissəsi */}
+      <div className="inc_dec_pr">
+        <button type="button" onClick={handleDecrement}>
+          -
+        </button>
+        <input
+          type="text"
+          inputMode="numeric"
+          value={quantity}
+          onChange={handleInputChange}
+        />
+
+        <button type="button" onClick={handleIncrement}>
+          +
+        </button>
+        <button type="button" onClick={addToCart} className="add_to_cart_pr">
+          🛒
+        </button>
+        
+      </div>
+    </div>
+  );
+};
+
+export default React.memo(FilterProductCard);
