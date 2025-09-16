@@ -41,13 +41,14 @@ const FilterProducts = () => {
   const [activeStore, setActiveStore] = useState("Hamısı");
 
   const {
-    productsList,
     recentProductsList,
     categoryList,
     brandList,
     storeList,
-    count,
+    // count,
     count1,
+    productsListTest,
+    count2
   } = useSelector((state) => state.products);
 
   // USER məlumatını və siyahıları yüklə - yalnız bir dəfə!
@@ -97,7 +98,7 @@ const FilterProducts = () => {
   const pageCount =
     activeCategory === "Yeni gələnlər"
       ? Math.ceil(count1 / pageSize)
-      : Math.ceil(count / pageSize);
+      : Math.ceil(count2 / pageSize);
 
   // Virtualization üçün memoized siyahılar
   const latestProducts = useMemo(() => {
@@ -107,7 +108,7 @@ const FilterProducts = () => {
       : recentProductsList;
   }, [recentProductsList]);
 
-  const normalProducts = useMemo(() => productsList || [], [productsList]);
+  const normalProducts = useMemo(() => productsListTest || [], [productsListTest]);
 
   const categoryButtons = useMemo(() => {
     return (
@@ -247,7 +248,7 @@ const FilterProducts = () => {
 
       {/* Pagination */}
       {((activeCategory === "Yeni gələnlər" && count1 > pageSize) ||
-        (activeCategory !== "Yeni gələnlər" && count > pageSize)) && (
+        (activeCategory !== "Yeni gələnlər" && count2 > pageSize)) && (
         <ReactPaginate
           previousLabel={
             <svg width="8" height="14" viewBox="0 0 8 14" fill="none">

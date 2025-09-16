@@ -1,6 +1,6 @@
 import axios from "axios";
 import { baseUrl } from "../../mainApi/MainApi";
-import { getBrandListFunc, getCategoryListFunc, getProductObjFunc, getProductsListFunc, getRecentProductsListFunc, getStoreListFunc } from "../../redux/slices/productsSlices";
+import { getBrandListFunc, getCategoryListFunc, getProductObjFunc, getProductsListFunc, getProductsListFuncTest, getRecentProductsListFunc, getStoreListFunc } from "../../redux/slices/productsSlices";
 import { startLoading, stopLoading } from "../../redux/slices/loaderSlice";
 import toast from "react-hot-toast";
 import { closeProductsDeleteModalFunc } from "../../redux/slices/admin/productTableSlice";
@@ -67,7 +67,7 @@ export const getProductsListTest = (
   return await axios
     .get(`${baseUrl}core/short-product-list/?page=${page}&search=${encodeURIComponent(searchQuery.trim())}`)
     .then((resp) => {
-      dispatch(getProductsListFunc(resp.data));
+      dispatch(getProductsListFuncTest(resp.data));
     })
     .catch((err) => {
       console.log(err);

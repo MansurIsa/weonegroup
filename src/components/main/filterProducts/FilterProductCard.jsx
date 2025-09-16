@@ -80,7 +80,7 @@ const FilterProductCard = ({ data }) => {
           )}
 
           <h3>{data?.name}</h3>
-          <p>{data?.brand?.name}</p>
+          <p>{data?.brand_name}</p>
           <span className="article_pr_name">
             Məhsul kodu: {data?.article_names?.join(", ")}
           </span>
