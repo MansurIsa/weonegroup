@@ -6,7 +6,7 @@ import Img3 from "../../assets/images/fixedPr3.png"
 import Img4 from "../../assets/images/fixedPr4.png"
 import Img5 from "../../assets/images/fixedPr5.png"
 import { useDispatch, useSelector } from 'react-redux';
-import { getProductsList } from '../../actions/productsAction/productsAction';
+import { getProductsList, getProductsListTest } from '../../actions/productsAction/productsAction';
 
 
 const products = [
@@ -21,17 +21,17 @@ const FixedProducts = () => {
   const dispatch = useDispatch()
 
    useEffect(() => {
-        dispatch(getProductsList())
+        dispatch(getProductsListTest())
     }, [dispatch])
 
-     const { productsList} = useSelector(state => state.products)
-     console.log(productsList);
+     const { productsListTest} = useSelector(state => state.products)
+     console.log(productsListTest);
      
 
   return (
     <div style={{ position: 'fixed', bottom: 0, width: '100%', background: '#fff', zIndex: 1000 }}>
     <Marquee speed={50} gradient={false}>
-      {productsList?.map(product => (
+      {productsListTest?.map(product => (
         <img
           key={product.id}
           src={product.image}
