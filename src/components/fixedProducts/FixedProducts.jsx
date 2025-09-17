@@ -21,7 +21,7 @@ const FixedProducts = () => {
   const dispatch = useDispatch()
 
    useEffect(() => {
-        dispatch(getProductsListTest())
+        // dispatch(getProductsListTest())
     }, [dispatch])
 
      const { productsListTest} = useSelector(state => state.products)

@@ -11,6 +11,7 @@ import {
 } from "../../../actions/productsAction/productsAction";
 import { getUserObj } from "../../../actions/loginAction/loginAction";
 import ReactPaginate from "react-paginate";
+import { useSearchParams } from "react-router-dom";
 
 // Debounce helper
 const useDebounce = (value, delay) => {
@@ -27,11 +28,18 @@ const MemoizedProductsContainer = React.memo(FilterProductsContainer);
 
 const FilterProducts = () => {
   const dispatch = useDispatch();
+
+  // Search params (for page)
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  // Get current page from URL or default to 1 (zero-based in state)
+  const pageFromUrl = parseInt(searchParams.get("page")) || 1;
+  const [currentPage, setCurrentPage] = useState(pageFromUrl - 1); // 0-based index for ReactPaginate
+
+  const pageSize = 10;
+
   const [brandDropdownOpen, setBrandDropdownOpen] = useState(false);
   const [storeDropdownOpen, setStoreDropdownOpen] = useState(false);
-
-  const [currentPage, setCurrentPage] = useState(0);
-  const pageSize = 10;
 
   const [searchQuery, setSearchQuery] = useState("");
   const debouncedSearch = useDebounce(searchQuery, 500);
@@ -45,13 +53,27 @@ const FilterProducts = () => {
     categoryList,
     brandList,
     storeList,
-    // count,
     count1,
     productsListTest,
-    count2
+    count2,
   } = useSelector((state) => state.products);
 
-  // USER məlumatını və siyahıları yüklə - yalnız bir dəfə!
+  // Page reset on search or filter change
+// useEffect(() => {
+//   setCurrentPage(0);
+//   setSearchParams({ page: 1 });
+// }, [debouncedSearch, activeCategory, activeBrand, activeStore, setSearchParams]);
+
+
+  // Sync currentPage state with URL changes (if user navigates back/forward)
+  useEffect(() => {
+    // pageFromUrl might change if URL changes externally (back/forward)
+    if (pageFromUrl - 1 !== currentPage) {
+      setCurrentPage(pageFromUrl - 1);
+    }
+  }, [pageFromUrl, currentPage]);
+
+  // Load user and lists once
   useEffect(() => {
     dispatch(getUserObj());
     dispatch(getCategoryList());
@@ -59,7 +81,7 @@ const FilterProducts = () => {
     dispatch(getStoreList());
   }, [dispatch]);
 
-  // Məhsulları yüklə
+  // Load products based on filters and currentPage
   useEffect(() => {
     if (activeCategory === "Yeni gələnlər") {
       dispatch(
@@ -90,17 +112,23 @@ const FilterProducts = () => {
     activeStore,
   ]);
 
-  const handlePageClick = useCallback((data) => {
-    setCurrentPage(data.selected);
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  }, []);
+  // Handle page click: update currentPage and sync URL
+  const handlePageClick = useCallback(
+    (data) => {
+      const selectedPage = data.selected;
+      setCurrentPage(selectedPage);
+      setSearchParams({ page: selectedPage + 1 }); // update URL (1-based)
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    },
+    [setSearchParams]
+  );
 
   const pageCount =
     activeCategory === "Yeni gələnlər"
       ? Math.ceil(count1 / pageSize)
       : Math.ceil(count2 / pageSize);
 
-  // Virtualization üçün memoized siyahılar
+  // Memoize lists
   const latestProducts = useMemo(() => {
     if (!recentProductsList) return [];
     return recentProductsList.length > 100
@@ -122,9 +150,7 @@ const FilterProducts = () => {
 
         <button
           onClick={() => setActiveCategory("Yeni gələnlər")}
-          className={
-            activeCategory === "Yeni gələnlər" ? "active_category" : ""
-          }
+          className={activeCategory === "Yeni gələnlər" ? "active_category" : ""}
         >
           Yeni gələnlər
         </button>
@@ -282,6 +308,7 @@ const FilterProducts = () => {
           previousClassName={"dashboard_end_arrow"}
           nextClassName={"dashboard_end_arrow"}
           activeClassName={"dashboard_end_active"}
+          forcePage={currentPage} // force ReactPaginate to highlight correct page
         />
       )}
     </div>
