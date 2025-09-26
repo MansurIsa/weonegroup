@@ -36,7 +36,7 @@ const FilterProducts = () => {
   const pageFromUrl = parseInt(searchParams.get("page")) || 1;
   const [currentPage, setCurrentPage] = useState(pageFromUrl - 1); // 0-based index for ReactPaginate
 
-  const pageSize = 10;
+  const pageSize = 5;
 
   const [brandDropdownOpen, setBrandDropdownOpen] = useState(false);
   const [storeDropdownOpen, setStoreDropdownOpen] = useState(false);

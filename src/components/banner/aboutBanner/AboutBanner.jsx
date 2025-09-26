@@ -18,15 +18,16 @@ const AboutBanner = () => {
     navigate("/contact")
   }
   return (
-    <div className='about_banner_container'>
+    <div className='about_banner_container project_container'>
         <div className='about_banner_left'>
             <h1>{settingsList[0]?.about_title}</h1>
             <p>{settingsList[0]?.about_content}</p>
             <button onClick={directContact}>İndi Alın</button>
         </div>
-        <div style={{background: `url(${settingsList[0]?.about_image})`, backgroundSize: "cover", backgroundRepeat: "no-repeat", backgroundPosition: "left", height: "100%", width: "50%"}} className="about_banner_right">
+        <img src={settingsList[0]?.about_image} alt="" />
+        {/* <div style={{background: `url(${settingsList[0]?.about_image})`, backgroundSize: "cover", backgroundRepeat: "no-repeat", backgroundPosition: "center", height: "100%", width: "50%"}} className="about_banner_right">
 
-        </div>
+        </div> */}
     </div>
   )
 }

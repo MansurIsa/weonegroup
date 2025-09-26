@@ -2,9 +2,14 @@
     height: 85vh;
     display: flex;
     align-items: center;
+    justify-content: space-between;
     background-color: var(--white);
 }
-
+.about_banner_container img{
+    max-width: 400px;
+    margin-top: 50px;
+    height: 90%;
+}
 .about_banner_left {
     width: 50%;
     padding-left: 120px;
@@ -44,15 +49,17 @@
       
         background-size: cover !important;
         background-repeat: no-repeat !important;
+        background-color: red;
         
     }
 @media screen and (max-width: 992px) {
     .about_banner_container{
-        flex-direction: column-reverse;
+        flex-direction: column;
         justify-content: flex-start;
-        gap: 30px;
-        height: 70vh;
-        padding-top: 40px;
+        gap: 0px;
+        /* height: 70vh; */
+        height: auto;
+        padding-top: 40px !important;
         padding-bottom: 40px;
     }
     .about_banner_left{
@@ -85,5 +92,8 @@
 }
 .about_banner_left{
     padding: 0 60px;
+}
+.about_banner_container img{
+    max-width: 300px;
 }
 }
