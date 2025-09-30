@@ -7,7 +7,7 @@ import { useDispatch } from 'react-redux';
 import { purchaseUpdateModalFunc, setUpdatePurchaseObjFunc } from '../../../redux/slices/admin/purchaseSlices';
 import { useNavigate } from 'react-router-dom';
 
-const ITEMS_PER_PAGE = 5;
+const ITEMS_PER_PAGE = 30;
 
 const PurchaseEnd = ({ purchaseList, supplierPurchaseObj }) => {
     const [currentPage, setCurrentPage] = useState(0);

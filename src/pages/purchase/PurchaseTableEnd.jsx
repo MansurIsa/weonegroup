@@ -86,14 +86,14 @@ const PurchaseTableEnd = () => {
     // };
 
 
-   const fetchData = () => {
-  dispatch(getPurchaseListList(currentPage + 1, searchQuery, startDate, endDate));
-};
+    const fetchData = () => {
+        dispatch(getPurchaseListList(currentPage + 1, searchQuery, startDate, endDate));
+    };
 
-// avtomatik API çağırışı
-useEffect(() => {
-  fetchData();
-}, [currentPage, searchQuery, startDate, endDate]); // burdan dispatch çıxarıldı
+    // avtomatik API çağırışı
+    useEffect(() => {
+        fetchData();
+    }, [currentPage, searchQuery, startDate, endDate]); // burdan dispatch çıxarıldı
 
 
 
@@ -131,22 +131,22 @@ useEffect(() => {
                 <label>Tarix aralığı</label>
                 <div className="date_range">
                     <input
-  type="date"
-  value={startDate}
-  onChange={(e) => {
-    setCurrentPage(0);
-    setStartDate(e.target.value); // YYYY-MM-DD formatında gəlir
-  }}
-/>
--
-<input
-  type="date"
-  value={endDate}
-  onChange={(e) => {
-    setCurrentPage(0);
-    setEndDate(e.target.value);
-  }}
-/>
+                        type="date"
+                        value={startDate}
+                        onChange={(e) => {
+                            setCurrentPage(0);
+                            setStartDate(e.target.value); // YYYY-MM-DD formatında gəlir
+                        }}
+                    />
+                    -
+                    <input
+                        type="date"
+                        value={endDate}
+                        onChange={(e) => {
+                            setCurrentPage(0);
+                            setEndDate(e.target.value);
+                        }}
+                    />
 
                 </div>
             </div>
@@ -170,7 +170,7 @@ useEffect(() => {
                         </tr>
                     </thead>
                     <tbody>
-                        {purchaseListList.map((item, index) => (
+                        {purchaseListList?.map((item, index) => (
                             <tr key={index}>
                                 <td className='number_table' onClick={() => handlePurchase(item?.id)} style={{ cursor: "pointer" }}>
                                     <svg width="16" height="16" viewBox="0 0 16 16" fill="none"
@@ -183,11 +183,13 @@ useEffect(() => {
                                 <td>{formatDate(item?.date)}</td>
                                 <td>{item.amount}</td>
                                 <td>
-                                    {item.purchase_price} {getCurrencySymbol(item.currency)}
+                                    {Math.round(item.purchase_price * 100) / 100} {getCurrencySymbol(item.currency)}
                                 </td>
-                                <td>{item.cost_price}₼</td>
-                                <td>{item.price}₼</td>
-                                <td>{item.discount_price}₼</td>
+
+                                <td>{Math.round(item.cost_price * 100) / 100}₼</td>
+                                <td>{Math.round(item.price * 100) / 100}₼</td>
+                                <td>{Math.round(item.discount_price * 100) / 100}₼</td>
+
                                 <td>
                                     {item.status === 'A'
                                         ? <span style={{ color: 'green' }}>Anbarda</span>
