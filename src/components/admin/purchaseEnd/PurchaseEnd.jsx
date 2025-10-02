@@ -7,7 +7,7 @@ import { useDispatch } from 'react-redux';
 import { purchaseUpdateModalFunc, setUpdatePurchaseObjFunc } from '../../../redux/slices/admin/purchaseSlices';
 import { useNavigate } from 'react-router-dom';
 
-const ITEMS_PER_PAGE = 30;
+const ITEMS_PER_PAGE = 20;
 
 const PurchaseEnd = ({ purchaseList, supplierPurchaseObj }) => {
     const [currentPage, setCurrentPage] = useState(0);
@@ -59,7 +59,7 @@ const PurchaseEnd = ({ purchaseList, supplierPurchaseObj }) => {
             <table className='custom_table purchase_table_retrive'>
                 <thead>
                     <tr>
-                         <th className="print_column">№</th>
+                        <th className="print_column print_column_number" style={{ width: "50px" }}>№</th>
                         <th className="print_column">Məhsul Adı</th>
                         <th className="print_column">Artikl</th>
                         <th className="print_column">Brend</th>
@@ -82,9 +82,17 @@ const PurchaseEnd = ({ purchaseList, supplierPurchaseObj }) => {
 
                         return (
                             <tr key={index}>
-                                <td className="print_column">{index+1}</td>
+                                <td className="print_column print_column_number" style={{ width: "50px" }}>{index + 1}</td>
                                 <td className="print_column">{product.name}</td>
-                                <td className="print_column">{articleNames}</td>
+                                {/* <td className="print_column">{articleNames}</td> */}
+                                <td className='table_article_scroll'>
+                                    <span className="screen-only">
+                                        {product?.articles?.map((art) => art.name).join(', ') || '—'}
+                                    </span>
+                                    <span className="print-only print-only-arc">
+                                        {product?.articles?.[0]?.name || '—'}
+                                    </span>
+                                </td>
                                 <td className="print_column">{product?.store?.name || "-"}</td>
                                 <td className="print_column">{item.amount}</td>
                                 <td className="print_column">{product.purchase_price} {currencySymbol}</td>
@@ -106,11 +114,11 @@ const PurchaseEnd = ({ purchaseList, supplierPurchaseObj }) => {
             </table>
 
             <div className="warehouse_summary print_column_summary">
-                
-                    <label>
-                        Cəm: {totalPurchase} {currencySymbol}
-                    </label>
-                
+
+                <label>
+                    Cəm:  {Math.round(totalPurchase * 100) / 100} {currencySymbol}
+                </label>
+
             </div>
 
 

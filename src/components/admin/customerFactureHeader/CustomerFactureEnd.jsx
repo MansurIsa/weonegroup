@@ -7,7 +7,7 @@ import { AiTwotoneDelete } from 'react-icons/ai';
 import { saleUpdateModalFunc, setSaleUpdateObjFunc } from '../../../redux/slices/admin/salesSlice';
 import { useDispatch } from 'react-redux';
 
-const ITEMS_PER_PAGE = 4;
+const ITEMS_PER_PAGE = 20;
 
 const CustomerFactureEnd = ({ factureList = [] }) => {
   const [currentPage, setCurrentPage] = useState(0);
@@ -56,7 +56,7 @@ const CustomerFactureEnd = ({ factureList = [] }) => {
         <table className='custom_table'>
           <thead>
             <tr>
-              <th>N</th>
+              <th className='print_column_number'>N</th>
               <th>Məhsul Adı</th>
               <th>Artikl</th>
               <th>Kateqoriya</th>
@@ -72,7 +72,7 @@ const CustomerFactureEnd = ({ factureList = [] }) => {
           <tbody>
             {currentPageData.map((item, index) => (
               <tr key={item.id}>
-                <td>{offset + index + 1}</td>
+                <td className='print_column_number'>{offset + index + 1}</td>
                 <td>{item.product?.name || '—'}</td>
                 <td className='table_article_scroll'>
                   <span className="screen-only">

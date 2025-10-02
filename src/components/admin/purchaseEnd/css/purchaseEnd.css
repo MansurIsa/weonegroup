@@ -147,4 +147,42 @@
     .admin_header_container{
         display: none;
     }
+
+     .purchase_table_retrive {
+        border-collapse: collapse; /* Hüceyrələr arasındakı boşluğu aradan qaldır */
+    }
+
+    /* Yalnız çap olunan sütunlara border ver */
+    .purchase_table_retrive th:nth-child(-n+6),
+    .purchase_table_retrive td:nth-child(-n+6) {
+        border: 2px solid black; /* Qalın border */
+        padding: 8px 10px;
+        text-align: center;
+    }
+
+    /* Gizlədilən sütunlar border olmadan qalır */
+    .purchase_table_retrive th:nth-child(n+7),
+    .purchase_table_retrive td:nth-child(n+7) {
+        display: none;
+    }
+
+    .print_column_summary {
+        display: flex;
+    }
+
+    .admin_header_container {
+        display: none;
+    }
+
+    /* Brauzerlərdə rəng və borderin itməməsi üçün */
+    .purchase_table_retrive th,
+    .purchase_table_retrive td {
+        -webkit-print-color-adjust: exact;
+    }
+}
+
+.print_column_number {
+    width: 50px;
+    min-width: 50px; /* optional, daha sabit olmaq üçün */
+    max-width: 50px; /* optional */
 }
