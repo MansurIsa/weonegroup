@@ -73,7 +73,7 @@ const CustomerFactureEnd = ({ factureList = [] }) => {
             {currentPageData.map((item, index) => (
               <tr key={item.id}>
                 <td className='print_column_number'>{offset + index + 1}</td>
-                <td>{item.product?.name || '—'}</td>
+                <td className='table_article_scroll'>{item.product?.name || '—'}</td>
                 <td className='table_article_scroll'>
                   <span className="screen-only">
                     {item.product?.articles?.map((art) => art.name).join(', ') || '—'}

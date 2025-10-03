@@ -15,7 +15,7 @@ const CustomerTableEnd = ({ searchTerm = "" }) => {
 
   const [currentPage, setCurrentPage] = useState(0);
 
-  const ITEMS_PER_PAGE = 10;
+  const ITEMS_PER_PAGE = 5;
   const pageCount = Math.ceil(count / ITEMS_PER_PAGE);
 
   // Backend səhifələmə üçün səhifəni seçəndə

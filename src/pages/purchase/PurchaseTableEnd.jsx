@@ -179,7 +179,7 @@ const PurchaseTableEnd = () => {
                                             fill="#202020" />
                                     </svg>
                                 </td>
-                                <td>{item?.supplier?.username || '-'}</td>
+                                <td>{item?.supplier || '-'}</td>
                                 <td>{formatDate(item?.date)}</td>
                                 <td>{item.amount}</td>
                                 <td>

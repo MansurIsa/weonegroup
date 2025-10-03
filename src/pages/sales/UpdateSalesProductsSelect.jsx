@@ -16,6 +16,11 @@ const UpdateSalesProductsSelect = () => {
   const { usersList } = useSelector(state => state.login);
   const { saleUpdateObj } = useSelector(state => state.sales);
 
+  console.log(stockList);
+  console.log(saleUpdateObj);
+  
+  
+
   const [selectedCustomerId, setSelectedCustomerId] = useState('');
   const [selectedDateTime, setSelectedDateTime] = useState('');
   const [quantityValues, setQuantityValues] = useState({});
@@ -24,7 +29,7 @@ const UpdateSalesProductsSelect = () => {
   const [errorIndexes, setErrorIndexes] = useState([]);
 
  useEffect(() => {
-    dispatch(getStockList());
+    // dispatch(getStockList());
     dispatch(getUsersList(1, "")); 
   }, [dispatch]);
 
@@ -40,9 +45,20 @@ const UpdateSalesProductsSelect = () => {
     }
   }, [saleUpdateObj]);
 
+ useEffect(() => {
+  if (saleUpdateObj?.product?.name) {
+    dispatch(getStockList(1, saleUpdateObj.product.name));
+  }
+  dispatch(getUsersList(1, ""));
+}, [dispatch, saleUpdateObj]);
+
+
+
   // Filter stock to only sale product
   const filtered = stockList?.filter(p => p.product?.id === saleUpdateObj?.product?.id) || [];
 
+  console.log(filtered);
+  
   // Initialize inputs values on load
   useEffect(() => {
     if (!saleUpdateObj || filtered.length === 0) return;
@@ -175,7 +191,7 @@ const UpdateSalesProductsSelect = () => {
                 return (
                   <tr key={index}>
                     <td><input type="checkbox" checked readOnly /></td>
-                    <td>{product?.name}</td>
+                    <td className='table_article_scroll'>{product?.name}</td>
                     <td className='table_article_scroll'>{product?.articles?.map(a => a.name).join(', ')}</td>
                     <td>{item.amount}</td>
                     <td>{product?.cost_price} ₼</td>
