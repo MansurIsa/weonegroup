@@ -67,15 +67,15 @@ const FilterProductCard = ({ data }) => {
                 +data?.amount > 20
                   ? "filter_product_card_content_stock_green"
                   : +data?.amount > 0 && +data?.amount < 21
-                  ? "filter_product_card_content_stock_orange"
-                  : "filter_product_card_content_stock_red"
+                    ? "filter_product_card_content_stock_orange"
+                    : "filter_product_card_content_stock_red"
               }
             >
               {+data?.amount > 20
                 ? "Stokda var"
                 : +data?.amount > 0 && +data?.amount < 21
-                ? "Stokda tükənir"
-                : "Stokda bitib"}
+                  ? "Stokda tükənir"
+                  : "Stokda bitib"}
             </span>
           )}
 
@@ -111,9 +111,13 @@ const FilterProductCard = ({ data }) => {
           +
         </button>
         <button type="button" onClick={addToCart} className="add_to_cart_pr">
-          🛒
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="9" cy="21" r="1" />
+            <circle cx="20" cy="21" r="1" />
+            <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
+          </svg>
         </button>
-        
+
       </div>
     </div>
   );

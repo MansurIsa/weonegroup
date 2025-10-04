@@ -67,25 +67,25 @@ const ProductDetailContainer = ({ productObj, userObj }) => {
                 <div className="product_detail_container_right">
                     <div className="product_detail_container_right_color">
                         <h1>{productObj?.name}</h1>
-                       {
-                        accessToken && (
-                            <span
-                                className={
-                                    +productObj?.amount > 20
-                                        ? 'filter_product_card_content_stock_green'
+                        {
+                            accessToken && (
+                                <span
+                                    className={
+                                        +productObj?.amount > 20
+                                            ? 'filter_product_card_content_stock_green'
+                                            : +productObj?.amount > 0 && +productObj?.amount < 21
+                                                ? 'filter_product_card_content_stock_orange'
+                                                : 'filter_product_card_content_stock_red'
+                                    }
+                                >
+                                    {+productObj?.amount > 20
+                                        ? 'Stokda var'
                                         : +productObj?.amount > 0 && +productObj?.amount < 21
-                                            ? 'filter_product_card_content_stock_orange'
-                                            : 'filter_product_card_content_stock_red'
-                                }
-                            >
-                                {+productObj?.amount > 20
-                                    ? 'Stokda var'
-                                    : +productObj?.amount > 0 && +productObj?.amount < 21
-                                        ? 'Stokda tükənir'
-                                        : 'Stokda bitib'}
-                            </span>
-                        )
-                    }
+                                            ? 'Stokda tükənir'
+                                            : 'Stokda bitib'}
+                                </span>
+                            )
+                        }
                     </div>
 
                     <div className='product_detail_container_right_cat'>
@@ -102,8 +102,8 @@ const ProductDetailContainer = ({ productObj, userObj }) => {
                             <p>{productObj?.store?.name}</p>
                         </div>
                     </div>
-                     <span className='article_pr_name'>
-                       Məhsul kodu: {productObj?.articles?.map(x => x?.name).join(", ")}
+                    <span className='article_pr_name'>
+                        Məhsul kodu: {productObj?.articles?.map(x => x?.name).join(", ")}
                     </span>
 
                     <div className="product_detail_about_wrapper">
@@ -121,8 +121,8 @@ const ProductDetailContainer = ({ productObj, userObj }) => {
                     <div className='price_inc_dec_pr'>
                         {accessToken && (
                             <p className='product_detail_container_right_price'>
-                                {userObj?.status === "S" ? `${productObj?.price===null? 0: productObj?.price} AZN` :
-                                    userObj?.status === "E" ? `${productObj?.discount_price===null? 0: productObj?.discount_price} AZN` : ''}
+                                {userObj?.status === "S" ? `${productObj?.price === null ? 0 : productObj?.price} AZN` :
+                                    userObj?.status === "E" ? `${productObj?.discount_price === null ? 0 : productObj?.discount_price} AZN` : ''}
                             </p>
                         )}
                         <div className="inc_dec_pr">
@@ -140,7 +140,12 @@ const ProductDetailContainer = ({ productObj, userObj }) => {
                                 onClick={addToCart}
                                 className='add_to_cart_pr'
                             >
-                                🛒
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <circle cx="9" cy="21" r="1" />
+                                    <circle cx="20" cy="21" r="1" />
+                                    <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
+                                </svg>
+
                             </button>
                         </div>
                     </div>
