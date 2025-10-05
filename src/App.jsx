@@ -40,6 +40,7 @@ import UpdateNewCustomer from './pages/customers/UpdateNewCustomer';
 import SupplierPurchase from './pages/purchase/SupplierPurchase';
 import Supplier from './pages/supplier/Supplier';
 import CustomerActionRetrive from './pages/customers/CustomerActionRetrive';
+import PurchaseProductsSelect from './pages/purchase/PurchaseProductsSelect';
 
 // Token yoxlama funksiyası
 const isTokenExpired = (token) => {
@@ -89,7 +90,8 @@ const adminOnlyPaths = [
   "/update-new-customer",
   "/supplier-purchase",
   "/supplier",
-  "/customeraction-retrieve/:id"
+  "/customeraction-retrieve/:id",
+  "/purchase-products-select"
 ];
 
 // Routing
@@ -140,7 +142,7 @@ const App = () => {
      { path: "/supplier-purchase", element: <SupplierPurchase />, isProtected: true },
 
     { path: "/customeraction-retrieve/:id", element: <CustomerActionRetrive />, isProtected: true },
-
+{ path: "/purchase-products-select", element: <PurchaseProductsSelect />, isProtected: true },
   ];
 
   return (

@@ -7,7 +7,7 @@ import { AiTwotoneDelete } from 'react-icons/ai';
 import { saleUpdateModalFunc, setSaleUpdateObjFunc } from '../../../redux/slices/admin/salesSlice';
 import { useDispatch } from 'react-redux';
 
-const ITEMS_PER_PAGE = 20;
+const ITEMS_PER_PAGE = 100;
 
 const CustomerFactureEnd = ({ factureList = [] }) => {
   const [currentPage, setCurrentPage] = useState(0);

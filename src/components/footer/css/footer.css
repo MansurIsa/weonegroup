@@ -80,6 +80,10 @@ footer {
     text-align: center;
     padding-bottom: 70px;
 }
+.copyright a{
+    color: var(--yellow);
+    font-weight: 600;
+}
 
 @media screen and (max-width: 1100px) {
     .footer_list{

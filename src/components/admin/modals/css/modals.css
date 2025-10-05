@@ -149,3 +149,18 @@
 .modal_yes_no_btns button:nth-of-type(2){
     background-color: var(--red);
 }
+
+.customer_retrive_modal{
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+}
+.customer_retrive_modal .close_icon{
+    cursor: pointer;
+    font-size: 2rem;
+}
+.customer_retrive_modal div{
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}

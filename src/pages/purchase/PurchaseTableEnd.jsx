@@ -7,6 +7,7 @@ import { useNavigate } from 'react-router-dom';
 import { AiTwotoneDelete } from 'react-icons/ai';
 import { purchaseDeleteModalFunc, purchaseUpdateModalFuncCommon } from '../../redux/slices/admin/purchaseSlices';
 import { FaPenToSquare } from 'react-icons/fa6';
+import { FaPlus } from 'react-icons/fa';
 
 const ITEMS_PER_PAGE = 10;
 
@@ -123,6 +124,13 @@ const PurchaseTableEnd = () => {
         dispatch(purchaseUpdateModalFuncCommon(x))
     }
 
+     const plusUpdatePurchase = async (item) => {
+        console.log(item);
+        navigate("/purchase-products-select")
+        // await dispatch(plusSalesFunc(item))
+        await dispatch(getPurchaseSupplierObj(item?.id));
+    }
+
     return (
         <div className='admin_container dashboard_end_container'>
             {/* <h2>Alış Siyahısı</h2> */}
@@ -200,6 +208,7 @@ const PurchaseTableEnd = () => {
                                 <td className='table_update'>
                                     <FaPenToSquare onClick={() => updatePurchase(item)} />
                                     <AiTwotoneDelete onClick={() => deletePurchase(item?.id)} />
+                                    <FaPlus onClick={() => plusUpdatePurchase(item)} />
                                 </td>
                             </tr>
                         ))}

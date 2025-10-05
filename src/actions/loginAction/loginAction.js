@@ -2,7 +2,7 @@ import axios from "axios";
 import toast from "react-hot-toast";
 import { baseUrl } from "../../mainApi/MainApi";
 import { startLoading, stopLoading } from "../../redux/slices/loaderSlice";
-import { closeCustomerUpdateModalFunc, getCustomerActionRetriveListFunc, getCustomerFactureListFunc, getCustomerMovementListFunc, getSupplierListFunc, getUserObjFunc, getUsersListFunc } from "../../redux/slices/loginSlices";
+import { closeCustomerUpdateModalFunc, getCustomerActionRetriveListFunc, getCustomerFactureListFunc, getCustomerMovementListFunc, getCustomerRetriveFunc, getSupplierListFunc, getUserObjFunc, getUsersListFunc } from "../../redux/slices/loginSlices";
 
 export const postLogin = (data, navigate) => async (dispatch) => {
   try {
@@ -107,14 +107,32 @@ export const getUsersList = (page = 1, search = "") => async (dispatch) => {
     });;
 };
 
-
+export const getCustomerRetrive = (id) => async (dispatch) => {
+  dispatch(startLoading());
+  return await axios.get(`${baseUrl}core/user-retrieve/${id}/`,
+    {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+      }
+    }
+  )
+    .then((resp) => {
+      console.log(resp.data);
+      dispatch(getCustomerRetriveFunc(resp.data));
+    })
+    .catch((err) => {
+      console.log(err);
+    }).finally(() => {
+      dispatch(stopLoading());
+    });;
+};
 
 
 export const getCustomerMovementList = (id) => async (dispatch) => {
   dispatch(startLoading());
   return await axios.get(`${baseUrl}accounting/customeraction-list/${id}/`)
     .then((resp) => {
-        console.log(resp.data);
+      console.log(resp.data);
       dispatch(getCustomerMovementListFunc(resp.data));
     })
     .catch((err) => {
@@ -128,7 +146,7 @@ export const getCustomerActionRetriveList = (id) => async (dispatch) => {
   dispatch(startLoading());
   return await axios.get(`${baseUrl}accounting/customeraction-retrieve/${id}/`)
     .then((resp) => {
-        console.log(resp.data);
+      console.log(resp.data);
       dispatch(getCustomerActionRetriveListFunc(resp.data));
     })
     .catch((err) => {
@@ -141,7 +159,7 @@ export const getCustomerFactureList = (id) => async (dispatch) => {
   dispatch(startLoading());
   return await axios.get(`${baseUrl}accounting/salelist-retrieve/${id}/`)
     .then((resp) => {
-        console.log(resp.data);
+      console.log(resp.data);
       dispatch(getCustomerFactureListFunc(resp.data));
     })
     .catch((err) => {
@@ -180,7 +198,7 @@ export const getSupplierList = () => async (dispatch) => {
 
 
 
-export const updateUser = (data,id,navigate) => async (dispatch) => {
+export const updateUser = (data, id, navigate) => async (dispatch) => {
   dispatch(startLoading());
   return await axios.put(`${baseUrl}core/profile-retrieve-update-delete/${id}/`, data, {
     headers: {
@@ -191,7 +209,7 @@ export const updateUser = (data,id,navigate) => async (dispatch) => {
       console.log(resp.data);
       navigate("/customers")
       toast.success("Müştəri/Tədarükçü məlumatları Redaktə edildi");
-      
+
     })
     .catch((err) => {
       console.log(err);
@@ -202,7 +220,7 @@ export const updateUser = (data,id,navigate) => async (dispatch) => {
 };
 
 
-export const deleteCustomer = (id,navigate) => async (dispatch) => {
+export const deleteCustomer = (id, navigate) => async (dispatch) => {
   dispatch(startLoading());
   return await axios.delete(`${baseUrl}core/profile-retrieve-update-delete/${id}/`, {
     headers: {

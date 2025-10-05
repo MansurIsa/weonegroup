@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { getProductsList } from "../../actions/productsAction/productsAction";
 
-const CustomProductSelect = ({ value, onChange }) => {
+const CustomProductSelect = ({ value, onChange, preselectedProduct }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [isOpen, setIsOpen] = useState(false);
   const [isTyping, setIsTyping] = useState(false);
@@ -10,6 +10,14 @@ const CustomProductSelect = ({ value, onChange }) => {
   const dropdownRef = useRef();
   const dispatch = useDispatch();
   const { productsList } = useSelector((state) => state.products);
+
+  // preselectedProduct dəyişdikdə məlumatları doldur
+  useEffect(() => {
+    if (preselectedProduct && !isTyping) {
+      setSelectedProduct(preselectedProduct);
+      setSearchTerm(preselectedProduct.name || "");
+    }
+  }, [preselectedProduct, isTyping]);
 
   // Seçilmiş məhsulun məlumatlarını yüklə
   useEffect(() => {
@@ -21,11 +29,11 @@ const CustomProductSelect = ({ value, onChange }) => {
           setSearchTerm(product.name);
         }
       }
-    } else if (!value && !isTyping) {
+    } else if (!value && !isTyping && !preselectedProduct) {
       setSearchTerm("");
       setSelectedProduct(null);
     }
-  }, [value, productsList, isTyping]);
+  }, [value, productsList, isTyping, preselectedProduct]);
 
   // Backend search
   useEffect(() => {
@@ -77,10 +85,10 @@ const CustomProductSelect = ({ value, onChange }) => {
 
   const handleInputFocus = () => {
     setIsOpen(true);
-    if (value && !searchTerm) {
-      const product = productsList.find(p => p.id === parseInt(value));
-      if (product) {
-        setSearchTerm(product.name);
+    if ((value || preselectedProduct) && !searchTerm) {
+      const productToShow = preselectedProduct || (value && productsList.find(p => p.id === parseInt(value)));
+      if (productToShow) {
+        setSearchTerm(productToShow.name);
       }
     }
   };
