@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { closeIncomeAddPaymentModal } from '../../../redux/slices/admin/incomeSlices';
 import { IoMdClose } from 'react-icons/io';
-import { getUsersList } from '../../../actions/loginAction/loginAction';
+import { getCustomerRetrive, getUsersList } from '../../../actions/loginAction/loginAction';
 import { getPaymentList, updateIncome } from '../../../actions/incomeAction/incomeAction';
 import { useNavigate } from 'react-router-dom';
 import CustomCustomerSelect from '../customerTableHead/CustomCustomerSelect';
@@ -16,19 +16,27 @@ const IncomeUpdatePaymentModal = () => {
   const [selectedDatetime, setSelectedDatetime] = useState('');
   const [amount, setAmount] = useState('');
 
-  const { usersList } = useSelector(state => state.login);
+  const { usersList,customerRetriveObj } = useSelector(state => state.login);
   const { incomeUpdatePaymentObj } = useSelector(state => state.income);
 
   // İlkin dəyərləri doldur
-  useEffect(() => {
-    dispatch(getUsersList(1, ''));
+  // IncomeUpdatePaymentModal.js - useEffect hissəsində
+useEffect(() => {
+  dispatch(getUsersList(1, ''));
 
-    if (incomeUpdatePaymentObj) {
-      setSelectedCustomer(incomeUpdatePaymentObj.customer?.id || '');
-      setSelectedDatetime(incomeUpdatePaymentObj.datetime?.slice(0, 16) || '');
-      setAmount(incomeUpdatePaymentObj.amount?.toString() || '');
-    }
-  }, [dispatch, incomeUpdatePaymentObj]);
+  if (incomeUpdatePaymentObj) {
+    setSelectedCustomer(incomeUpdatePaymentObj.customer?.id || '');
+    setSelectedDatetime(incomeUpdatePaymentObj.datetime?.slice(0, 16) || '');
+    setAmount(incomeUpdatePaymentObj.amount?.toString() || '');
+    
+    // Əlavə: Konsola yoxlama üçün
+    console.log('Seçilmiş müştəri:', incomeUpdatePaymentObj.customer);
+  }
+}, [dispatch, incomeUpdatePaymentObj]);
+
+useEffect(()=>{
+  dispatch(getCustomerRetrive(selectedCustomer))
+},[dispatch,selectedCustomer])
 
   // 🔍 Müştəri axtarışı (debounce ilə backend search)
   const handleCustomerSearch = (value) => {
@@ -49,8 +57,8 @@ const IncomeUpdatePaymentModal = () => {
     console.log('Göndəriləcək məlumat:', payload);
 
     await dispatch(updateIncome(payload, incomeUpdatePaymentObj?.id, navigate));
-    await dispatch(closeIncomeAddPaymentModal());
-    await dispatch(getPaymentList());
+    // await dispatch(closeIncomeAddPaymentModal());
+    // await dispatch(getPaymentList());
   };
 
   return (
@@ -74,6 +82,31 @@ const IncomeUpdatePaymentModal = () => {
                 onSearch={handleCustomerSearch}
               />
             </div>
+
+             {
+              selectedCustomer?
+              <div className='income_user_debt'>
+
+                <h4>Bizə Borc:</h4>
+                <p>{customerRetriveObj?.customer_debt_amount || 0} ₼</p>
+              </div>: null
+            }
+            {
+              selectedCustomer?
+              <div className='income_user_debt'>
+                <h4>Bizim Borc:</h4>
+                <p>
+                  {Array.isArray(customerRetriveObj?.our_debt_amount) ? (() => {
+                    const [manat, dollar, rubl] = customerRetriveObj.our_debt_amount;
+                    const debts = [];
+                    if (manat !== 0) debts.push(`${manat} ₼`);
+                    if (dollar !== 0) debts.push(`${dollar} $`);
+                    if (rubl !== 0) debts.push(`${rubl} ₽`);
+                    return debts.length > 0 ? debts.join(' | ') : '0 ₼';
+                  })() : `${customerRetriveObj?.our_debt_amount || 0} ₼`}
+                </p>
+              </div>: null
+            }
 
             <div className="form_group">
               <label>Tarix</label>

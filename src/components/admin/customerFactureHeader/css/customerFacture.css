@@ -2,10 +2,13 @@
   display: inline;
 }
 
-.print-only {
+.print-only,
+.print-only-title {
   display: none;
 }
-
+.print-only-title{
+  margin-bottom: 10px;
+}
 
 @media print {
 
@@ -156,6 +159,10 @@
   .print-only {
     display: table-cell !important;
     text-align: center !important;
+  }
+  .print-only-title{
+    display: block;
+    text-align: center;
   }
 
   .print-only-arc {

@@ -29,7 +29,9 @@ export const addIncome = (data,navigate) => async (dispatch) => {
     .then((resp) => {
         console.log(resp);
         toast.success("Ödəniş əlavə edildi");
+        dispatch(getPaymentList({page: 1, search: ""}));
         navigate("/income")
+       dispatch(closeIncomeAddPaymentModal());
     })
     .catch((err) => {
       console.log(err);
@@ -67,6 +69,7 @@ export const addExpense = (data,navigate) => async (dispatch) => {
     .then((resp) => {
         console.log(resp);
         toast.success("Xərc əlavə edildi");
+        dispatch(getExpenseList({page: 1, search: ""}));
         navigate("/expense")
     })
     .catch((err) => {
@@ -103,7 +106,9 @@ export const updateIncome = (data,id,navigate) => async (dispatch) => {
     .then((resp) => {
         console.log(resp);
         toast.success("Ödəniş Məlumatları dəyişdirildi");
+        dispatch(getPaymentList({page: 1, search: ""}));
         navigate("/income")
+        dispatch(closeIncomeAddPaymentModal());
     })
     .catch((err) => {
       console.log(err);
@@ -124,6 +129,7 @@ export const deleteIncome = (id,navigate) => async (dispatch) => {
     .then((resp) => {
         console.log(resp);
         toast.success("Ödəniş Məlumatları silindi");
+        dispatch(getPaymentList({page: 1, search: ""}));
         navigate("/income")
         dispatch(closeIncomeAddPaymentModal())
     })
@@ -146,7 +152,9 @@ export const updateExpense = (data,id,navigate) => async (dispatch) => {
     .then((resp) => {
         console.log(resp);
         toast.success("Xərc Məlumatları dəyişdirildi");
+         dispatch(getExpenseList({page: 1, search: ""}));
         navigate("/expense")
+        dispatch(closeIncomeAddPaymentModal())
     })
     .catch((err) => {
       console.log(err);
@@ -166,6 +174,7 @@ export const deleteExpense = (id,navigate) => async (dispatch) => {
     .then((resp) => {
         console.log(resp);
         toast.success("Xərc Məlumatları silindi");
+         dispatch(getExpenseList({page: 1, search: ""}));
         navigate("/expense")
         dispatch(closeIncomeAddPaymentModal())
     })
@@ -204,7 +213,9 @@ export const addSupplier = (data,navigate) => async (dispatch) => {
     .then((resp) => {
         console.log(resp);
         toast.success("Ödəniş əlavə edildi");
+         dispatch(getSupplierList({page: 1, search: ""}));
         navigate("/supplier")
+        dispatch(closeIncomeAddPaymentModal())
     })
     .catch((err) => {
       console.log(err);
@@ -225,7 +236,9 @@ export const updateSupplier = (data,id,navigate) => async (dispatch) => {
     .then((resp) => {
         console.log(resp);
         toast.success("Tədarükçünün/Müştərinin Ödəniş Məlumatları dəyişdirildi");
+         dispatch(getSupplierList({page: 1, search: ""}));
         navigate("/supplier")
+        dispatch(closeIncomeAddPaymentModal())
     })
     .catch((err) => {
       console.log(err);
@@ -245,6 +258,7 @@ export const deleteSupplier = (id,navigate) => async (dispatch) => {
     .then((resp) => {
         console.log(resp);
         toast.success("Tədarükçünün/Müştərinin Ödəniş Məlumatları silindi");
+         dispatch(getSupplierList({page: 1, search: ""}));
         navigate("/supplier")
         dispatch(closeIncomeAddPaymentModal())
     })

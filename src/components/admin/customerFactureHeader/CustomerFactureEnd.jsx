@@ -7,7 +7,7 @@ import { AiTwotoneDelete } from 'react-icons/ai';
 import { saleUpdateModalFunc, setSaleUpdateObjFunc } from '../../../redux/slices/admin/salesSlice';
 import { useDispatch } from 'react-redux';
 
-const ITEMS_PER_PAGE = 100;
+const ITEMS_PER_PAGE = 300;
 
 const CustomerFactureEnd = ({ factureList = [] }) => {
   const [currentPage, setCurrentPage] = useState(0);
@@ -50,9 +50,14 @@ const CustomerFactureEnd = ({ factureList = [] }) => {
     navigate("/update-sales-products-select");
   };
 
+  console.log(currentPageData);
+  
+
   return (
     <div className='admin_container dashboard_end_container'>
+      
       <div className="table_scroll_wrapper">
+        <h2 className='print-only-title'>{currentPageData[0]?.customer?.first_name} {currentPageData[0]?.customer?.first_name}({currentPageData[0]?.customer?.username})</h2>
         <table className='custom_table'>
           <thead>
             <tr>
@@ -121,7 +126,7 @@ const CustomerFactureEnd = ({ factureList = [] }) => {
           <label>Müştərinin ümumi qalan borcu:  {factureList[0]?.total_debt}AZN</label>
         </div>
         <div>
-          <label>Ümumi gəlir:  {factureList[0]?.total_profit}AZN</label>
+          <label>Ümumi gəlir: {Math.round(factureList[0]?.total_profit * 100) / 100}AZN</label>
         </div>
       </div>
 

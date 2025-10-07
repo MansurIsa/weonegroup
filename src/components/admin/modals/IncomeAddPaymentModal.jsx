@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { closeIncomeAddPaymentModal } from '../../../redux/slices/admin/incomeSlices';
 import { IoMdClose } from 'react-icons/io';
-import { getUsersList } from '../../../actions/loginAction/loginAction';
+import { getCustomerRetrive, getUsersList } from '../../../actions/loginAction/loginAction';
 import { addIncome, addIncomeSale, getPaymentList } from '../../../actions/incomeAction/incomeAction';
 import { useNavigate } from 'react-router-dom';
 import CustomCustomerSelect from '../customerTableHead/CustomCustomerSelect';
@@ -15,12 +15,15 @@ const IncomeAddPaymentModal = ({ salesNavigate }) => {
   const [selectedDatetime, setSelectedDatetime] = useState('');
   const [amount, setAmount] = useState('');
   const searchTimeout = useRef(null);
+  console.log(selectedCustomer);
+
 
   useEffect(() => {
     dispatch(getUsersList(1, ""));
-  }, [dispatch]);
+    dispatch(getCustomerRetrive(selectedCustomer))
+  }, [dispatch,selectedCustomer]);
 
-  const { usersList } = useSelector(state => state.login);
+  const { usersList, customerRetriveObj } = useSelector(state => state.login);
 
   // 🔍 Müştəri axtarışı (debounce ilə backend search)
   const handleCustomerSearch = (value) => {
@@ -35,7 +38,7 @@ const IncomeAddPaymentModal = ({ salesNavigate }) => {
     const payload = {
       datetime: selectedDatetime || null,
       amount: amount || null,
-      customer: salesNavigate===true? +localStorage.getItem("customerId"): selectedCustomer 
+      customer: salesNavigate === true ? +localStorage.getItem("customerId") : selectedCustomer
     };
 
     console.log('Göndəriləcək məlumat:', payload);
@@ -46,8 +49,8 @@ const IncomeAddPaymentModal = ({ salesNavigate }) => {
     }
 
 
-    await dispatch(closeIncomeAddPaymentModal());
-    await dispatch(getPaymentList());
+    // await dispatch(closeIncomeAddPaymentModal());
+    // await dispatch(getPaymentList());
   };
 
   return (
@@ -61,16 +64,41 @@ const IncomeAddPaymentModal = ({ salesNavigate }) => {
             />
 
             <div className="form_group">
-              {!salesNavigate? 
-               <CustomCustomerSelect
-                customers={usersList?.filter(user => !user.is_staff)}
-                value={selectedCustomer}
-                onChange={setSelectedCustomer}
-                onSearch={handleCustomerSearch}
-              />: null
-            }
-             
+              {!salesNavigate ?
+                <CustomCustomerSelect
+                  customers={usersList?.filter(user => !user.is_staff)}
+                  value={selectedCustomer}
+                  onChange={setSelectedCustomer}
+                  onSearch={handleCustomerSearch}
+                /> : null
+              }
+
             </div>
+
+            {
+              selectedCustomer?
+              <div className='income_user_debt'>
+
+                <h4>Bizə Borc:</h4>
+                <p>{customerRetriveObj?.customer_debt_amount || 0} ₼</p>
+              </div>: null
+            }
+            {
+              selectedCustomer?
+              <div className='income_user_debt'>
+                <h4>Bizim Borc:</h4>
+                <p>
+                  {Array.isArray(customerRetriveObj?.our_debt_amount) ? (() => {
+                    const [manat, dollar, rubl] = customerRetriveObj.our_debt_amount;
+                    const debts = [];
+                    if (manat !== 0) debts.push(`${manat} ₼`);
+                    if (dollar !== 0) debts.push(`${dollar} $`);
+                    if (rubl !== 0) debts.push(`${rubl} ₽`);
+                    return debts.length > 0 ? debts.join(' | ') : '0 ₼';
+                  })() : `${customerRetriveObj?.our_debt_amount || 0} ₼`}
+                </p>
+              </div>: null
+            }
 
             <div className="form_group">
               <label>Tarix</label>

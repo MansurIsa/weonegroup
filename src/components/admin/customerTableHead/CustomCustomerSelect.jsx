@@ -4,20 +4,40 @@ import React, { useState, useEffect, useRef } from 'react';
 const CustomCustomerSelect = ({ customers, value, onChange, onSearch }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [isOpen, setIsOpen] = useState(false);
+  const [lastExternalValue, setLastExternalValue] = useState(value); // Əlavə edildi
   const containerRef = useRef(null);
 
+  // Xarici value dəyişdikdə searchTerm-i yenilə
   useEffect(() => {
-    const selected = customers.find(c => c.id === +value);
-    if (selected) setSearchTerm(`${selected.first_name} ${selected.last_name}`);
-  }, [value, customers]);
+    if (value !== lastExternalValue) {
+      const selected = customers.find(c => c.id === +value);
+      if (selected) {
+        setSearchTerm(`${selected.first_name} ${selected.last_name}`);
+      } else {
+        setSearchTerm('');
+      }
+      setLastExternalValue(value);
+    }
+  }, [value, customers, lastExternalValue]);
 
   useEffect(() => {
     const handleClickOutside = (e) => {
-      if (containerRef.current && !containerRef.current.contains(e.target)) setIsOpen(false);
+      if (containerRef.current && !containerRef.current.contains(e.target)) {
+        setIsOpen(false);
+        
+        // Dropdown bağlananda searchTerm-i yenidən tənzimlə
+        const selected = customers.find(c => c.id === +value);
+        if (selected) {
+          setSearchTerm(`${selected.first_name} ${selected.last_name}`);
+        } else {
+          setSearchTerm('');
+        }
+      }
     };
+    
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
+  }, [value, customers]);
 
   const handleSelect = (customer) => {
     onChange(customer.id);
@@ -26,9 +46,26 @@ const CustomCustomerSelect = ({ customers, value, onChange, onSearch }) => {
   };
 
   const handleInputChange = (e) => {
-    setSearchTerm(e.target.value);
+    const newValue = e.target.value;
+    setSearchTerm(newValue);
     setIsOpen(true);
-    if (onSearch) onSearch(e.target.value); // backend çağırışı
+    
+    if (onSearch) onSearch(newValue);
+    
+    // Əgər input boşdursa, seçimi təmizlə
+    if (newValue === '') {
+      onChange('');
+    }
+  };
+
+  const handleInputBlur = () => {
+    // Blur olduqda seçilmiş müştəri məlumatını yenidən göstər
+    setTimeout(() => {
+      const selected = customers.find(c => c.id === +value);
+      if (selected) {
+        setSearchTerm(`${selected.first_name} ${selected.last_name}`);
+      }
+    }, 200);
   };
 
   const filteredCustomers = customers.filter(c =>
@@ -44,6 +81,7 @@ const CustomCustomerSelect = ({ customers, value, onChange, onSearch }) => {
         value={searchTerm}
         onChange={handleInputChange}
         onFocus={() => setIsOpen(true)}
+        onBlur={handleInputBlur}
       />
       {isOpen && (
         <div className="custom-select-dropdown">

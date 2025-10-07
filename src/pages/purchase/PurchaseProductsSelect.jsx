@@ -105,7 +105,7 @@ const PurchaseProductsSelect = () => {
         e.preventDefault();
 
         const payload = {
-            id: supplierPurchaseObj.id, // Mövcud alış ID-si
+            purchaselist: supplierPurchaseObj.id, // Mövcud alış ID-si
             supplier: generalInfo.supplierId ? +generalInfo.supplierId : null,
             date: generalInfo.purchaseDate,
             currency: generalInfo.currency,
