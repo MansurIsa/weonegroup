@@ -57,7 +57,7 @@ const CustomerFactureEnd = ({ factureList = [] }) => {
     <div className='admin_container dashboard_end_container'>
       
       <div className="table_scroll_wrapper">
-        <h2 className='print-only-title'>{currentPageData[0]?.customer?.first_name} {currentPageData[0]?.customer?.first_name}({currentPageData[0]?.customer?.username})</h2>
+        <h2 className='print-only-title'>{currentPageData[0]?.customer?.first_name} {currentPageData[0]?.customer?.last_name}({currentPageData[0]?.customer?.username})</h2>
         <table className='custom_table'>
           <thead>
             <tr>
