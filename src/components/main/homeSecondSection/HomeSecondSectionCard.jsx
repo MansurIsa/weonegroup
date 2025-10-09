@@ -1,5 +1,5 @@
 import React from 'react'
-import Img from "../../../assets/images/homeSecondCard.jpg"
+// import Img from "../../../assets/images/homeSecondCard.jpg"
 
 const HomeSecondSectionCard = ({data}) => {
   return (

@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo, useCallback } from "react";
+import React, { useEffect, useState, useMemo, useCallback, useRef } from "react";
 import "./css/filterProducts.css";
 import FilterProductsContainer from "./FilterProductsContainer";
 import { useDispatch, useSelector } from "react-redux";
@@ -11,9 +11,9 @@ import {
 } from "../../../actions/productsAction/productsAction";
 import { getUserObj } from "../../../actions/loginAction/loginAction";
 import ReactPaginate from "react-paginate";
-import { useSearchParams } from "react-router-dom";
+import { useSearchParams, useLocation } from "react-router-dom";
 
-// Debounce helper
+// Optimized debounce hook
 const useDebounce = (value, delay) => {
   const [debounced, setDebounced] = useState(value);
   useEffect(() => {
@@ -23,30 +23,54 @@ const useDebounce = (value, delay) => {
   return debounced;
 };
 
-// Memoized FilterProductsContainer
-const MemoizedProductsContainer = React.memo(FilterProductsContainer);
+// Skeleton Loader Component
+const ProductSkeleton = () => (
+  <div className="product-skeleton">
+    <div className="skeleton-image"></div>
+    <div className="skeleton-text"></div>
+    <div className="skeleton-text short"></div>
+    <div className="skeleton-button"></div>
+  </div>
+);
+
+const SkeletonLoader = ({ count = 5 }) => (
+  <div className="filter_products_container">
+    {Array.from({ length: count }).map((_, index) => (
+      <ProductSkeleton key={index} />
+    ))}
+  </div>
+);
 
 const FilterProducts = () => {
   const dispatch = useDispatch();
-
-  // Search params (for page)
   const [searchParams, setSearchParams] = useSearchParams();
+  const location = useLocation(); // YENİ: location əlavə edildi
 
-  // Get current page from URL or default to 1 (zero-based in state)
+  // YENİ: Bütün state-ləri URL-də saxlamaq
   const pageFromUrl = parseInt(searchParams.get("page")) || 1;
-  const [currentPage, setCurrentPage] = useState(pageFromUrl - 1); // 0-based index for ReactPaginate
+  const searchFromUrl = searchParams.get("search") || "";
+  const categoryFromUrl = searchParams.get("category") || "Hamısı";
+  const brandFromUrl = searchParams.get("brand") || "Hamısı";
+  const storeFromUrl = searchParams.get("store") || "Hamısı";
+
+  const [currentPage, setCurrentPage] = useState(pageFromUrl - 1); // 0-based
+  const [loading, setLoading] = useState(false);
 
   const pageSize = 5;
 
   const [brandDropdownOpen, setBrandDropdownOpen] = useState(false);
   const [storeDropdownOpen, setStoreDropdownOpen] = useState(false);
 
-  const [searchQuery, setSearchQuery] = useState("");
+  const [searchQuery, setSearchQuery] = useState(searchFromUrl);
   const debouncedSearch = useDebounce(searchQuery, 500);
 
-  const [activeCategory, setActiveCategory] = useState("Hamısı");
-  const [activeBrand, setActiveBrand] = useState("Hamısı");
-  const [activeStore, setActiveStore] = useState("Hamısı");
+  const [activeCategory, setActiveCategory] = useState(categoryFromUrl);
+  const [activeBrand, setActiveBrand] = useState(brandFromUrl);
+  const [activeStore, setActiveStore] = useState(storeFromUrl);
+
+  // Refs for dropdown close handling
+  const brandDropdownRef = useRef(null);
+  const storeDropdownRef = useRef(null);
 
   const {
     recentProductsList,
@@ -58,22 +82,101 @@ const FilterProducts = () => {
     count2,
   } = useSelector((state) => state.products);
 
-  // Page reset on search or filter change
-// useEffect(() => {
-//   setCurrentPage(0);
-//   setSearchParams({ page: 1 });
-// }, [debouncedSearch, activeCategory, activeBrand, activeStore, setSearchParams]);
-
-
-  // Sync currentPage state with URL changes (if user navigates back/forward)
+  // Close dropdowns when clicking outside
   useEffect(() => {
-    // pageFromUrl might change if URL changes externally (back/forward)
-    if (pageFromUrl - 1 !== currentPage) {
-      setCurrentPage(pageFromUrl - 1);
-    }
-  }, [pageFromUrl, currentPage]);
+    const handleClickOutside = (event) => {
+      if (brandDropdownRef.current && !brandDropdownRef.current.contains(event.target)) {
+        setBrandDropdownOpen(false);
+      }
+      if (storeDropdownRef.current && !storeDropdownRef.current.contains(event.target)) {
+        setStoreDropdownOpen(false);
+      }
+    };
 
-  // Load user and lists once
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  // YENİ: Bütün filterləri URL-də saxlamaq
+  const updateURL = useCallback((updates) => {
+    const params = new URLSearchParams(searchParams);
+    
+    Object.entries(updates).forEach(([key, value]) => {
+      if (value && value !== "Hamısı" && value !== "") {
+        params.set(key, value);
+      } else {
+        params.delete(key);
+      }
+    });
+    
+    setSearchParams(params);
+  }, [searchParams, setSearchParams]);
+
+  // YENİ: URL-dən state-ləri yenilə
+  useEffect(() => {
+    const urlPage = parseInt(searchParams.get("page")) || 1;
+    const urlSearch = searchParams.get("search") || "";
+    const urlCategory = searchParams.get("category") || "Hamısı";
+    const urlBrand = searchParams.get("brand") || "Hamısı";
+    const urlStore = searchParams.get("store") || "Hamısı";
+
+    let hasChanges = false;
+    const updates = {};
+
+    if (urlPage - 1 !== currentPage) {
+      setCurrentPage(urlPage - 1);
+      hasChanges = true;
+    }
+
+    if (urlSearch !== searchQuery) {
+      setSearchQuery(urlSearch);
+      hasChanges = true;
+    }
+
+    if (urlCategory !== activeCategory) {
+      setActiveCategory(urlCategory);
+      hasChanges = true;
+    }
+
+    if (urlBrand !== activeBrand) {
+      setActiveBrand(urlBrand);
+      hasChanges = true;
+    }
+
+    if (urlStore !== activeStore) {
+      setActiveStore(urlStore);
+      hasChanges = true;
+    }
+
+    if (hasChanges) {
+      console.log("URL-dən state-lər yeniləndi");
+    }
+  }, [searchParams]);
+
+  // YENİ: Search dəyişdikdə URL-i yenilə
+  useEffect(() => {
+    if (debouncedSearch !== searchFromUrl) {
+      updateURL({ search: debouncedSearch, page: 1 });
+    }
+  }, [debouncedSearch, updateURL]);
+
+  // YENİ: Filterlər dəyişdikdə URL-i yenilə və səhifəni sıfırla
+  useEffect(() => {
+    if (activeCategory !== categoryFromUrl || 
+        activeBrand !== brandFromUrl || 
+        activeStore !== storeFromUrl) {
+      
+      setCurrentPage(0);
+      updateURL({ 
+        category: activeCategory, 
+        brand: activeBrand, 
+        store: activeStore,
+        page: 1 
+      });
+    }
+  }, [activeCategory, activeBrand, activeStore, updateURL]);
+
+  // Load initial data
   useEffect(() => {
     dispatch(getUserObj());
     dispatch(getCategoryList());
@@ -81,28 +184,44 @@ const FilterProducts = () => {
     dispatch(getStoreList());
   }, [dispatch]);
 
-  // Load products based on filters and currentPage
+  // YENİ: Optimized products loading
   useEffect(() => {
-    if (activeCategory === "Yeni gələnlər") {
-      dispatch(
-        getRecentProductsList(
-          currentPage + 1,
-          debouncedSearch,
-          activeBrand !== "Hamısı" ? activeBrand : "",
-          activeStore !== "Hamısı" ? activeStore : ""
-        )
-      );
-    } else {
-      dispatch(
-        getProductsListTest(
-          currentPage + 1,
-          debouncedSearch,
-          activeCategory !== "Hamısı" ? activeCategory : "",
-          activeBrand !== "Hamısı" ? activeBrand : "",
-          activeStore !== "Hamısı" ? activeStore : ""
-        )
-      );
-    }
+    const loadProducts = async () => {
+      setLoading(true);
+      
+      try {
+        const apiPage = currentPage + 1; // API üçün 1-based
+        
+        if (activeCategory === "Yeni gələnlər") {
+          await dispatch(
+            getRecentProductsList(
+              apiPage,
+              debouncedSearch,
+              activeBrand !== "Hamısı" ? activeBrand : "",
+              activeStore !== "Hamısı" ? activeStore : ""
+            )
+          );
+        } else {
+          await dispatch(
+            getProductsListTest(
+              apiPage,
+              debouncedSearch,
+              activeCategory !== "Hamısı" ? activeCategory : "",
+              activeBrand !== "Hamısı" ? activeBrand : "",
+              activeStore !== "Hamısı" ? activeStore : ""
+            )
+          );
+        }
+        
+        console.log("Məhsullar yükləndi, səhifə:", apiPage);
+      } catch (error) {
+        console.error("Error loading products:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadProducts();
   }, [
     dispatch,
     currentPage,
@@ -112,23 +231,52 @@ const FilterProducts = () => {
     activeStore,
   ]);
 
-  // Handle page click: update currentPage and sync URL
+  // YENİ: Sadələşdirilmiş page click handler
   const handlePageClick = useCallback(
     (data) => {
-      const selectedPage = data.selected;
+      const selectedPage = data.selected; // 0-based
+      const newPageNumber = selectedPage + 1; // 1-based for URL
+      
+      console.log("Səhifə klikləndi:", selectedPage, "-> URL:", newPageNumber);
+      
+      // State-i yenilə
       setCurrentPage(selectedPage);
-      setSearchParams({ page: selectedPage + 1 }); // update URL (1-based)
+      
+      // URL-i yenilə (yalnız səhifə)
+      updateURL({ page: newPageNumber });
+      
+      // Səhifənin yuxarısına scroll et
       window.scrollTo({ top: 0, behavior: "smooth" });
     },
-    [setSearchParams]
+    [updateURL]
   );
 
-  const pageCount =
-    activeCategory === "Yeni gələnlər"
-      ? Math.ceil(count1 / pageSize)
-      : Math.ceil(count2 / pageSize);
+  const handleCategoryClick = useCallback((category) => {
+    setActiveCategory(category);
+  }, []);
 
-  // Memoize lists
+  const handleBrandSelect = useCallback((brand) => {
+    setActiveBrand(brand);
+    setBrandDropdownOpen(false);
+  }, []);
+
+  const handleStoreSelect = useCallback((store) => {
+    setActiveStore(store);
+    setStoreDropdownOpen(false);
+  }, []);
+
+  const handleSearchChange = useCallback((e) => {
+    setSearchQuery(e.target.value);
+  }, []);
+
+  // Memoized calculations
+  const pageCount = useMemo(() => {
+    const count = activeCategory === "Yeni gələnlər" ? count1 : count2;
+    const calculated = Math.ceil(count / pageSize);
+    console.log("Page count hesablandı:", calculated);
+    return calculated;
+  }, [activeCategory, count1, count2, pageSize]);
+
   const latestProducts = useMemo(() => {
     if (!recentProductsList) return [];
     return recentProductsList.length > 100
@@ -138,35 +286,45 @@ const FilterProducts = () => {
 
   const normalProducts = useMemo(() => productsListTest || [], [productsListTest]);
 
+  // Memoized category buttons
   const categoryButtons = useMemo(() => {
-    return (
-      <>
-        <button
-          onClick={() => setActiveCategory("Hamısı")}
-          className={activeCategory === "Hamısı" ? "active_category" : ""}
-        >
-          Hamısı
-        </button>
+    const categories = [
+      { name: "Hamısı", key: "all" },
+      { name: "Yeni gələnlər", key: "new" },
+      ...(categoryList?.map(cat => ({ name: cat.name, key: cat.id })) || [])
+    ];
 
-        <button
-          onClick={() => setActiveCategory("Yeni gələnlər")}
-          className={activeCategory === "Yeni gələnlər" ? "active_category" : ""}
-        >
-          Yeni gələnlər
-        </button>
+    return categories.map((cat) => (
+      <button
+        key={cat.key}
+        onClick={() => handleCategoryClick(cat.name)}
+        className={activeCategory === cat.name ? "active_category" : ""}
+      >
+        {cat.name}
+      </button>
+    ));
+  }, [categoryList, activeCategory, handleCategoryClick]);
 
-        {categoryList?.map((cat) => (
-          <button
-            key={cat.id}
-            onClick={() => setActiveCategory(cat.name)}
-            className={activeCategory === cat.name ? "active_category" : ""}
-          >
-            {cat.name}
-          </button>
-        ))}
-      </>
-    );
-  }, [categoryList, activeCategory]);
+  // Memoized dropdown items
+  const brandItems = useMemo(() => [
+    { name: "Hamısı", key: "all-brands" },
+    ...(brandList?.map(brand => ({ name: brand.name, key: brand.id })) || [])
+  ], [brandList]);
+
+  const storeItems = useMemo(() => [
+    { name: "Hamısı", key: "all-stores" },
+    ...(storeList?.map(store => ({ name: store.name, key: store.id })) || [])
+  ], [storeList]);
+
+  // Debug information
+  console.log("=== DEBUG INFO ===");
+  console.log("URL Page:", pageFromUrl);
+  console.log("Current Page (0-based):", currentPage);
+  console.log("Page Count:", pageCount);
+  console.log("Loading:", loading);
+  console.log("Active Category:", activeCategory);
+  console.log("Active Brand:", activeBrand);
+  console.log("Active Store:", activeStore);
 
   return (
     <div className="filter_products_parent_container">
@@ -183,34 +341,22 @@ const FilterProducts = () => {
             placeholder="Məhsulu axtar..."
             type="text"
             value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
+            onChange={handleSearchChange}
           />
         </div>
 
         {/* Marka Dropdown */}
-        <div className="brand_dropdown_container">
+        <div className="brand_dropdown_container" ref={brandDropdownRef}>
           <button onClick={() => setBrandDropdownOpen((prev) => !prev)}>
             {activeBrand === "Hamısı" ? "Markalar" : activeBrand}
           </button>
           {brandDropdownOpen && (
             <div className="brand_dropdown">
-              <div
-                className="brand_item"
-                onClick={() => {
-                  setActiveBrand("Hamısı");
-                  setBrandDropdownOpen(false);
-                }}
-              >
-                Hamısı
-              </div>
-              {brandList?.map((brand) => (
+              {brandItems.map((brand) => (
                 <div
-                  key={brand.id}
+                  key={brand.key}
                   className="brand_item"
-                  onClick={() => {
-                    setActiveBrand(brand.name);
-                    setBrandDropdownOpen(false);
-                  }}
+                  onClick={() => handleBrandSelect(brand.name)}
                 >
                   {brand.name}
                 </div>
@@ -220,29 +366,17 @@ const FilterProducts = () => {
         </div>
 
         {/* Brend (Store) Dropdown */}
-        <div className="brand_dropdown_container">
+        <div className="brand_dropdown_container" ref={storeDropdownRef}>
           <button onClick={() => setStoreDropdownOpen((prev) => !prev)}>
             {activeStore === "Hamısı" ? "Brendlər" : activeStore}
           </button>
           {storeDropdownOpen && (
             <div className="brand_dropdown">
-              <div
-                className="brand_item"
-                onClick={() => {
-                  setActiveStore("Hamısı");
-                  setStoreDropdownOpen(false);
-                }}
-              >
-                Hamısı
-              </div>
-              {storeList?.map((store) => (
+              {storeItems.map((store) => (
                 <div
-                  key={store.id}
+                  key={store.key}
                   className="brand_item"
-                  onClick={() => {
-                    setActiveStore(store.name);
-                    setStoreDropdownOpen(false);
-                  }}
+                  onClick={() => handleStoreSelect(store.name)}
                 >
                   {store.name}
                 </div>
@@ -253,28 +387,36 @@ const FilterProducts = () => {
       </div>
 
       {/* Kateqoriyalar */}
-      <div className="filter_products_categories">{categoryButtons}</div>
+      <div className="filter_products_categories">
+        {categoryButtons}
+      </div>
 
-      {/* Məhsullar */}
-      {activeCategory === "Yeni gələnlər" ? (
-        latestProducts?.length === 0 ? (
-          <div className="no_products_found">
-            <p>Məhsul tapılmadı</p>
-          </div>
-        ) : (
-          <MemoizedProductsContainer productsList={latestProducts} />
-        )
-      ) : normalProducts?.length === 0 ? (
-        <div className="no_products_found">
-          <p>Məhsul tapılmadı</p>
-        </div>
+      {/* Loading State */}
+      {loading ? (
+        <SkeletonLoader count={5} />
       ) : (
-        <MemoizedProductsContainer productsList={normalProducts} />
+        /* Məhsullar */
+        <>
+          {activeCategory === "Yeni gələnlər" ? (
+            latestProducts?.length === 0 ? (
+              <div className="no_products_found">
+                <p>Məhsul tapılmadı</p>
+              </div>
+            ) : (
+              <FilterProductsContainer productsList={latestProducts} />
+            )
+          ) : normalProducts?.length === 0 ? (
+            <div className="no_products_found">
+              <p>Məhsul tapılmadı</p>
+            </div>
+          ) : (
+            <FilterProductsContainer productsList={normalProducts} />
+          )}
+        </>
       )}
 
       {/* Pagination */}
-      {((activeCategory === "Yeni gələnlər" && count1 > pageSize) ||
-        (activeCategory !== "Yeni gələnlər" && count2 > pageSize)) && (
+      {!loading && pageCount > 1 && (
         <ReactPaginate
           previousLabel={
             <svg width="8" height="14" viewBox="0 0 8 14" fill="none">
@@ -308,11 +450,13 @@ const FilterProducts = () => {
           previousClassName={"dashboard_end_arrow"}
           nextClassName={"dashboard_end_arrow"}
           activeClassName={"dashboard_end_active"}
-          forcePage={currentPage} // force ReactPaginate to highlight correct page
+          forcePage={currentPage}
+          disableInitialCallback={true}
+          key={`pagination-${currentPage}`}
         />
       )}
     </div>
   );
 };
 
-export default FilterProducts;
+export default React.memo(FilterProducts);

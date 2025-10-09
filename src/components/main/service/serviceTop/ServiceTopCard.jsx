@@ -1,5 +1,5 @@
 import React from 'react'
-import Img from "../../../../assets/images/service.jpg"
+// import Img from "../../../../assets/images/service.jpg"
 
 const ServiceTopCard = ({data}) => {
   return (

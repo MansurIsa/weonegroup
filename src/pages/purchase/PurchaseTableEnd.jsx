@@ -124,12 +124,18 @@ const PurchaseTableEnd = () => {
         dispatch(purchaseUpdateModalFuncCommon(x))
     }
 
-     const plusUpdatePurchase = async (item) => {
-        console.log(item);
-        navigate("/purchase-products-select")
-        // await dispatch(plusSalesFunc(item))
-        await dispatch(getPurchaseSupplierObj(item?.id));
-    }
+const plusUpdatePurchase = async (item) => {
+  try {
+    // API cavabını gözləyir
+    await dispatch(getPurchaseSupplierObj(item?.id));
+
+    // Cavab gəldikdən sonra yönləndirir
+    navigate("/purchase-products-select");
+  } catch (error) {
+    console.error("Xəta baş verdi:", error);
+  }
+};
+
 
     return (
         <div className='admin_container dashboard_end_container'>

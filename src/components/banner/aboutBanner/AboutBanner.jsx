@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react'
 import "./css/aboutBanner.css"
-import Img from "../../../assets/images/aboutBanner.jpg"
+// import Img from "../../../assets/images/aboutBanner.jpg"
 import { useDispatch, useSelector } from 'react-redux'
 import { getSettingsList } from '../../../actions/homeAction/homeAction'
 import { useNavigate } from 'react-router-dom'

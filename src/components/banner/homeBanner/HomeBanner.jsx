@@ -4,7 +4,7 @@ import "swiper/css/pagination";
 import "swiper/css/navigation";
 import { Pagination, Navigation } from "swiper/modules";
 import "../css/banner.css";
-import Img from "../../../assets/images/banner.jpg"
+// import Img from "../../../assets/images/banner.jpg"
 import { useEffect } from "react";
 import { getBannerList } from "../../../actions/homeAction/homeAction";
 import { useDispatch, useSelector } from "react-redux";

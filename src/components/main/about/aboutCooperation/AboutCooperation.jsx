@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react'
-import Img from "../../../../assets/images/aboutCooperation.jpg"
+// import Img from "../../../../assets/images/aboutCooperation.jpg"
 import { useDispatch, useSelector } from 'react-redux'
 import { getSettingsList } from '../../../../actions/homeAction/homeAction'
 import { useNavigate } from 'react-router-dom'

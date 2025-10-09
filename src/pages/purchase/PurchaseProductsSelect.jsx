@@ -32,6 +32,9 @@ const PurchaseProductsSelect = () => {
         dispatch(getSupplierList());
     }, [dispatch]);
 
+    console.log(supplierPurchaseObj);
+    
+
     // supplierPurchaseObj dəyişdikdə formu doldur
     useEffect(() => {
         if (supplierPurchaseObj) {

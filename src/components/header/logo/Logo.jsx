@@ -1,7 +1,6 @@
 import React, { useEffect } from 'react'
 import "./css/logo.css"
 import { Link } from 'react-router-dom'
-import LogoImg from "../../../assets/images/logo.png";
 import { useDispatch, useSelector } from 'react-redux';
 import { getSettingsList } from '../../../actions/homeAction/homeAction';
 
