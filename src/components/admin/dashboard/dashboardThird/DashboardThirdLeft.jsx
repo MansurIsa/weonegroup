@@ -40,7 +40,7 @@ const DashboardThirdLeft = () => {
             mostDebtObj.map((item, index) => (
               <tr key={index}>
                 <td>{item.name}</td>
-                <td>{item.debt} ₼</td>
+                <td>{Math.round(item?.debt * 100) / 100} ₼ </td>
                 <td>{item.phone_number || "-"}</td>
               </tr>
             ))

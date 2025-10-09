@@ -141,7 +141,7 @@ const SalesTableEnd = () => {
                             </td>
                             <td>{item.customer || "-"}</td>
                             <td>{item.seller || "-"}</td>
-                            <td>{item.total_amount ?? 0} ₼</td>
+                            <td>{Math.round(item.total_amount * 100) / 100 ?? 0} ₼</td>
                             <td>{formatDateTime(item.sale_datetime)}</td>
                             <td style={{ color: item?.sale_status === "S" ? "green" : item?.sale_status === "G" ? "orange" : "inherit" }}>
                                 {item?.sale_status === "S" ? "Satılıb" : item?.sale_status === "G" ? "Gözləyir" : "-"}

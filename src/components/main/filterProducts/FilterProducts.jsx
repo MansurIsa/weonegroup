@@ -33,7 +33,7 @@ const ProductSkeleton = () => (
   </div>
 );
 
-const SkeletonLoader = ({ count = 5 }) => (
+const SkeletonLoader = ({ count = 10 }) => (
   <div className="filter_products_container">
     {Array.from({ length: count }).map((_, index) => (
       <ProductSkeleton key={index} />
@@ -56,7 +56,7 @@ const FilterProducts = () => {
   const [currentPage, setCurrentPage] = useState(pageFromUrl - 1); // 0-based
   const [loading, setLoading] = useState(false);
 
-  const pageSize = 5;
+  const pageSize = 10;
 
   const [brandDropdownOpen, setBrandDropdownOpen] = useState(false);
   const [storeDropdownOpen, setStoreDropdownOpen] = useState(false);
@@ -393,7 +393,7 @@ const FilterProducts = () => {
 
       {/* Loading State */}
       {loading ? (
-        <SkeletonLoader count={5} />
+        <SkeletonLoader count={10} />
       ) : (
         /* Məhsullar */
         <>
