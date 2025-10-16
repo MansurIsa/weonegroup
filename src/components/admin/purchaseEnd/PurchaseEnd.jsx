@@ -15,7 +15,11 @@ const PurchaseEnd = ({ purchaseList, supplierPurchaseObj }) => {
     const navigate = useNavigate();
 
     const offset = currentPage * ITEMS_PER_PAGE;
-    const currentPageData = purchaseList.slice(offset, offset + ITEMS_PER_PAGE);
+    // const currentPageData = purchaseList.slice(offset, offset + ITEMS_PER_PAGE);
+    const currentPageData = purchaseList
+  .slice(offset, offset + ITEMS_PER_PAGE)
+  .sort((a, b) => a.product.name.localeCompare(b.product.name));
+
     const pageCount = Math.ceil(purchaseList.length / ITEMS_PER_PAGE);
 
     const handlePageClick = (event) => setCurrentPage(event.selected);

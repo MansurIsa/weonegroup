@@ -18,7 +18,11 @@ const CustomerFactureEnd = ({ factureList = [] }) => {
   const sales = factureList[0]?.salelist_sales || [];
 
   const offset = currentPage * ITEMS_PER_PAGE;
-  const currentPageData = sales.slice(offset, offset + ITEMS_PER_PAGE);
+  // const currentPageData = sales.slice(offset, offset + ITEMS_PER_PAGE);
+  const currentPageData = sales
+  .slice(offset, offset + ITEMS_PER_PAGE)
+  .sort((a, b) => a.product.name.localeCompare(b.product.name));
+
   const pageCount = Math.ceil(sales.length / ITEMS_PER_PAGE);
 
   const handlePageClick = (event) => {
