@@ -4,7 +4,6 @@ import { useNavigate } from 'react-router-dom';
 import { getStockList } from '../../actions/stockActions/stockActions';
 import { useDispatch, useSelector } from 'react-redux';
 import toast from 'react-hot-toast';
-import CustomCustomerSelect from '../../components/admin/salesTableHead/CustomCustomerSelect';
 import { getUsersList } from '../../actions/loginAction/loginAction';
 import { updateSale } from '../../actions/salesAction/salesAction';
 
@@ -13,13 +12,7 @@ const UpdateSalesProductsSelect = () => {
   const navigate = useNavigate();
 
   const { stockList } = useSelector(state => state.stock);
-  const { usersList } = useSelector(state => state.login);
   const { saleUpdateObj } = useSelector(state => state.sales);
-
-  console.log(stockList);
-  console.log(saleUpdateObj);
-  
-  
 
   const [selectedCustomerId, setSelectedCustomerId] = useState('');
   const [selectedDateTime, setSelectedDateTime] = useState('');
@@ -28,57 +21,36 @@ const UpdateSalesProductsSelect = () => {
   const [statusValues, setStatusValues] = useState({});
   const [errorIndexes, setErrorIndexes] = useState([]);
 
- useEffect(() => {
-    // dispatch(getStockList());
-    dispatch(getUsersList(1, "")); 
-  }, [dispatch]);
+  useEffect(() => {
+    if (saleUpdateObj?.product?.name) {
+      dispatch(getStockList(1, saleUpdateObj.product.name));
+    }
+  }, [dispatch, saleUpdateObj]);
 
-    const handleCustomerSearch = (searchTerm) => {
-    dispatch(getUsersList(1, searchTerm));
-  };
-
-  // Sale update info set
   useEffect(() => {
     if (saleUpdateObj) {
-      setSelectedCustomerId(saleUpdateObj.customer?.id || '');
+      setSelectedCustomerId(saleUpdateObj.customer?.id?.toString() || '');
       setSelectedDateTime(saleUpdateObj.datetime?.substring(0, 16) || '');
     }
   }, [saleUpdateObj]);
 
- useEffect(() => {
-  if (saleUpdateObj?.product?.name) {
-    dispatch(getStockList(1, saleUpdateObj.product.name));
-  }
-  dispatch(getUsersList(1, ""));
-}, [dispatch, saleUpdateObj]);
-
-
-
-  // Filter stock to only sale product
   const filtered = stockList?.filter(p => p.product?.id === saleUpdateObj?.product?.id) || [];
 
-  console.log(filtered);
-  
-  // Initialize inputs values on load
   useEffect(() => {
     if (!saleUpdateObj || filtered.length === 0) return;
-    const index = 0; // single product
+    const index = 0;
     setQuantityValues({ [index]: saleUpdateObj.amount.toString() });
     setPriceValues({ [index]: saleUpdateObj.price });
     setStatusValues({ [index]: saleUpdateObj.status });
     setErrorIndexes([]);
   }, [saleUpdateObj, filtered.length]);
 
-  // Handlers
-  const handleCustomerChange = id => setSelectedCustomerId(id);
   const handleDateChange = e => setSelectedDateTime(e.target.value);
 
   const handleQuantityChange = (index, value) => {
-    // Remove leading zeros, allow empty string to clear input
     const numericValue = value.replace(/^0+(?=\d)/, '');
     if (numericValue === '' || /^\d*$/.test(numericValue)) {
       setQuantityValues(prev => ({ ...prev, [index]: numericValue }));
-      // Clear error on change
       setErrorIndexes(prev => prev.filter(i => i !== index));
     }
   };
@@ -99,10 +71,12 @@ const UpdateSalesProductsSelect = () => {
 
   const handleSave = async () => {
     setErrorIndexes([]);
+
     if (!selectedCustomerId) {
-      toast.error("Zəhmət olmasa müştəri seçin.");
+      toast.error("Müştəri tapılmadı.");
       return;
     }
+
     if (!selectedDateTime) {
       toast.error("Zəhmət olmasa satış tarixini seçin.");
       return;
@@ -111,6 +85,7 @@ const UpdateSalesProductsSelect = () => {
     const index = 0;
     const item = filtered[index];
     const product = item?.product;
+
     if (!product) {
       toast.error("Məhsul tapılmadı.");
       return;
@@ -154,12 +129,9 @@ const UpdateSalesProductsSelect = () => {
         </div>
 
         <div className="left_box left_box_mb">
-         <CustomCustomerSelect
-            customers={usersList.filter(u => !u.is_staff)}
-            value={selectedCustomerId}
-            onChange={setSelectedCustomerId}
-            onSearch={handleCustomerSearch}   // 🔹 Burda search-i bağladıq
-          />
+          {/* Müştəri inputu göstərilmir */}
+          <input type="hidden" value={selectedCustomerId} />
+
           <div className="form_group form_group_sales_table_head">
             <label>Satış tarixi</label>
             <input

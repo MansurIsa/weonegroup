@@ -1,23 +1,34 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { useDispatch } from 'react-redux';
+import { getSaleListReturned } from '../../../actions/salesAction/salesAction'; // 🔹 Əlavə et
 
-const CustomSalesSelect = ({ sales, value, onChange }) => {
+const CustomSalesSelect = ({ sales = [], value, onChange }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [isOpen, setIsOpen] = useState(false);
   const containerRef = useRef(null);
+  const dispatch = useDispatch();
 
   const selectedSale = sales.find(s => s.id === +value);
 
   const handleSelect = (sale) => {
     onChange(sale.id.toString());
-    setSearchTerm(`${sale.customer.first_name} ${sale.customer.last_name} — ${sale.product.name}`);
+    setSearchTerm(sale.sale);
     setIsOpen(false);
   };
 
+  // 🔹 Axtarış hər dəfə dəyişəndə API-yə sorğu göndər
+  useEffect(() => {
+    const delayDebounce = setTimeout(() => {
+      dispatch(getSaleListReturned({ page: 1, search: searchTerm }));
+    }, 400); // 400ms gecikmə — çox tez sorğu göndərməsin
+    return () => clearTimeout(delayDebounce);
+  }, [searchTerm, dispatch]);
+
   useEffect(() => {
     if (selectedSale) {
-      setSearchTerm(`${selectedSale.customer.first_name} ${selectedSale.customer.last_name} — ${selectedSale.product.name}`);
+      setSearchTerm(selectedSale.sale);
     }
-  }, [value]);
+  }, [selectedSale]);
 
   useEffect(() => {
     const handleClickOutside = (e) => {
@@ -30,9 +41,7 @@ const CustomSalesSelect = ({ sales, value, onChange }) => {
   }, []);
 
   const filteredSales = sales.filter(s =>
-    (`${s.customer.first_name} ${s.customer.last_name} ${s.product.name}`)
-      .toLowerCase()
-      .includes(searchTerm.toLowerCase())
+    s.sale.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   return (
@@ -57,7 +66,7 @@ const CustomSalesSelect = ({ sales, value, onChange }) => {
                 className="custom-select-option"
                 onClick={() => handleSelect(sale)}
               >
-                {sale.customer.first_name} {sale.customer.last_name} — {sale.product.name}
+                {sale.sale}
               </div>
             ))
           ) : (

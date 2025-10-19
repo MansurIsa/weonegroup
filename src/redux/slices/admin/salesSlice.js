@@ -18,7 +18,11 @@ const SalesSlice = createSlice({
         count: 0,
         next: null,
         previous: null,
-        plusSalesObj: {}
+        plusSalesObj: {},
+        saleListReturned: [],
+        count1: 0,
+        next1: null,
+        previous1: null,
     },
     reducers: {
         getSalesListFunc: (state, action) => {
@@ -29,6 +33,12 @@ const SalesSlice = createSlice({
         },
          getSaleListFunc: (state, action) => {
             state.saleList = action.payload;
+        },
+        getSaleListReturnedFunc: (state, action) => {
+            state.saleListReturned = action.payload.results;
+            state.count1 = action.payload.count;
+            state.next1 = action.payload.next;
+            state.previous1 = action.payload.previous;
         },
         setCustomerId: (state, action) => {
             state.customerId = action.payload;
@@ -73,5 +83,6 @@ export const {
     setSaleUpdateObjFunc,
     getSaleListFunc,saleDeleteModalFunc,
     saleUpdateModalFuncCommon,
-    plusSalesFunc
+    plusSalesFunc,
+    getSaleListReturnedFunc
 } = SalesSlice.actions;

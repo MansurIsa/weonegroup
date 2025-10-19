@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { IoMdClose } from 'react-icons/io';
 import { useNavigate } from 'react-router-dom';
+import { getSaleListReturned } from '../../../actions/salesAction/salesAction'; // ✅ Əlavə et
 import { getReturnBackList, updateReturnBack } from '../../../actions/productsTableAction/productsTableAction';
 import { handleCloseModal } from '../../../redux/slices/admin/productTableSlice';
 import CustomSalesSelect from './CustomSalesSelect';
@@ -10,32 +11,39 @@ const ProductReturnUpdateModal = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const { saleList } = useSelector(state => state.sales);
+  const { saleListReturned } = useSelector(state => state.sales); // ✅ dəyişdi
   const { productReturnUpdateObj } = useSelector(state => state.productTable);
 
   const [selectedSaleId, setSelectedSaleId] = useState('');
   const [returnDate, setReturnDate] = useState('');
   const [reason, setReason] = useState('');
   const [amount, setAmount] = useState('');
-  const [status, setStatus] = useState(''); // yeni status state
+  const [status, setStatus] = useState('');
 
+  // 🔹 İlk renderdə satış siyahısını çək
+  useEffect(() => {
+    dispatch(getSaleListReturned({ page: 1, search: '' }));
+  }, [dispatch]);
+
+  // 🔹 Mövcud obyektin məlumatlarını inputlara doldur
   useEffect(() => {
     if (productReturnUpdateObj) {
       setSelectedSaleId(productReturnUpdateObj.sale?.id?.toString() || '');
       setReturnDate(productReturnUpdateObj.date || '');
       setReason(productReturnUpdateObj.reason || '');
       setAmount(productReturnUpdateObj.amount?.toString() || '');
-      setStatus(productReturnUpdateObj.status || ''); // status-u set et
+      setStatus(productReturnUpdateObj.status || '');
     }
   }, [productReturnUpdateObj]);
 
+  // 🔹 Submit funksiyası
   const handleSubmit = async () => {
     const payload = {
       sale: selectedSaleId || null,
       date: returnDate || null,
       reason: reason || null,
       amount: amount || null,
-      status: status || null // status-u payload-a əlavə et
+      status: status || null
     };
 
     await dispatch(updateReturnBack(payload, productReturnUpdateObj?.id, navigate));
@@ -50,8 +58,9 @@ const ProductReturnUpdateModal = () => {
           <div className="left_box">
             <IoMdClose className='close_icon' onClick={() => dispatch(handleCloseModal())} />
 
+            {/* ✅ Burada artıq saleListReturned istifadə olunur */}
             <CustomSalesSelect
-              sales={saleList}
+              sales={saleListReturned}
               value={selectedSaleId}
               onChange={setSelectedSaleId}
             />

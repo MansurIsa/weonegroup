@@ -7,7 +7,6 @@ import { getStockList } from "../../actions/stockActions/stockActions";
 import { getUsersList } from "../../actions/loginAction/loginAction";
 import { addSale } from "../../actions/salesAction/salesAction";
 import toast from "react-hot-toast";
-import CustomCustomerSelect from "../../components/admin/salesTableHead/CustomCustomerSelect";
 import ReactPaginate from "react-paginate";
 
 const SalesProductsSelect = () => {
@@ -16,7 +15,7 @@ const SalesProductsSelect = () => {
 
   const { stockList, count, next, previous } = useSelector((state) => state.stock);
   const { usersList, customerFactureList } = useSelector((state) => state.login);
-  const { plusSalesObj } = useSelector(state => state.sales)
+  const { plusSalesObj } = useSelector(state => state.sales);
 
   const [selectedProductIds, setSelectedProductIds] = useState([]);
   const [quantityValues, setQuantityValues] = useState({});
@@ -28,9 +27,8 @@ const SalesProductsSelect = () => {
   const [currentPage, setCurrentPage] = useState(1);
 
   const searchTimeout = useRef(null);
-  const itemsPerPage = 10; // göstərəcəyimiz hər səhifədə item sayı (frontend üçün info)
+  const itemsPerPage = 10;
 
-  // initial fetch
   useEffect(() => {
     dispatch(getBrandList());
     dispatch(getCategoryList());
@@ -101,53 +99,56 @@ const SalesProductsSelect = () => {
   const handleDateChange = (e) => setSelectedDateTime(e.target.value);
 
   const handleSave = () => {
-  if (!selectedCustomerId || !selectedDateTime) {
-    toast.error("Zəhmət olmasa müştəri və satış tarixini seçin.");
-    return;
-  }
-
-  let hasError = false;
-  const invalidProducts = [];
-
-  const selectedItems = selectedProductIds.map((productId) => {
-    const stockItem = stockList.find((item) => item.product.id === productId);
-    const product = stockItem?.product;
-    const quantity = +quantityValues[productId] || 0;
-    const status = statusValues[productId] || "G";
-    const inStock = stockItem?.amount || 0;
-
-    if (status === "S" && quantity > inStock) {
-      hasError = true;
-      invalidProducts.push({ name: product?.name, available: inStock });
+    if (!selectedCustomerId || !selectedDateTime) {
+      toast.error("Zəhmət olmasa müştəri və satış tarixini təyin edin.");
+      return;
     }
 
-    return { product_id: productId, quantity, price: +priceValues[productId] || product?.price, status };
-  });
+    let hasError = false;
+    const invalidProducts = [];
 
-  if (hasError) {
-    invalidProducts.forEach((p) =>
-      toast.error(`Anbarda ${p.name} üçün yalnız ${p.available} ədəd mövcuddur.`)
-    );
-    return;
-  }
+    const selectedItems = selectedProductIds.map((productId) => {
+      const stockItem = stockList.find((item) => item.product.id === productId);
+      const product = stockItem?.product;
+      const quantity = +quantityValues[productId] || 0;
+      const status = statusValues[productId] || "G";
+      const inStock = stockItem?.amount || 0;
 
-  // payload-u şərti olaraq formalaşdırırıq
-  const basePayload = {
-    customer: selectedCustomerId,
-    products: selectedItems.map((p) => p.product_id),
-    prices: selectedItems.map((p) => p.price),
-    amounts: selectedItems.map((p) => p.quantity),
-    datetimes: selectedItems.map(() => selectedDateTime),
-    statuses: selectedItems.map((p) => p.status),
+      if (status === "S" && quantity > inStock) {
+        hasError = true;
+        invalidProducts.push({ name: product?.name, available: inStock });
+      }
+
+      return {
+        product_id: productId,
+        quantity,
+        price: +priceValues[productId] || product?.price,
+        status,
+      };
+    });
+
+    if (hasError) {
+      invalidProducts.forEach((p) =>
+        toast.error(`Anbarda ${p.name} üçün yalnız ${p.available} ədəd mövcuddur.`)
+      );
+      return;
+    }
+
+    const basePayload = {
+      customer: selectedCustomerId,
+      products: selectedItems.map((p) => p.product_id),
+      prices: selectedItems.map((p) => p.price),
+      amounts: selectedItems.map((p) => p.quantity),
+      datetimes: selectedItems.map(() => selectedDateTime),
+      statuses: selectedItems.map((p) => p.status),
+    };
+
+    const payload = plusSalesObj?.id
+      ? { salelist: plusSalesObj.id, ...basePayload }
+      : basePayload;
+
+    dispatch(addSale(payload, navigate));
   };
-
-  const payload = plusSalesObj?.id
-    ? { salelist: plusSalesObj.id, ...basePayload } // update üçün
-    : basePayload; // yeni əlavə üçün
-
-  dispatch(addSale(payload, navigate));
-};
-
 
   const handlePageClick = (event) => {
     const selectedPage = event.selected + 1;
@@ -156,22 +157,19 @@ const SalesProductsSelect = () => {
 
   const returnSales = () => navigate("/sales");
 
-  console.log(plusSalesObj);
-  console.log(stockList);
-  console.log(customerFactureList);
-
   useEffect(() => {
-    if (plusSalesObj && Object.keys(plusSalesObj).length > 0 && customerFactureList?.salelist_sales?.length > 0) {
-      // Müştəri seç
+    if (
+      plusSalesObj &&
+      Object.keys(plusSalesObj).length > 0 &&
+      customerFactureList?.salelist_sales?.length > 0
+    ) {
       setSelectedCustomerId(customerFactureList.customer?.toString() || "");
 
-      // İlk məhsulun datetime-ni götür
       const firstDatetime = customerFactureList.salelist_sales[0]?.datetime;
       if (firstDatetime) {
-        setSelectedDateTime(firstDatetime.slice(0, 16)); // datetime-local üçün format
+        setSelectedDateTime(firstDatetime.slice(0, 16));
       }
 
-      // Məhsulları seçilmiş kimi göstər
       const productIds = customerFactureList.salelist_sales.map(s => s.product.id);
 
       const quantities = {};
@@ -195,13 +193,10 @@ const SalesProductsSelect = () => {
     if (selectedCustomerId && usersList.length > 0) {
       const exists = usersList.some(u => u.id.toString() === selectedCustomerId.toString());
       if (!exists) {
-        // Əlavə olaraq müştərini usersList-ə push edə bilərsən (əgər gəlməyibsə)
         dispatch(getUsersList(1, ""));
       }
     }
   }, [selectedCustomerId, usersList, dispatch]);
-
-
 
   return (
     <AdminLayout adminHeaderHide={true}>
@@ -211,22 +206,26 @@ const SalesProductsSelect = () => {
         </div>
 
         <div className="left_box left_box_mb">
-          <CustomCustomerSelect
-            customers={usersList.filter(u => !u.is_staff)}
-            value={selectedCustomerId}  // burda artıq açılışda seçilmiş gələcək
-            onChange={setSelectedCustomerId}
-            onSearch={(search) => dispatch(getUsersList(1, search))}
-          />
-
+          {/* Müştəri inputu görünmür */}
+          <input type="hidden" value={selectedCustomerId} />
 
           <div className="form_group form_group_sales_table_head">
             <label>Satış tarixi</label>
-            <input type="datetime-local" value={selectedDateTime} onChange={handleDateChange} />
+            <input
+              type="datetime-local"
+              value={selectedDateTime}
+              onChange={handleDateChange}
+            />
           </div>
         </div>
 
         <div className="admin_header_search project_container">
-          <input type="text" placeholder="Axtar..." value={searchTerm} onChange={handleStockSearch} />
+          <input
+            type="text"
+            placeholder="Axtar..."
+            value={searchTerm}
+            onChange={handleStockSearch}
+          />
         </div>
 
         <div className="warehouse_table_wrapper">
@@ -283,10 +282,12 @@ const SalesProductsSelect = () => {
                           type="number"
                           value={quantityValues[productId] ?? ""}
                           onChange={(e) => handleQuantityChange(productId, e.target.value)}
-                          className={`quantity_input ${statusValues[productId] === "S" && +quantityValues[productId] > item.amount
-                            ? "input-error"
-                            : ""
-                            }`}
+                          className={`quantity_input ${
+                            statusValues[productId] === "S" &&
+                            +quantityValues[productId] > item.amount
+                              ? "input-error"
+                              : ""
+                          }`}
                         />
                       )}
                     </td>

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { IoMdClose } from 'react-icons/io';
 import { useNavigate } from 'react-router-dom';
-import { getSaleList } from '../../../actions/salesAction/salesAction';
+import { getSaleListReturned } from '../../../actions/salesAction/salesAction'; // ⚙️ Yeni action
 import { handleCloseModal } from '../../../redux/slices/admin/productTableSlice';
 import { addReturnBack, getReturnBackList } from '../../../actions/productsTableAction/productsTableAction';
 import CustomSalesSelect from './CustomSalesSelect'; // Yol doğru olsun
@@ -17,13 +17,14 @@ const ProductReturnedModal = () => {
   const [amount, setAmount] = useState('');
   const [status, setStatus] = useState('Y'); // Default olaraq "Yararsız"
 
+  // 🔹 Yeni: getSaleListReturned çağırılır
   useEffect(() => {
-    dispatch(getSaleList());
+    dispatch(getSaleListReturned({ page: 1, search: '' }));
   }, [dispatch]);
 
-  const { saleList } = useSelector(state => state.sales);
-  console.log(saleList);
-  
+  // 🔹 Yeni: saleListReturned state-dən alınır
+  const { saleListReturned } = useSelector(state => state.sales);
+  console.log('saleListReturned:', saleListReturned);
 
   const handleSubmit = async () => {
     const payload = {
@@ -46,8 +47,9 @@ const ProductReturnedModal = () => {
           <div className="left_box">
             <IoMdClose className='close_icon' onClick={() => dispatch(handleCloseModal())} />
 
+            {/* 🔹 saleListReturned istifadə edilir */}
             <CustomSalesSelect
-              sales={saleList}
+              sales={saleListReturned}
               value={selectedSaleId}
               onChange={setSelectedSaleId}
             />

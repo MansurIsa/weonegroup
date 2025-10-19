@@ -2,7 +2,7 @@ import axios from "axios";
 import { baseUrl } from "../../mainApi/MainApi";
 import { startLoading, stopLoading } from "../../redux/slices/loaderSlice";
 import toast from "react-hot-toast";
-import { closeSaleUpdateModalFunc, getSaleListFunc, getSalesListFunc } from "../../redux/slices/admin/salesSlice";
+import { closeSaleUpdateModalFunc, getSaleListFunc, getSaleListReturnedFunc, getSalesListFunc } from "../../redux/slices/admin/salesSlice";
 
 export const getSalesList = (page = 1, search = '', min = '', max = '', start_date = "", end_date = "") => async (dispatch) => {
   // dispatch(startLoading());
@@ -41,6 +41,20 @@ export const getSaleList = () => async (dispatch) => {
     });;
 };
 
+
+export const getSaleListReturned = ({ page = 1, search = '' }) => async (dispatch) => {
+  dispatch(startLoading());
+  return await axios.get(`${baseUrl}accounting/short-sale-list/?page=${page}&search=${encodeURIComponent(search)}`)
+    .then((resp) => {
+        console.log(resp.data);
+      dispatch(getSaleListReturnedFunc(resp.data));
+    })
+    .catch((err) => {
+      console.log(err);
+    }).finally(() => {
+      dispatch(stopLoading());
+    });;
+};
 
 
 
