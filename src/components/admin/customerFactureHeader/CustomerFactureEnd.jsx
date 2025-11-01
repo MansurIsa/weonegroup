@@ -127,7 +127,7 @@ const CustomerFactureEnd = ({ factureList = [] }) => {
           <label>Müştərinin ödədiyi:  {factureList[0]?.paid_amount}AZN</label>
         </div>
         <div>
-          <label>Müştərinin ümumi qalan borcu:  {factureList[0]?.total_debt}AZN</label>
+          <label>Müştərinin ümumi qalan borcu:  {Math.round(factureList[0]?.total_debt*100)/100}AZN</label>
         </div>
         <div>
           <label>Ümumi gəlir: {Math.round(factureList[0]?.total_profit * 100) / 100}AZN</label>

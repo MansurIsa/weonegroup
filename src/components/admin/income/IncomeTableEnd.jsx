@@ -57,7 +57,7 @@ const IncomeTableEnd = ({ paymentList, count, fetchPayments, searchTerm }) => {
             <tr key={item.id}>
               <td>{item.customer?.first_name || '-'} {item.customer?.last_name || '-'}</td>
               <td>{item.customer?.username || '-'}</td>
-              <td>{item.amount} ₼</td>
+              <td>{Math.round(item.amount*100)/100} ₼</td>
               <td>{formatDateTime(item.datetime)}</td>
               <td className='table_update'>
                 <FaPenToSquare onClick={() => updateIncome(item)} />

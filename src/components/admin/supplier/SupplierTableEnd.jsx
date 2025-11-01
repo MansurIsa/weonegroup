@@ -54,7 +54,7 @@ const SupplierTableEnd = ({ paymentList = [], count = 0, fetchSuppliers, searchT
                         <tr key={item.id}>
                             <td>{item.supplier?.first_name || '-'} {item.supplier?.last_name || '-'}</td>
                             <td>{item.supplier?.username || '-'}</td>
-                            <td>{item.amount} {item?.currency === 'M' ? '₼' : item?.currency==='D' ? '$' : item?.currency==='R'? '₽': ""}</td>
+                            <td>{Math.round(item.amount*100)/100} {item?.currency === 'M' ? '₼' : item?.currency==='D' ? '$' : item?.currency==='R'? '₽': ""}</td>
                             <td>{formatDateTime(item.datetime)}</td>
                             <td className='table_update'>
                                 <FaPenToSquare onClick={() => updateSupplier(item)} />
