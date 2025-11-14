@@ -77,7 +77,7 @@ const Login = () => {
                   fontSize: "25px"
                 }}
               >
-                {showPassword ? "🙈" : "👁"}
+                {showPassword ? "🔒" : "👁"}
               </span>
             </div>
             <button type="submit">Daxil ol</button>

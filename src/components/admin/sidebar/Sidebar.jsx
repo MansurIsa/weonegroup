@@ -47,7 +47,7 @@ const Sidebar = () => {
     const { userObj } = useSelector(state => state.login)
     return (
         <div className='sidebar_container'>
-            <Logo />
+            <Logo adminLayoutLogoHeight={true}/>
 
             <ul className='sidebar_menu'>
                 {

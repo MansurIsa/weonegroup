@@ -65,9 +65,12 @@
     color: var(--white);
     background-color: var(--mainFirst);
     /* margin-left: auto; */
+    transition: 0.5s ease-in-out;
 
 }
-
+.contact_form_container form button:hover{
+    opacity: 0.8;
+}
 @media screen and (max-width: 1100px) {
 
     .firstname_lastname_form,

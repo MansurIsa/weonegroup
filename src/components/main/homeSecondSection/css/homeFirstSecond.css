@@ -7,8 +7,11 @@
 
 .home_second_section_card {
     min-width: 365px;
+    transition: 0.5s ease-in-out;
 }
-
+.home_second_section_card:hover{
+    transform: translateY(-10px);
+}
 .home_second_section_card img {
     width: 100%;
     border-radius: 12px;

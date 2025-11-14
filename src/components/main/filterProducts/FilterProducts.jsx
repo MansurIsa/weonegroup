@@ -403,7 +403,7 @@ const FilterProducts = () => {
                 <p>Məhsul tapılmadı</p>
               </div>
             ) : (
-              <FilterProductsContainer productsList={latestProducts} />
+              <FilterProductsContainer newPr={true} productsList={latestProducts} />
             )
           ) : normalProducts?.length === 0 ? (
             <div className="no_products_found">

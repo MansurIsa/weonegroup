@@ -50,8 +50,11 @@
     padding: 18px 40px;
     background-color: var(--mainFirst);
     border-radius: 12px;
+    transition: 0.5s ease-in-out;
 }
-
+.home_first_section_container div button:hover{
+    opacity: 0.8;
+}
 @media screen and (max-width: 620px){
 .home_first_section_container {
     grid-template-columns: repeat(auto-fill, minmax(348px, 1fr));

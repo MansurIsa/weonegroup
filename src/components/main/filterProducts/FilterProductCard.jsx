@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { addProductToCart } from "../../../actions/productsAction/productsAction";
 
-const FilterProductCard = ({ data }) => {
+const FilterProductCard = ({ data, newPr }) => {
   const accessToken = localStorage.getItem("accessToken");
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -59,6 +59,13 @@ const FilterProductCard = ({ data }) => {
         onClick={goToDetail}
         style={{ cursor: "pointer" }}
       >
+        {
+          newPr ?
+            <div className="new_pr">
+              Yeni
+            </div> : null
+        }
+
         <img src={data?.image} alt={data?.name} loading="lazy" />
         <div className="filter_product_card_content">
           {accessToken && (

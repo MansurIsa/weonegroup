@@ -17,7 +17,7 @@ const CustomerRetriveModal = ({closeModal}) => {
                     <div>
 
                         <h4>Bizə Borc:</h4>
-                        <p>{customerRetriveObj?.customer_debt_amount || 0} ₼</p>
+                        <p>{`${Math.round(customerRetriveObj?.customer_debt_amount * 100) / 100 || 0} ₼`}</p>
                     </div>
                     <div>
                         <h4>Bizim Borc:</h4>

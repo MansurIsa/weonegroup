@@ -1,13 +1,13 @@
 import React from "react";
 import FilterProductCard from "./FilterProductCard";
 
-const FilterProductsContainer = ({ productsList }) => {
+const FilterProductsContainer = ({ productsList,newPr }) => {
   console.log(productsList);
   
   return (
     <div className="filter_products_container">
       {productsList?.map((data) => (
-        <FilterProductCard key={data.id} data={data} />
+        <FilterProductCard newPr={newPr} key={data.id} data={data} />
       ))}
     </div>
   );

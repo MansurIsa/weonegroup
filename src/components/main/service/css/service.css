@@ -9,6 +9,10 @@
     min-width: 344px;
     height: 340px;
     border-radius: 12px;
+    transition: 0.5s ease-in-out;
+}
+.service_top_card:hover{
+    transform: translateY(-10px);
 }
 
 .service_top_card_shadow {
@@ -33,11 +37,11 @@
 
 .service_top_parent_container p {
     max-width: 994px;
-    margin: 60px auto 72px;
+    margin: 0px auto 72px;
     font-weight: 400;
     font-size: 2.4rem;
-    line-height: 100%;
-    letter-spacing: 0%;
+    /* line-height: 100%;
+    letter-spacing: 0%; */
     text-align: center;
 
 }
@@ -59,8 +63,11 @@
     padding: 25px 0 25px 28px;
     display: flex;
     align-items: center;
+    transition: 0.5s ease-in-out;
 }
-
+.service_bottom_card:hover{
+    transform: translateY(-10px);
+}
 .service_bottom_card img {
     width: 30%;
 }

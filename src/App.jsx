@@ -41,6 +41,7 @@ import SupplierPurchase from './pages/purchase/SupplierPurchase';
 import Supplier from './pages/supplier/Supplier';
 import CustomerActionRetrive from './pages/customers/CustomerActionRetrive';
 import PurchaseProductsSelect from './pages/purchase/PurchaseProductsSelect';
+import ToTop from './components/toTop/ToTop';
 
 // Token yoxlama funksiyası
 const isTokenExpired = (token) => {
@@ -182,6 +183,7 @@ const App = () => {
       <Toaster position="top-right" />
       <Loader />
       <ScrollToTop />
+      <ToTop/>
     </div>
   );
 };

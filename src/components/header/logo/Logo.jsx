@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux';
 import { getSettingsList } from '../../../actions/homeAction/homeAction';
 
-const Logo = () => {
+const Logo = ({adminLayoutLogoHeight}) => {
   const dispatch=useDispatch()
   useEffect(()=>{
     dispatch(getSettingsList())
@@ -12,7 +12,7 @@ const Logo = () => {
 
   const {settingsList}=useSelector(state=>state.home)
     return (
-        <Link to={'/'}>
+        <Link className={adminLayoutLogoHeight? 'logo_header_admin': 'logo_header'} to={'/'}>
           <img src={settingsList[0]?.logo} alt="" />
         </Link>
     )
