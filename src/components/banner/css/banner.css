@@ -50,7 +50,8 @@
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: 250px;
+  /* gap: 250px; */
+  gap: 30px;
 
 }
 
@@ -61,12 +62,23 @@
 }
 
 .home_banner_yellow2 p {
-  width: 32%;
+  /* width: 32%; */
   padding-left: 20px;
   font-size: 2rem;
-  margin-top: 180px;
+  /* margin-top: 180px; */
+
 
 }
+.home_banner_yellow2 .marquee {
+  background: #9b2a2a;
+background: linear-gradient(90deg,rgba(155, 42, 42, 1) 0%, rgba(199, 121, 87, 1) 0%, rgba(255, 229, 0, 1) 69%);
+  padding: 10px 0;
+  font-size: 2rem;
+
+}
+
+
+
 
 .home_banner_yellow2 button {
   margin-left: 20px;

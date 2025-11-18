@@ -10,29 +10,33 @@ import { FaPenToSquare } from 'react-icons/fa6';
 import { FaPlus } from 'react-icons/fa';
 
 const ITEMS_PER_PAGE = 10;
+const STORAGE_KEY = 'purchaseTableCurrentPage';
 
 const PurchaseTableEnd = () => {
-    const [currentPage, setCurrentPage] = useState(0);
+    const [currentPage, setCurrentPage] = useState(() => {
+        // LocalStorage-dan səhifəni oxuyuruq
+        const savedPage = localStorage.getItem(STORAGE_KEY);
+        return savedPage ? parseInt(savedPage, 10) : 0;
+    });
     const [searchQuery, setSearchQuery] = useState('');
     const [startDate, setStartDate] = useState('');
     const [endDate, setEndDate] = useState('');
-
 
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const { purchaseListList, count } = useSelector(state => state.purchase);
 
-    console.log(purchaseListList);
+    // LocalStorage-a cari səhifəni yazırıq
+    useEffect(() => {
+        localStorage.setItem(STORAGE_KEY, currentPage.toString());
+    }, [currentPage]);
 
-
+    // Komponent unmount olduqda localStorage-u təmizləmək (isteğe bağlı)
     // useEffect(() => {
-    //     dispatch(getPurchaseListList());
-    // }, [dispatch]);
-
-    // const handleSearch = (query) => {
-    //     setSearchQuery(query.toLowerCase());
-    //     setCurrentPage(0);
-    // };
+    //     return () => {
+    //         localStorage.removeItem(STORAGE_KEY);
+    //     };
+    // }, []);
 
     const formatDate = (dateString) => {
         const date = new Date(dateString);
@@ -54,49 +58,13 @@ const PurchaseTableEnd = () => {
         }
     };
 
-    // const filteredData = purchaseListList.filter(item => {
-    //     const firstName = item?.supplier?.first_name?.toLowerCase() || '';
-    //     const lastName = item?.supplier?.last_name?.toLowerCase() || '';
-    //     const username = item?.supplier?.username?.toLowerCase() || '';
-    //     return (
-    //         firstName.includes(searchQuery) ||
-    //         lastName.includes(searchQuery) ||
-    //         username.includes(searchQuery)
-    //     );
-    // });
-
-    // const dateFilteredData = filteredData.filter(item => {
-    //     const itemDate = new Date(item.date);
-    //     const start = startDate ? new Date(startDate) : null;
-    //     const end = endDate ? new Date(endDate) : null;
-
-    //     if (start && end) return itemDate >= start && itemDate <= end;
-    //     if (start) return itemDate >= start;
-    //     if (end) return itemDate <= end;
-    //     return true;
-    // });
-
-
-    // const offset = currentPage * ITEMS_PER_PAGE;
-    // const currentPageData = dateFilteredData.slice(offset, offset + ITEMS_PER_PAGE);
-    // const pageCount = Math.ceil(dateFilteredData.length / ITEMS_PER_PAGE);
-
-
-    // const handlePageClick = (event) => {
-    //     setCurrentPage(event.selected);
-    // };
-
-
     const fetchData = () => {
         dispatch(getPurchaseListList(currentPage + 1, searchQuery, startDate, endDate));
     };
 
-    // avtomatik API çağırışı
     useEffect(() => {
         fetchData();
-    }, [currentPage, searchQuery, startDate, endDate]); // burdan dispatch çıxarıldı
-
-
+    }, [currentPage, searchQuery, startDate, endDate]);
 
     const handleSearch = (query) => {
         setSearchQuery(query);
@@ -110,37 +78,33 @@ const PurchaseTableEnd = () => {
     };
 
     const handlePurchase = (x) => {
-        navigate("/supplier-purchase")
-        dispatch(getPurchaseSupplierObj(x))
+        // Səhifəni localStorage-da saxlayaraq navigate edirik
+        localStorage.setItem(STORAGE_KEY, currentPage.toString());
+        navigate("/supplier-purchase");
+        dispatch(getPurchaseSupplierObj(x));
     }
 
     const deletePurchase = (x) => {
-        dispatch(purchaseDeleteModalFunc(x))
-
-
+        dispatch(purchaseDeleteModalFunc(x));
     }
 
     const updatePurchase = (x) => {
-        dispatch(purchaseUpdateModalFuncCommon(x))
+        dispatch(purchaseUpdateModalFuncCommon(x));
     }
 
-const plusUpdatePurchase = async (item) => {
-  try {
-    // API cavabını gözləyir
-    await dispatch(getPurchaseSupplierObj(item?.id));
-
-    // Cavab gəldikdən sonra yönləndirir
-    navigate("/purchase-products-select");
-  } catch (error) {
-    console.error("Xəta baş verdi:", error);
-  }
-};
-
+    const plusUpdatePurchase = async (item) => {
+        try {
+            // Səhifəni localStorage-da saxlayaraq navigate edirik
+            localStorage.setItem(STORAGE_KEY, currentPage.toString());
+            await dispatch(getPurchaseSupplierObj(item?.id));
+            navigate("/purchase-products-select");
+        } catch (error) {
+            console.error("Xəta baş verdi:", error);
+        }
+    };
 
     return (
         <div className='admin_container dashboard_end_container'>
-            {/* <h2>Alış Siyahısı</h2> */}
-
             <div className="form_group sales_dates_inputs">
                 <label>Tarix aralığı</label>
                 <div className="date_range">
@@ -149,7 +113,7 @@ const plusUpdatePurchase = async (item) => {
                         value={startDate}
                         onChange={(e) => {
                             setCurrentPage(0);
-                            setStartDate(e.target.value); // YYYY-MM-DD formatında gəlir
+                            setStartDate(e.target.value);
                         }}
                     />
                     -
@@ -161,10 +125,8 @@ const plusUpdatePurchase = async (item) => {
                             setEndDate(e.target.value);
                         }}
                     />
-
                 </div>
             </div>
-
 
             <SearchInpMain onSearch={handleSearch} />
             <div className="table_wrapper">
@@ -199,11 +161,9 @@ const plusUpdatePurchase = async (item) => {
                                 <td>
                                     {Math.round(item.purchase_price * 100) / 100} {getCurrencySymbol(item.currency)}
                                 </td>
-
                                 <td>{Math.round(item.cost_price * 100) / 100}₼</td>
                                 <td>{Math.round(item.price * 100) / 100}₼</td>
                                 <td>{Math.round(item.discount_price * 100) / 100}₼</td>
-
                                 <td>
                                     {item.status === 'A'
                                         ? <span style={{ color: 'green' }}>Anbarda</span>
@@ -222,27 +182,29 @@ const plusUpdatePurchase = async (item) => {
                 </table>
             </div>
 
-
-            {pageCount > 1 && (<ReactPaginate
-                previousLabel={
-                    <svg width="8" height="14" viewBox="0 0 8 14" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M7 1L1 7L7 13" stroke="#9F9FA0" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                    </svg>
-                }
-                nextLabel={
-                    <svg width="8" height="14" viewBox="0 0 8 14" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M1 1L7 7L1 13" stroke="#202020" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                    </svg>
-                }
-                pageCount={pageCount}
-                onPageChange={handlePageClick}
-                containerClassName={'dashboard_end_pagination'}
-                pageClassName={'dashboard_end_page'}
-                pageLinkClassName={'dashboard_end_page_link'}
-                previousClassName={'dashboard_end_arrow'}
-                nextClassName={'dashboard_end_arrow'}
-                activeClassName={'dashboard_end_active'}
-            />)}
+            {pageCount > 1 && (
+                <ReactPaginate
+                    previousLabel={
+                        <svg width="8" height="14" viewBox="0 0 8 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M7 1L1 7L7 13" stroke="#9F9FA0" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                        </svg>
+                    }
+                    nextLabel={
+                        <svg width="8" height="14" viewBox="0 0 8 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M1 1L7 7L1 13" stroke="#202020" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                        </svg>
+                    }
+                    pageCount={pageCount}
+                    onPageChange={handlePageClick}
+                    forcePage={currentPage} // Bu səhifəni məcburi olaraq göstərir
+                    containerClassName={'dashboard_end_pagination'}
+                    pageClassName={'dashboard_end_page'}
+                    pageLinkClassName={'dashboard_end_page_link'}
+                    previousClassName={'dashboard_end_arrow'}
+                    nextClassName={'dashboard_end_arrow'}
+                    activeClassName={'dashboard_end_active'}
+                />
+            )}
         </div>
     );
 };

@@ -6,7 +6,7 @@ import CustomCustomerSelect from "../../components/admin/salesTableHead/CustomCu
 
 const MonthYearSelect = () => {
   const today = new Date();
-  const defaultYear = String(today.getFullYear());
+  const currentYear = String(today.getFullYear());
 
   const months = [
     { value: "All", label: "Bütün aylar" },
@@ -24,60 +24,89 @@ const MonthYearSelect = () => {
     { value: "Dekabr", label: "Dekabr" },
   ];
 
-  const [selectedYear, setSelectedYear] = useState(defaultYear);
-  const [selectedMonth, setSelectedMonth] = useState("All");
-  const [selectedCustomerId, setSelectedCustomerId] = useState(null);
+  const years = Array.from({ length: 101 }, (_, i) => 2000 + i);
 
   const dispatch = useDispatch();
   const { usersList, userObj } = useSelector((state) => state.login);
 
-  const years = Array.from({ length: 101 }, (_, i) => 2000 + i);
+  // Local state, localStorage-dan oxunur
+  const [selectedYear, setSelectedYear] = useState(() => {
+    const storedYear = localStorage.getItem("selectedYear");
+    return storedYear || currentYear; // yeni il gəlibsə hazırkı il
+  });
 
+  const [selectedMonth, setSelectedMonth] = useState(() => {
+    return localStorage.getItem("selectedMonth") || months[today.getMonth()].value;
+  });
+
+  const [selectedCustomerId, setSelectedCustomerId] = useState(() => {
+    return localStorage.getItem("selectedCustomerId") || null;
+  });
+
+  // İlk load üçün user list və user obj
   useEffect(() => {
-    dispatch(getUsersList()); // ilk load üçün
+    dispatch(getUsersList());
     dispatch(getUserObj());
   }, [dispatch]);
 
+  // Superuser üçün default customer seçimi
   useEffect(() => {
     if (userObj?.is_superuser) {
-      setSelectedCustomerId(userObj.id);
+      const defaultCustomerId = selectedCustomerId || userObj.id;
+      setSelectedCustomerId(defaultCustomerId);
+      localStorage.setItem("selectedCustomerId", defaultCustomerId);
     }
   }, [userObj]);
 
-  useEffect(() => {
-    if (!userObj || !selectedYear || !selectedMonth) return;
-
-    const idToSend =
-      userObj.is_superuser && selectedCustomerId
-        ? selectedCustomerId
-        : userObj.id;
-
-    dispatch(getDashboardList(idToSend, selectedMonth, selectedYear));
-  }, [selectedYear, selectedMonth, selectedCustomerId, userObj, dispatch]);
-
-  // yalnız is_staff == true olan user-lər filterlənir
+  // Yalnız is_staff == true olan user-lər filterlənir
   const staffUsers = usersList.filter((u) => u.is_staff);
 
-  // search üçün API call
-const handleSearch = (searchTerm) => {
-  if (!searchTerm.trim()) {
-    // input boşaldılanda bütün userləri gətir
-    dispatch(getUsersList());
-  } else {
-    // inputda yazılanda filtrli gətir
-    dispatch(getUsersList(1, searchTerm));
-  }
-};
+  // Search üçün API call
+  const handleSearch = (searchTerm) => {
+    if (!searchTerm.trim()) {
+      dispatch(getUsersList());
+    } else {
+      dispatch(getUsersList(1, searchTerm));
+    }
+  };
 
+  // Ay, İl və Customer dəyişəndə API çağırışı
+  useEffect(() => {
+    if (!userObj) return;
+
+    const customerIdToSend =
+      userObj?.is_superuser && selectedCustomerId
+        ? selectedCustomerId
+        : userObj?.id;
+
+    if (customerIdToSend) {
+      dispatch(getDashboardList(customerIdToSend, selectedMonth, selectedYear));
+    }
+  }, [selectedMonth, selectedYear, selectedCustomerId, userObj, dispatch]);
+
+  // Ay dəyişəndə state + localStorage
+  const handleMonthChange = (month) => {
+    setSelectedMonth(month);
+    localStorage.setItem("selectedMonth", month);
+  };
+
+  // İl dəyişəndə state + localStorage
+  const handleYearChange = (year) => {
+    setSelectedYear(year);
+    localStorage.setItem("selectedYear", year);
+  };
+
+  // Customer dəyişəndə state + localStorage
+  const handleCustomerChange = (id) => {
+    setSelectedCustomerId(id);
+    localStorage.setItem("selectedCustomerId", id);
+  };
 
   return (
     <div className="admin_container">
       <div className="month_year_select">
         <div className="form_group">
-          <select
-            value={selectedYear}
-            onChange={(e) => setSelectedYear(e.target.value)}
-          >
+          <select value={selectedYear} onChange={(e) => handleYearChange(e.target.value)}>
             <option value="">İl seçin</option>
             {years.map((year) => (
               <option key={year} value={year}>
@@ -88,10 +117,7 @@ const handleSearch = (searchTerm) => {
         </div>
 
         <div className="form_group">
-          <select
-            value={selectedMonth}
-            onChange={(e) => setSelectedMonth(e.target.value)}
-          >
+          <select value={selectedMonth} onChange={(e) => handleMonthChange(e.target.value)}>
             <option value="">Ay seçin</option>
             {months.map((month) => (
               <option key={month.value} value={month.value}>
@@ -103,11 +129,11 @@ const handleSearch = (searchTerm) => {
 
         {userObj?.is_superuser && (
           <CustomCustomerSelect
-          displayVal={false}
+            displayVal={false}
             customers={staffUsers}
             value={selectedCustomerId}
-            onChange={(id) => setSelectedCustomerId(id)}
-            onSearch={handleSearch} // search yazılanda API çağırır
+            onChange={handleCustomerChange}
+            onSearch={handleSearch}
           />
         )}
       </div>

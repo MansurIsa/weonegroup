@@ -76,12 +76,12 @@
   min-width: 224px;
   border-radius: 12px;
   box-shadow: 0 0 9px rgba(237, 237, 237, 1);
-  transition: 0.5s ease-in-out;
+  transition: 0.2s ease-in-out;
   overflow: hidden;
   position: relative;
 }
 .filter_product_card:hover{
-  transform: translateY(-10px);
+  transform: translateY(-15px);
 }
 .filter_product_card:hover img{
   transform: scale(1.05);

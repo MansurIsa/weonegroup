@@ -20,27 +20,27 @@ const FixedProducts = () => {
 
   const dispatch = useDispatch()
 
-   useEffect(() => {
-        // dispatch(getProductsListTest())
-    }, [dispatch])
+  useEffect(() => {
+    // dispatch(getProductsListTest())
+  }, [dispatch])
 
-     const { productsListTest} = useSelector(state => state.products)
-     console.log(productsListTest);
-     
+  const { productsListTest } = useSelector(state => state.products)
+  console.log(productsListTest);
+
 
   return (
     <div style={{ position: 'fixed', bottom: 0, width: '100%', background: '#fff', zIndex: 1000 }}>
-    <Marquee speed={50} gradient={false}>
-      {productsListTest?.map(product => (
-        <img
-          key={product.id}
-          src={product.image}
-          alt="product"
-          style={{ height: 60, width: 60, marginRight: 20, borderRadius: 30, objectFit: "cover" }}
-        />
-      ))}
-    </Marquee>
-  </div>
+      <Marquee speed={50} gradient={false}>
+        {productsListTest?.map(product => (
+          <img
+            key={product.id}
+            src={product.image}
+            alt="product"
+            style={{ height: 60, width: 60, marginRight: 20, borderRadius: 30, objectFit: "cover" }}
+          />
+        ))}
+      </Marquee>
+    </div>
   )
 }
 
