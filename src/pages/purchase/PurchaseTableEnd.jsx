@@ -10,34 +10,56 @@ import { FaPenToSquare } from 'react-icons/fa6';
 import { FaPlus } from 'react-icons/fa';
 
 const ITEMS_PER_PAGE = 10;
-const STORAGE_KEY = 'purchaseTableCurrentPage';
+
+const STORAGE_KEY_PAGE = 'purchaseTableCurrentPage';
+const STORAGE_KEY_SEARCH = 'purchaseTableSearch';
+const STORAGE_KEY_START = 'purchaseTableStartDate';
+const STORAGE_KEY_END = 'purchaseTableEndDate';
 
 const PurchaseTableEnd = () => {
+
+    // ================== STATE: PAGE + SEARCH + DATES ==================
     const [currentPage, setCurrentPage] = useState(() => {
-        // LocalStorage-dan səhifəni oxuyuruq
-        const savedPage = localStorage.getItem(STORAGE_KEY);
-        return savedPage ? parseInt(savedPage, 10) : 0;
+        const saved = localStorage.getItem(STORAGE_KEY_PAGE);
+        return saved ? Number(saved) : 0;
     });
-    const [searchQuery, setSearchQuery] = useState('');
-    const [startDate, setStartDate] = useState('');
-    const [endDate, setEndDate] = useState('');
+
+    const [searchQuery, setSearchQuery] = useState(() => {
+        return localStorage.getItem(STORAGE_KEY_SEARCH) || '';
+    });
+
+    const [startDate, setStartDate] = useState(() => {
+        return localStorage.getItem(STORAGE_KEY_START) || '';
+    });
+
+    const [endDate, setEndDate] = useState(() => {
+        return localStorage.getItem(STORAGE_KEY_END) || '';
+    });
 
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const { purchaseListList, count } = useSelector(state => state.purchase);
 
-    // LocalStorage-a cari səhifəni yazırıq
+
+    // ================== LOCALSTORAGE WRITE ==================
     useEffect(() => {
-        localStorage.setItem(STORAGE_KEY, currentPage.toString());
+        localStorage.setItem(STORAGE_KEY_PAGE, currentPage.toString());
     }, [currentPage]);
 
-    // Komponent unmount olduqda localStorage-u təmizləmək (isteğe bağlı)
-    // useEffect(() => {
-    //     return () => {
-    //         localStorage.removeItem(STORAGE_KEY);
-    //     };
-    // }, []);
+    useEffect(() => {
+        localStorage.setItem(STORAGE_KEY_SEARCH, searchQuery);
+    }, [searchQuery]);
 
+    useEffect(() => {
+        localStorage.setItem(STORAGE_KEY_START, startDate);
+    }, [startDate]);
+
+    useEffect(() => {
+        localStorage.setItem(STORAGE_KEY_END, endDate);
+    }, [endDate]);
+
+
+    // ================== HELPERS ==================
     const formatDate = (dateString) => {
         const date = new Date(dateString);
         return `${date.getDate().toString().padStart(2, '0')}.${(date.getMonth() + 1)
@@ -47,17 +69,15 @@ const PurchaseTableEnd = () => {
 
     const getCurrencySymbol = (currency) => {
         switch (currency) {
-            case 'D':
-                return '$';
-            case 'M':
-                return '₼';
-            case 'R':
-                return '₽';
-            default:
-                return '';
+            case 'D': return '$';
+            case 'M': return '₼';
+            case 'R': return '₽';
+            default: return '';
         }
     };
 
+
+    // ================== FETCH DATA ==================
     const fetchData = () => {
         dispatch(getPurchaseListList(currentPage + 1, searchQuery, startDate, endDate));
     };
@@ -66,6 +86,8 @@ const PurchaseTableEnd = () => {
         fetchData();
     }, [currentPage, searchQuery, startDate, endDate]);
 
+
+    // ================== EVENTS ==================
     const handleSearch = (query) => {
         setSearchQuery(query);
         setCurrentPage(0);
@@ -77,25 +99,23 @@ const PurchaseTableEnd = () => {
         setCurrentPage(event.selected);
     };
 
-    const handlePurchase = (x) => {
-        // Səhifəni localStorage-da saxlayaraq navigate edirik
-        localStorage.setItem(STORAGE_KEY, currentPage.toString());
+    const handlePurchase = (id) => {
+        localStorage.setItem(STORAGE_KEY_PAGE, currentPage.toString());
         navigate("/supplier-purchase");
-        dispatch(getPurchaseSupplierObj(x));
-    }
+        dispatch(getPurchaseSupplierObj(id));
+    };
 
-    const deletePurchase = (x) => {
-        dispatch(purchaseDeleteModalFunc(x));
-    }
+    const deletePurchase = (id) => {
+        dispatch(purchaseDeleteModalFunc(id));
+    };
 
-    const updatePurchase = (x) => {
-        dispatch(purchaseUpdateModalFuncCommon(x));
-    }
+    const updatePurchase = (item) => {
+        dispatch(purchaseUpdateModalFuncCommon(item));
+    };
 
     const plusUpdatePurchase = async (item) => {
         try {
-            // Səhifəni localStorage-da saxlayaraq navigate edirik
-            localStorage.setItem(STORAGE_KEY, currentPage.toString());
+            localStorage.setItem(STORAGE_KEY_PAGE, currentPage.toString());
             await dispatch(getPurchaseSupplierObj(item?.id));
             navigate("/purchase-products-select");
         } catch (error) {
@@ -103,8 +123,12 @@ const PurchaseTableEnd = () => {
         }
     };
 
+
+    // ================== RETURN JSX ==================
     return (
         <div className='admin_container dashboard_end_container'>
+
+            {/* TARİX ARALIĞI */}
             <div className="form_group sales_dates_inputs">
                 <label>Tarix aralığı</label>
                 <div className="date_range">
@@ -112,8 +136,8 @@ const PurchaseTableEnd = () => {
                         type="date"
                         value={startDate}
                         onChange={(e) => {
-                            setCurrentPage(0);
                             setStartDate(e.target.value);
+                            setCurrentPage(0);
                         }}
                     />
                     -
@@ -121,14 +145,17 @@ const PurchaseTableEnd = () => {
                         type="date"
                         value={endDate}
                         onChange={(e) => {
-                            setCurrentPage(0);
                             setEndDate(e.target.value);
+                            setCurrentPage(0);
                         }}
                     />
                 </div>
             </div>
 
-            <SearchInpMain onSearch={handleSearch} />
+            {/* SEARCH */}
+            <SearchInpMain onSearch={handleSearch} inputValue={searchQuery} />
+
+            {/* TABLE */}
             <div className="table_wrapper">
                 <table className='custom_table custom_table_sales'>
                     <thead>
@@ -145,6 +172,7 @@ const PurchaseTableEnd = () => {
                             <th>Düzəliş/Sil</th>
                         </tr>
                     </thead>
+
                     <tbody>
                         {purchaseListList?.map((item, index) => (
                             <tr key={index}>
@@ -155,15 +183,15 @@ const PurchaseTableEnd = () => {
                                             fill="#202020" />
                                     </svg>
                                 </td>
+
                                 <td>{item?.supplier || '-'}</td>
                                 <td>{formatDate(item?.date)}</td>
                                 <td>{item.amount}</td>
-                                <td>
-                                    {Math.round(item.purchase_price * 100) / 100} {getCurrencySymbol(item.currency)}
-                                </td>
+                                <td>{Math.round(item.purchase_price * 100) / 100} {getCurrencySymbol(item.currency)}</td>
                                 <td>{Math.round(item.cost_price * 100) / 100}₼</td>
                                 <td>{Math.round(item.price * 100) / 100}₼</td>
                                 <td>{Math.round(item.discount_price * 100) / 100}₼</td>
+
                                 <td>
                                     {item.status === 'A'
                                         ? <span style={{ color: 'green' }}>Anbarda</span>
@@ -171,6 +199,7 @@ const PurchaseTableEnd = () => {
                                             ? <span style={{ color: 'orange' }}>Gözləyir</span>
                                             : '-'}
                                 </td>
+
                                 <td className='table_update'>
                                     <FaPenToSquare onClick={() => updatePurchase(item)} />
                                     <AiTwotoneDelete onClick={() => deletePurchase(item?.id)} />
@@ -182,6 +211,7 @@ const PurchaseTableEnd = () => {
                 </table>
             </div>
 
+            {/* PAGINATION */}
             {pageCount > 1 && (
                 <ReactPaginate
                     previousLabel={
@@ -196,7 +226,7 @@ const PurchaseTableEnd = () => {
                     }
                     pageCount={pageCount}
                     onPageChange={handlePageClick}
-                    forcePage={currentPage} // Bu səhifəni məcburi olaraq göstərir
+                    forcePage={currentPage}
                     containerClassName={'dashboard_end_pagination'}
                     pageClassName={'dashboard_end_page'}
                     pageLinkClassName={'dashboard_end_page_link'}

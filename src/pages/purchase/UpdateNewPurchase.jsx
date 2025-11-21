@@ -18,7 +18,8 @@ const UpdateNewPurchase = () => {
         supplierId: '',
         quantity: '',
         status: 'G',
-        purchaseDate: ''
+        purchaseDate: '',
+        price: ''
     });
 
     const navigate = useNavigate();
@@ -28,6 +29,8 @@ const UpdateNewPurchase = () => {
     const { supplierList } = useSelector(state => state.login);
     const { updatePurchaseObj } = useSelector(state => state.purchase);
 
+    console.log(updatePurchaseObj);
+    
     useEffect(() => {
         dispatch(getBrandList());
         dispatch(getCategoryList());
@@ -44,7 +47,8 @@ const UpdateNewPurchase = () => {
                 supplierId: updatePurchaseObj.supplier || '',
                 quantity: updatePurchaseObj.amount || '',
                 status: updatePurchaseObj.status || 'G',
-                purchaseDate: updatePurchaseObj.date || ''
+                purchaseDate: updatePurchaseObj.date || '',
+                price: updatePurchaseObj.price || '',
             });
         }
     }, [updatePurchaseObj]);
@@ -66,6 +70,7 @@ const UpdateNewPurchase = () => {
             amount: +formData.quantity,
             date: formData.purchaseDate,
             status: formData.status,
+            price: +formData.price
         };
 
         dispatch(updatePurchase(payload, updatePurchaseObj?.id, navigate));
@@ -103,6 +108,16 @@ const UpdateNewPurchase = () => {
                                 name="quantity"
                                 placeholder="Miqdarı daxil edin"
                                 value={formData.quantity}
+                                onChange={handleChange}
+                            />
+                        </div>
+                        <div className="form_group">
+                            <label>Alış Qiyməti</label>
+                            <input
+                                type="number"
+                                name="price"
+                                placeholder="Alış qiyməti daxil edin"
+                                value={formData.price}
                                 onChange={handleChange}
                             />
                         </div>

@@ -14,6 +14,8 @@ const PurchaseEnd = ({ purchaseList, supplierPurchaseObj }) => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
+    console.log(purchaseList);
+    
     const offset = currentPage * ITEMS_PER_PAGE;
     // const currentPageData = purchaseList.slice(offset, offset + ITEMS_PER_PAGE);
     const currentPageData = purchaseList
@@ -99,7 +101,8 @@ const PurchaseEnd = ({ purchaseList, supplierPurchaseObj }) => {
                                 </td>
                                 <td className="print_column">{product?.store?.name || "-"}</td>
                                 <td className="print_column">{item.amount}</td>
-                                <td className="print_column">{product.purchase_price} {currencySymbol}</td>
+                                {/* <td className="print_column">{product.purchase_price} {currencySymbol}</td> */}
+                                <td className="print_column">{item?.price} {currencySymbol}</td>
 
                                 {/* Normal görünüş üçün əlavə sütunlar */}
                                 <td className="no-print">{product.cost_price} ₼</td>

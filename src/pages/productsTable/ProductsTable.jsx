@@ -67,22 +67,23 @@ const ProductsTable = () => {
       <SearchInpMain onSearch={handleSearch} />
 
       <div className="admin_container brand_list_buttons">
-        <button
-          onClick={() => handleBrandFilter(null)}
-          className={activeBrandId === null ? 'active' : ''}
-        >
-          Bütün markalar
-        </button>
+       <button
+  onClick={() => handleBrandFilter(null)}
+  className={activeBrandId === null ? 'active' : ''}
+>
+  Bütün markalar
+</button>
 
-        {brandList?.map((data) => (
-          <button
-            key={data.id}
-            onClick={() => handleBrandFilter(data.id)}
-            className={activeBrandId === data.id ? 'active' : ''}
-          >
-            {data.name}
-          </button>
-        ))}
+{brandList?.map((data) => (
+  <button
+    key={data.id}
+    onClick={() => handleBrandFilter(data.name)}   // name göndərilir
+    className={activeBrandId === data.name ? 'active' : ''}   // name ilə müqayisə olunur
+  >
+    {data.name}
+  </button>
+))}
+
       </div>
 
       <ProductsTableEnd productsList={productsList} />

@@ -77,7 +77,7 @@ const HomeBanner = () => {
                     </SwiperSlide>
                 ))} */}
 
-                <SwiperSlide className="home_banner_bg_img" data-hash="slide1" style={{ background: `url(${Img1})`, backgroundSize: "cover", backgroundPosition: "left", backgroundRepeat: "no-repeat" }}>
+                <SwiperSlide className="home_banner_bg_img home_banner_bg_img1" data-hash="slide1" style={{ background: `url(${Img1})`, backgroundSize: "cover", backgroundPosition: "left", backgroundRepeat: "no-repeat" }}>
                     <div className="home_banner_yellow1">
                         <img src={settingsList[0]?.logo} alt="" />
                         <h1>Performans Üçün Yaradılsa da, Keyfiyyətlə Möhkəmlənir</h1>
@@ -85,20 +85,7 @@ const HomeBanner = () => {
                         {/* <button onClick={targetPr}>Məhsullara bax</button> */}
                     </div>
                 </SwiperSlide>
-                <SwiperSlide className="home_banner_bg_img" data-hash="slide2" style={{ background: `url(${Img4})`, backgroundSize: "cover", backgroundPosition: "center", backgroundRepeat: "no-repeat" }}>
-                    <div className="home_banner_yellow2">
-                        <h1>Avtomobilinizin Gücü Doğru Seçimlə Başlayır</h1>
-                        <Marquee className="marquee" speed={150} gradient={false}>
-                           Premium materiallar, uzunömürlü istifadə və tam uyğunluq — bunların hamısı WeOneGroup-un təklif etdiyi keyfiyyətdədir.
-                        </Marquee>
-                        {/* <div className="marquee">
-                            <p>Premium materiallar, uzunömürlü istifadə və tam uyğunluq — bunların hamısı WeOneGroup-un təklif etdiyi keyfiyyətdədir.</p>
-                        </div> */}
-                    </div>
-
-
-
-                </SwiperSlide>
+              
                 <SwiperSlide className="home_banner_bg_img" data-hash="slide3" style={{ background: `url(${Img3})`, backgroundSize: "cover", backgroundPosition: "right", backgroundRepeat: "no-repeat" }}>
                     <div className="home_banner_yellow3">
                         <h1>Keyfiyyətli Hissələr, Daha Güclü Maşın</h1>

@@ -7,7 +7,7 @@ import { getSalesList } from '../../../actions/salesAction/salesAction';
 import { getCustomerFactureList } from '../../../actions/loginAction/loginAction';
 import { FaPenToSquare } from 'react-icons/fa6';
 import { AiTwotoneDelete } from 'react-icons/ai';
-import { plusSalesFunc, saleDeleteModalFunc, saleUpdateModalFunc, saleUpdateModalFuncCommon, setSaleUpdateObjFunc } from '../../../redux/slices/admin/salesSlice';
+import { plusSalesFunc, saleDeleteModalFunc, saleUpdateModalFuncCommon } from '../../../redux/slices/admin/salesSlice';
 import SearchInpMain from '../searchInpMain/SearchInpMain';
 import { FaPlus } from 'react-icons/fa';
 
@@ -15,31 +15,34 @@ const ITEMS_PER_PAGE = 10;
 const STORAGE_KEY = 'salesTableCurrentPage';
 const DATE_RANGE_STORAGE_KEY = 'salesTableDateRange';
 const AMOUNT_RANGE_STORAGE_KEY = 'salesTableAmountRange';
+const SEARCH_STORAGE_KEY = 'salesTableSearchQuery';
 
 const SalesTableEnd = () => {
-    const [searchQuery, setSearchQuery] = useState('');
-    
-    // localStorage-dan məlumatları oxuyaraq state-ləri başlat
+    const [searchQuery, setSearchQuery] = useState(() => {
+        const savedSearch = localStorage.getItem(SEARCH_STORAGE_KEY);
+        return savedSearch || '';
+    });
+
     const [minAmount, setMinAmount] = useState(() => {
         const savedAmountRange = localStorage.getItem(AMOUNT_RANGE_STORAGE_KEY);
         return savedAmountRange ? JSON.parse(savedAmountRange).minAmount : '';
     });
-    
+
     const [maxAmount, setMaxAmount] = useState(() => {
         const savedAmountRange = localStorage.getItem(AMOUNT_RANGE_STORAGE_KEY);
         return savedAmountRange ? JSON.parse(savedAmountRange).maxAmount : '';
     });
-    
+
     const [startDate, setStartDate] = useState(() => {
         const savedDateRange = localStorage.getItem(DATE_RANGE_STORAGE_KEY);
         return savedDateRange ? JSON.parse(savedDateRange).startDate : '';
     });
-    
+
     const [endDate, setEndDate] = useState(() => {
         const savedDateRange = localStorage.getItem(DATE_RANGE_STORAGE_KEY);
         return savedDateRange ? JSON.parse(savedDateRange).endDate : '';
     });
-    
+
     const [currentPage, setCurrentPage] = useState(() => {
         const savedPage = localStorage.getItem(STORAGE_KEY);
         return savedPage ? parseInt(savedPage, 10) : 1;
@@ -48,38 +51,31 @@ const SalesTableEnd = () => {
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const { salesList, count } = useSelector(state => state.sales);
-    console.log(salesList);
 
+    // --- EFFECTS ---
     useEffect(() => {
         fetchSales(currentPage, searchQuery, minAmount, maxAmount, startDate, endDate);
     }, [currentPage, searchQuery, minAmount, maxAmount, startDate, endDate]);
 
-    // Səhifə dəyişdikdə localStorage-a yaz
     useEffect(() => {
         localStorage.setItem(STORAGE_KEY, currentPage.toString());
     }, [currentPage]);
 
-    // Tarix aralığı dəyişdikdə localStorage-a yaz
     useEffect(() => {
         const dateRange = { startDate, endDate };
         localStorage.setItem(DATE_RANGE_STORAGE_KEY, JSON.stringify(dateRange));
     }, [startDate, endDate]);
 
-    // Məbləğ aralığı dəyişdikdə localStorage-a yaz
     useEffect(() => {
         const amountRange = { minAmount, maxAmount };
         localStorage.setItem(AMOUNT_RANGE_STORAGE_KEY, JSON.stringify(amountRange));
     }, [minAmount, maxAmount]);
 
-    // Komponent unmount olarkən təmizləmək istəsəniz (lazım deyil, amma option kimi)
-    // useEffect(() => {
-    //     return () => {
-    //         localStorage.removeItem(STORAGE_KEY);
-    //         localStorage.removeItem(DATE_RANGE_STORAGE_KEY);
-    //         localStorage.removeItem(AMOUNT_RANGE_STORAGE_KEY);
-    //     };
-    // }, []);
+    useEffect(() => {
+        localStorage.setItem(SEARCH_STORAGE_KEY, searchQuery);
+    }, [searchQuery]);
 
+    // --- FETCH ---
     const fetchSales = (page = 1, search = searchQuery, min = minAmount, max = maxAmount, start_date = startDate, end_date = endDate) => {
         dispatch(getSalesList(page, search, min, max, start_date, end_date));
         setCurrentPage(page);
@@ -95,15 +91,6 @@ const SalesTableEnd = () => {
         fetchSales(1, query);
     };
 
-    const handleFilterAmount = () => {
-        fetchSales(1, searchQuery, minAmount, maxAmount);
-    };
-
-    const handleFilterDate = () => {
-        fetchSales(1, searchQuery, minAmount, maxAmount, startDate, endDate);
-    };
-
-    // Tarix filtrlərini təmizləmək üçün funksiya
     const handleClearDateFilter = () => {
         setStartDate('');
         setEndDate('');
@@ -111,7 +98,6 @@ const SalesTableEnd = () => {
         fetchSales(1, searchQuery, minAmount, maxAmount, '', '');
     };
 
-    // Məbləğ filtrlərini təmizləmək üçün funksiya
     const handleClearAmountFilter = () => {
         setMinAmount('');
         setMaxAmount('');
@@ -119,7 +105,6 @@ const SalesTableEnd = () => {
         fetchSales(1, searchQuery, '', '', startDate, endDate);
     };
 
-    // Bütün filtrləri təmizləmək üçün funksiya
     const handleClearAllFilters = () => {
         setStartDate('');
         setEndDate('');
@@ -128,6 +113,7 @@ const SalesTableEnd = () => {
         setSearchQuery('');
         localStorage.removeItem(DATE_RANGE_STORAGE_KEY);
         localStorage.removeItem(AMOUNT_RANGE_STORAGE_KEY);
+        localStorage.removeItem(SEARCH_STORAGE_KEY);
         fetchSales(1, '', '', '', '', '');
     };
 
@@ -135,7 +121,7 @@ const SalesTableEnd = () => {
         if (!id) return;
         await dispatch(getCustomerFactureList(id));
         navigate(`/customer-movement-facture`);
-        localStorage.setItem("customerId", customerId)
+        localStorage.setItem("customerId", customerId);
     };
 
     const formatDateTime = (datetime) => {
@@ -144,88 +130,67 @@ const SalesTableEnd = () => {
     };
 
     const deleteSale = (id) => {
-        console.log(id);
         dispatch(saleDeleteModalFunc(id));
     }
 
     const updateSale = (x) => dispatch(saleUpdateModalFuncCommon(x));
 
-    const pageCount = Math.ceil(count / ITEMS_PER_PAGE);
-
     const plusUpdateSale = async (item) => {
-        console.log(item);
-        navigate("/sales-products-select")
-        await dispatch(plusSalesFunc(item))
+        navigate("/sales-products-select");
+        await dispatch(plusSalesFunc(item));
         await dispatch(getCustomerFactureList(item?.id));
     }
 
+    const pageCount = Math.ceil(count / ITEMS_PER_PAGE);
+
     return (
         <div className='admin_container dashboard_end_container'>
+            {/* Tarix */}
             <div className="form_group sales_dates_inputs">
                 <label>Tarix aralığı</label>
                 <div className="date_range">
-                    <input
-                        type="date"
-                        value={startDate}
-                        onChange={(e) => setStartDate(e.target.value)}
-                    />
+                    <input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} />
                     -
-                    <input
-                        type="date"
-                        value={endDate}
-                        onChange={(e) => setEndDate(e.target.value)}
-                    />
-                    {/* <button 
-                        style={{ marginTop: "20px", marginLeft: "10px" }} 
-                        className="submit_btn" 
-                        onClick={handleFilterDate}
-                    >
-                        Tətbiq et
-                    </button> */}
+                    <input type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} />
                     {(startDate || endDate) && (
-                        <button 
-                            style={{ marginTop: "20px", marginLeft: "10px", backgroundColor: '#ff4444' }} 
-                            className="submit_btn" 
-                            onClick={handleClearDateFilter}
-                        >
+                        <button style={{ marginTop: "20px", marginLeft: "10px", backgroundColor: '#ff4444' }}
+                                className="submit_btn"
+                                onClick={handleClearDateFilter}>
                             Təmizlə
                         </button>
                     )}
                 </div>
             </div>
 
+            {/* Məbləğ */}
             <div className="form_group">
                 <label>Məbləğ aralığı</label>
                 <div>
                     <input type="number" placeholder="Min" value={minAmount} onChange={(e) => setMinAmount(e.target.value)} />
                     -
                     <input type="number" placeholder="Max" value={maxAmount} onChange={(e) => setMaxAmount(e.target.value)} />
-                    {/* <button style={{ marginTop: "20px" }} className="submit_btn" onClick={handleFilterAmount}>Tətbiq et</button> */}
                     {(minAmount || maxAmount) && (
-                        <button 
-                            style={{ marginTop: "20px", marginLeft: "10px", backgroundColor: '#ff4444' }} 
-                            className="submit_btn" 
-                            onClick={handleClearAmountFilter}
-                        >
+                        <button style={{ marginTop: "20px", marginLeft: "10px", backgroundColor: '#ff4444' }}
+                                className="submit_btn"
+                                onClick={handleClearAmountFilter}>
                             Təmizlə
                         </button>
                     )}
                 </div>
             </div>
 
+            {/* Search */}
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '20px' }}>
-                <SearchInpMain onSearch={handleSearch} />
+                <SearchInpMain onSearch={handleSearch} inputValue={searchQuery} />
                 {(startDate || endDate || minAmount || maxAmount || searchQuery) && (
-                    <button 
-                        style={{ backgroundColor: '#888', height: 'fit-content' }} 
-                        className="submit_btn" 
-                        onClick={handleClearAllFilters}
-                    >
+                    <button style={{ backgroundColor: '#888', height: 'fit-content' }} className="submit_btn"
+                            onClick={handleClearAllFilters}>
                         Bütün Filtrləri Təmizlə
                     </button>
                 )}
             </div>
 
+            {/* Cədvəl */}
             <table className='custom_table custom_table_sales'>
                 <thead>
                     <tr>
@@ -265,6 +230,7 @@ const SalesTableEnd = () => {
                 </tbody>
             </table>
 
+            {/* Pagination */}
             {pageCount > 1 && (
                 <ReactPaginate
                     previousLabel={
@@ -286,7 +252,8 @@ const SalesTableEnd = () => {
                     nextClassName={'dashboard_end_arrow'}
                     activeClassName={'dashboard_end_active'}
                     forcePage={currentPage - 1}
-                />)}
+                />
+            )}
         </div>
     );
 };

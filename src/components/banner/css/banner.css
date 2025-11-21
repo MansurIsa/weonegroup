@@ -1,9 +1,12 @@
 .home_banner_bg_img {
   width: 100%;
   height: 85vh;
-  background-repeat: no-repeat;
-  background-size: cover;
-  background-position: center;
+  background-repeat: no-repeat !important;
+  background-size: cover !important;
+  background-position: right !important;
+}
+.home_banner_bg_img1{
+  background-position: left !important;
 }
 
 .home_banner_bg_img h1 {

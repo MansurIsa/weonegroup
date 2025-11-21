@@ -25,9 +25,12 @@ const SalesChart = () => {
   const { chartObj } = useSelector(state => state.dashboard);
   const { brandList } = useSelector(state => state.products);
 
+  console.log(usersList);
+  
+
   // Başlanğıc load
   useEffect(() => {
-    dispatch(getUsersList());
+    dispatch(getUsersList(1,""));
     dispatch(getUserObj());
     dispatch(getBrandList());
   }, [dispatch]);
@@ -78,7 +81,7 @@ const SalesChart = () => {
             <div className="form_group">
               <CustomCustomerSelect
                 displayVal={false}
-                customers={usersList.filter(user => user.is_staff)}
+                customers={usersList}
                 value={selectedCustomer}
                 onChange={(id) => setSelectedCustomer(id)}
                 onSearch={handleSearch}
