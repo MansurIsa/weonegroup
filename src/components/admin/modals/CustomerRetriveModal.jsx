@@ -25,11 +25,11 @@ const CustomerRetriveModal = ({closeModal}) => {
                             {Array.isArray(customerRetriveObj?.our_debt_amount) ? (() => {
                                 const [manat, dollar, rubl] = customerRetriveObj.our_debt_amount;
                                 const debts = [];
-                                if (manat !== 0) debts.push(`${manat} ₼`);
-                                if (dollar !== 0) debts.push(`${dollar} $`);
-                                if (rubl !== 0) debts.push(`${rubl} ₽`);
+                                if (manat !== 0) debts.push(`${Math.round(manat*100)/100} ₼`);
+                                if (dollar !== 0) debts.push(`${Math.round(dollar*100)/100} $`);
+                                if (rubl !== 0) debts.push(`${Math.round(rubl*100)/100} ₽`);
                                 return debts.length > 0 ? debts.join(' | ') : '0 ₼';
-                            })() : `${customerRetriveObj?.our_debt_amount || 0} ₼`}
+                            })() : `${Math.round(customerRetriveObj?.our_debt_amount*100)/100 || 0} ₼`}
                         </p>
                     </div>
 

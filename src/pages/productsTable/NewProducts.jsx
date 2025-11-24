@@ -18,7 +18,8 @@ const NewProducts = () => {
     image: null,
     store: '',
     titles: [''],
-    contents: ['']
+    contents: [''],
+    degree: ''
   });
 
   const [previewUrl, setPreviewUrl] = useState(null);
@@ -101,11 +102,12 @@ const NewProducts = () => {
     form.append('store', +formData.store);
     form.append('titles', JSON.stringify(formData.titles));
     form.append('contents', JSON.stringify(formData.contents));
+    form.append('degree', JSON.stringify(formData.degree));
 
     if (formData.image) {
       form.append('image', formData.image);
     }
-  console.log(Object.fromEntries(form.entries()));
+    console.log(Object.fromEntries(form.entries()));
     dispatch(addProduct(form, navigate));
   };
 
@@ -188,44 +190,53 @@ const NewProducts = () => {
               placeholder="Brend seçin"
             />
           </div>
-
+          <div className="form_group">
+            <label>Dərəcə</label>
+            <input
+              type="text"
+              name="degree"
+              placeholder="Dərəcə daxil edin"
+              value={formData.degree}
+              onChange={handleChange}
+            />
+          </div>
           <div className="form_group">
             <label>Başlıq və məzmunlar</label>
-           {formData.titles.map((title, index) => (
-  <div key={index} style={{ marginBottom: '20px', borderBottom: '1px solid #ccc', paddingBottom: '15px' }}>
-    <input
-      type="text"
-      placeholder="Başlıq"
-      value={title}
-      onChange={(e) => handleTitleChange(index, e.target.value)}
-      style={{ width: '100%', marginBottom: '10px' }}
-    />
+            {formData.titles.map((title, index) => (
+              <div key={index} style={{ marginBottom: '20px', borderBottom: '1px solid #ccc', paddingBottom: '15px' }}>
+                <input
+                  type="text"
+                  placeholder="Başlıq"
+                  value={title}
+                  onChange={(e) => handleTitleChange(index, e.target.value)}
+                  style={{ width: '100%', marginBottom: '10px' }}
+                />
 
-    <EditableContent
-      value={formData.contents[index]}
-      onChange={(html) => handleContentChange(index, html)}
-    />
+                <EditableContent
+                  value={formData.contents[index]}
+                  onChange={(html) => handleContentChange(index, html)}
+                />
 
-    <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '10px' }}>
-      {formData.titles.length > 1 && (
-        <button type="button" onClick={() => removeTitleContent(index)} className="remove_article_btn">
-          {/* SVG saxlanılıb */}
-          <svg width="15" height="15" viewBox="0 0 15 15" fill="none">
-            <path d="M1.5 7.5C1.5 7.2 1.6 7 1.8 6.8C2 6.6 2.2 6.5 2.5 6.5H12.5C12.8 6.5 13 6.6 13.2 6.8C13.4 7 13.5 7.2 13.5 7.5C13.5 7.8 13.4 8 13.2 8.2C13 8.4 12.8 8.5 12.5 8.5H2.5C2.2 8.5 2 8.4 1.8 8.2C1.6 8 1.5 7.8 1.5 7.5Z" fill="#D60000" />
-          </svg>
-        </button>
-      )}
-      {index === formData.titles.length - 1 && (
-        <button type="button" onClick={addTitleContent} className="add_article_btn">
-          {/* SVG saxlanılıb */}
-          <svg width="15" height="15" viewBox="0 0 15 15" fill="none">
-            <path d="M13.5 8.5H8.5V13.5C8.5 13.8 8.4 14 8.2 14.2C8 14.4 7.8 14.5 7.5 14.5C7.2 14.5 7 14.4 6.8 14.2C6.6 14 6.5 13.8 6.5 13.5V8.5H1.5C1.2 8.5 1 8.4 0.8 8.2C0.6 8 0.5 7.8 0.5 7.5C0.5 7.2 0.6 7 0.8 6.8C1 6.6 1.2 6.5 1.5 6.5H6.5V1.5C6.5 1.2 6.6 1 6.8 0.8C7 0.6 7.2 0.5 7.5 0.5C7.8 0.5 8 0.6 8.2 0.8C8.4 1 8.5 1.2 8.5 1.5V6.5H13.5C13.8 6.5 14 6.6 14.2 6.8C14.4 7 14.5 7.2 14.5 7.5C14.5 7.8 14.4 8 14.2 8.2C14 8.4 13.8 8.5 13.5 8.5Z" fill="#202020" />
-          </svg>
-        </button>
-      )}
-    </div>
-  </div>
-))}
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '10px' }}>
+                  {formData.titles.length > 1 && (
+                    <button type="button" onClick={() => removeTitleContent(index)} className="remove_article_btn">
+                      {/* SVG saxlanılıb */}
+                      <svg width="15" height="15" viewBox="0 0 15 15" fill="none">
+                        <path d="M1.5 7.5C1.5 7.2 1.6 7 1.8 6.8C2 6.6 2.2 6.5 2.5 6.5H12.5C12.8 6.5 13 6.6 13.2 6.8C13.4 7 13.5 7.2 13.5 7.5C13.5 7.8 13.4 8 13.2 8.2C13 8.4 12.8 8.5 12.5 8.5H2.5C2.2 8.5 2 8.4 1.8 8.2C1.6 8 1.5 7.8 1.5 7.5Z" fill="#D60000" />
+                      </svg>
+                    </button>
+                  )}
+                  {index === formData.titles.length - 1 && (
+                    <button type="button" onClick={addTitleContent} className="add_article_btn">
+                      {/* SVG saxlanılıb */}
+                      <svg width="15" height="15" viewBox="0 0 15 15" fill="none">
+                        <path d="M13.5 8.5H8.5V13.5C8.5 13.8 8.4 14 8.2 14.2C8 14.4 7.8 14.5 7.5 14.5C7.2 14.5 7 14.4 6.8 14.2C6.6 14 6.5 13.8 6.5 13.5V8.5H1.5C1.2 8.5 1 8.4 0.8 8.2C0.6 8 0.5 7.8 0.5 7.5C0.5 7.2 0.6 7 0.8 6.8C1 6.6 1.2 6.5 1.5 6.5H6.5V1.5C6.5 1.2 6.6 1 6.8 0.8C7 0.6 7.2 0.5 7.5 0.5C7.8 0.5 8 0.6 8.2 0.8C8.4 1 8.5 1.2 8.5 1.5V6.5H13.5C13.8 6.5 14 6.6 14.2 6.8C14.4 7 14.5 7.2 14.5 7.5C14.5 7.8 14.4 8 14.2 8.2C14 8.4 13.8 8.5 13.5 8.5Z" fill="#202020" />
+                      </svg>
+                    </button>
+                  )}
+                </div>
+              </div>
+            ))}
           </div>
 
           <div className="form_group">

@@ -35,6 +35,12 @@ const FooterRight = () => {
             {contactNumber}
           </a>
         )}
+        <a href="tel:+994504020250">
+            +994 50 402 02 50
+          </a>
+          <a href="tel:+994504800420">
+            +994 50 480 04 20
+          </a>
       </div>
     </div>
   )

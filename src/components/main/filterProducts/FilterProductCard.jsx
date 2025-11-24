@@ -86,7 +86,7 @@ const FilterProductCard = ({ data, newPr }) => {
             </span>
           )}
 
-          <h3>{data?.name}</h3>
+          <h3>{data?.name} {data?.degree}</h3>
           <p>{data?.brand_name}</p>
           <span className="article_pr_name">
             Məhsul kodu: {data?.article_names?.join(", ")}

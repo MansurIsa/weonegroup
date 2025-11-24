@@ -10,6 +10,7 @@ import Img2 from "../../../assets/images/banner2.jpg"
 import Img3 from "../../../assets/images/banner3.jpg"
 import Img4 from "../../../assets/images/banner4.jpg"
 import Img5 from "../../../assets/images/banner5.jpg"
+import Video1 from "../../../assets/images/VID-20251122-WA0001.mp4"
 import { useEffect } from "react";
 import { getBannerList, getSettingsList } from "../../../actions/homeAction/homeAction";
 import { useDispatch, useSelector } from "react-redux";
@@ -59,7 +60,7 @@ const HomeBanner = () => {
                 pagination={{ clickable: true }}
                 loop={true}
                 autoplay={{
-                    delay: 5000,
+                    delay: 8000,
                     disableOnInteraction: false,
                 }}
                 effect="fade"
@@ -76,6 +77,22 @@ const HomeBanner = () => {
                         </div>
                     </SwiperSlide>
                 ))} */}
+<SwiperSlide className="home_banner_bg_img home_banner_video" data-hash="slide-video">
+    <video
+        src={Video1}
+        autoPlay
+        muted
+        loop
+        playsInline
+        className="home_banner_video_tag"
+    ></video>
+
+    {/* <div className="home_banner_yellow_video">
+        <h1>Keyfiyyət hər kadrda hiss olunur</h1>
+        <p>WeOneGroup — avtomobiliniz üçün ən güvənilən hissələri təqdim edir.</p>
+        <button onClick={targetPr}>Məhsullara bax</button>
+    </div> */}
+</SwiperSlide>
 
                 <SwiperSlide className="home_banner_bg_img home_banner_bg_img1" data-hash="slide1" style={{ background: `url(${Img1})`, backgroundSize: "cover", backgroundPosition: "left", backgroundRepeat: "no-repeat" }}>
                     <div className="home_banner_yellow1">

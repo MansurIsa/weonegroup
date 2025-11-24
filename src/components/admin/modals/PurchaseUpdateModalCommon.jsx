@@ -16,6 +16,9 @@ const PurchaseUpdateModalCommon = () => {
   const [currency, setCurrency] = useState('');
   const [status, setStatus] = useState('');
 
+  console.log(purchaseUpdateModalCommonObj);
+  
+
   useEffect(() => {
     if (purchaseUpdateModalCommonObj) {
       setDate(purchaseUpdateModalCommonObj.date || '');
@@ -56,18 +59,18 @@ const PurchaseUpdateModalCommon = () => {
               />
             </div>
 
-           <div className="form_group">
-  <label>Valyuta</label>
-  <select
-    value={currency}
-    onChange={(e) => setCurrency(e.target.value)}
-  >
-    <option value="">Seçin</option>
-    <option value="M">₼ Manat</option>
-    <option value="D">$ Dollar</option>
-    <option value="R">₽ Rubl</option>
-  </select>
-</div>
+            <div className="form_group">
+              <label>Valyuta</label>
+              <select
+                value={currency}
+                onChange={(e) => setCurrency(e.target.value)}
+              >
+                <option value="">Seçin</option>
+                <option value="M">₼ Manat</option>
+                <option value="D">$ Dollar</option>
+                <option value="R">₽ Rubl</option>
+              </select>
+            </div>
 
 
             <div className="form_group">

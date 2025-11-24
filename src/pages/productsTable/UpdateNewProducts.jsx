@@ -25,6 +25,7 @@ const UpdateNewProducts = () => {
         purchasePrice: '',
         salePrice: '',
         discountPrice: '',
+        degree: ''
     });
 
     const [previewUrl, setPreviewUrl] = useState(null);
@@ -46,6 +47,8 @@ const UpdateNewProducts = () => {
         dispatch(getBrandList());
         dispatch(getStoreList());
     }, [dispatch]);
+    console.log(productUpdateObj);
+    
 
     // Load product initial data into formData when productUpdateObj changes
     useEffect(() => {
@@ -73,6 +76,7 @@ const UpdateNewProducts = () => {
                 purchasePrice: productUpdateObj.purchase_price || '',
                 salePrice: productUpdateObj.price || '',
                 discountPrice: productUpdateObj.discount_price || '',
+                degree: productUpdateObj.degree.replaceAll('"',"") || ''
             });
             setPreviewUrl(productUpdateObj.image || null);
         }
@@ -198,6 +202,7 @@ const UpdateNewProducts = () => {
         form.append('purchase_price', formData.purchasePrice);
         form.append('price', formData.salePrice);
         form.append('discount_price', formData.discountPrice);
+        form.append('degree', formData.degree);
 
         if (formData.image) {
             form.append('image', formData.image);
@@ -422,6 +427,16 @@ const UpdateNewProducts = () => {
                                 </span>
                             </label>
                         )}
+                    </div>
+                    <div className="form_group">
+                        <label>Dərəcə</label>
+                        <input
+                            type="text"
+                            name="degree"
+                            value={formData.degree}
+                            onChange={handleChange}
+                            placeholder="Dərəcə daxil edin"
+                        />
                     </div>
 
                     {/* Başlıq və Məzmun hissəsi alt-alta */}

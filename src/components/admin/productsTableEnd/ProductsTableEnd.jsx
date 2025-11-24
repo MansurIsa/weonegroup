@@ -41,7 +41,7 @@ const ProductsTableEnd = ({ productsList }) => {
                 <tbody>
                     {productsList?.map((item, index) => (
                         <tr key={index}>
-                            <td>{item?.name || "-"}</td>
+                            <td>{item?.name || "-"} {item?.degree || ""}</td>
                             <td className='table_article_scroll'>
                                 {item?.articles?.map(a => a.name).join(', ') || "-"}
                             </td>
