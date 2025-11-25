@@ -17,6 +17,8 @@ const SalesProductsSelect = () => {
   const { usersList, customerFactureList } = useSelector((state) => state.login);
   const { plusSalesObj } = useSelector((state) => state.sales);
 
+  console.log(stockList);
+  
   const [selectedProductIds, setSelectedProductIds] = useState([]);
   const [quantityValues, setQuantityValues] = useState({});
   const [priceValues, setPriceValues] = useState({});
@@ -34,7 +36,37 @@ const SalesProductsSelect = () => {
     dispatch(getCategoryList());
     dispatch(getUsersList());
     fetchStock(1, "");
+    
+    // ✅ İlk yükləndikdə cari tarixi 24 saatlıq formata təyin et
+    const now = new Date();
+    const formattedDateTime = formatToDateTimeLocal(now);
+    setSelectedDateTime(formattedDateTime);
   }, [dispatch]);
+
+  // ✅ 24 saatlıq formata çevirən funksiya
+  const formatToDateTimeLocal = (date) => {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+    
+    return `${year}-${month}-${day}T${hours}:${minutes}`;
+  };
+
+  // ✅ DateTime-local dəyərini 24 saatlıq formata çevirən funksiya
+  const formatDateTimeForDisplay = (dateTimeString) => {
+    if (!dateTimeString) return "";
+    
+    const date = new Date(dateTimeString);
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const year = date.getFullYear();
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+    
+    return `${day}/${month}/${year} ${hours}:${minutes}`;
+  };
 
   const fetchStock = (page = 1, search = "") => {
     dispatch(getStockList(page, search));
@@ -193,7 +225,10 @@ const handleQuantityChange = (productId, value) => {
       setSelectedCustomerId(customerFactureList.customer?.toString() || "");
       const firstDatetime = customerFactureList.salelist_sales[0]?.datetime;
       if (firstDatetime) {
-        setSelectedDateTime(firstDatetime.slice(0, 16));
+        // ✅ Backend-dən gələn tarixi datetime-local formatına çevir
+        const date = new Date(firstDatetime);
+        const formattedDate = formatToDateTimeLocal(date);
+        setSelectedDateTime(formattedDate);
       }
       const productIds = customerFactureList.salelist_sales.map((s) => s.product.id);
       const quantities = {};
@@ -255,7 +290,14 @@ const handleQuantityChange = (productId, value) => {
               type="datetime-local" 
               value={selectedDateTime} 
               onChange={handleDateChange} 
+              className="datetime-input"
             /> 
+            {/* ✅ Formatlanmış tarixi göstərmək üçün (opsional) */}
+            {selectedDateTime && (
+              <div className="formatted-date">
+                Seçilmiş tarix: {formatDateTimeForDisplay(selectedDateTime)}
+              </div>
+            )}
           </div> 
         </div> 
         <div className="admin_header_search project_container"> 
@@ -366,8 +408,16 @@ const handleQuantityChange = (productId, value) => {
           </table> 
           {count > itemsPerPage && ( 
             <ReactPaginate 
-              previousLabel={"<"} 
-              nextLabel={">"} 
+              previousLabel={
+            <svg width="8" height="14" viewBox="0 0 8 14" fill="none">
+              <path d="M7 1L1 7L7 13" stroke="#9F9FA0" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          }
+          nextLabel={
+            <svg width="8" height="14" viewBox="0 0 8 14" fill="none">
+              <path d="M1 1L7 7L1 13" stroke="#202020" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          }
               pageCount={Math.ceil(count / itemsPerPage)} 
               onPageChange={handlePageClick} 
               containerClassName={"dashboard_end_pagination"} 

@@ -56,7 +56,7 @@ const ProductDetailContainer = ({ productObj, userObj }) => {
         <div className='product_detail_page project_container'>
             <div className="product_detail_page_paths">
                 <Link to={'/products'}>Məhsullar</Link>
-                / <p>{productObj?.name}</p>
+                / <p>{productObj?.name} {productObj?.degree}</p>
             </div>
 
             <div className="product_detail_container">
@@ -66,7 +66,7 @@ const ProductDetailContainer = ({ productObj, userObj }) => {
 
                 <div className="product_detail_container_right">
                     <div className="product_detail_container_right_color">
-                        <h1>{productObj?.name}</h1>
+                        <h1>{productObj?.name} {productObj?.degree}</h1>
                         {
                             accessToken && (
                                 <span

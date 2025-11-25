@@ -1,41 +1,112 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { IoMdClose } from 'react-icons/io';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { closeSaleUpdateModalFunc } from '../../../redux/slices/admin/salesSlice';
 import { getSalesList, updateSaleCommon } from '../../../actions/salesAction/salesAction';
-// import { updateSaleCommon, closeSaleUpdateModalFunc, getSalesList } from 'your/actions'
+import { getUsersList } from '../../../actions/loginAction/loginAction';
 
 const SaleUpdateModalCommon = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const dropdownRef = useRef(null);
 
   const { saleUpdateModalCommonObj } = useSelector(state => state.sales);
+  const { usersList } = useSelector(state => state.login);
 
   console.log(saleUpdateModalCommonObj);
-  
 
   const [dateTime, setDateTime] = useState('');
   const [status, setStatus] = useState('');
+  const [customer, setCustomer] = useState('');
+  const [searchTerm, setSearchTerm] = useState('');
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   useEffect(() => {
     if (saleUpdateModalCommonObj) {
-      // sale_datetime = "2025-08-01T17:29:00Z" → convert to local ISO format
       const formattedDate = saleUpdateModalCommonObj.sale_datetime
         ? new Date(saleUpdateModalCommonObj.sale_datetime).toISOString().slice(0, 16)
         : '';
       setDateTime(formattedDate);
       setStatus(saleUpdateModalCommonObj.sale_status || '');
+      
+      // Mevcut müşteri bilgisini ayarla
+      if (saleUpdateModalCommonObj.customer) {
+        setCustomer(saleUpdateModalCommonObj.customer);
+        setSearchTerm(saleUpdateModalCommonObj.customer);
+      }
     }
   }, [saleUpdateModalCommonObj]);
 
+  // Kullanıcı listesini çek
+  useEffect(() => {
+    dispatch(getUsersList(1, ""));
+  }, [dispatch]);
+
+  // Arama işlemi
+  useEffect(() => {
+    const delayDebounceFn = setTimeout(() => {
+      dispatch(getUsersList(1, searchTerm));
+    }, 300);
+
+    return () => clearTimeout(delayDebounceFn);
+  }, [searchTerm, dispatch]);
+
+  const handleCustomerSelect = (user) => {
+    setCustomer(user.username);
+    setSearchTerm(user.username);
+    setIsDropdownOpen(false);
+  };
+
+  const handleInputChange = (e) => {
+    const value = e.target.value;
+    setSearchTerm(value);
+    setIsDropdownOpen(true);
+  };
+
+  const handleInputFocus = () => {
+    setIsDropdownOpen(true);
+  };
+
+  const filteredUsers = usersList?.filter(user => 
+    user.username.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    user.first_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    user.last_name?.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  // Dropdown dışına tıklama
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setIsDropdownOpen(false);
+        
+        // Dropdown kapanınca, eğer bir müşteri seçiliyse searchTerm'ü ona eşitle
+        // Eğer müşteri seçili değilse, searchTerm olduğu gibi kalsın
+        if (customer && searchTerm !== customer) {
+          setSearchTerm(customer);
+        }
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [customer, searchTerm]);
+
   const handleSubmit = async () => {
+    // Seçilen kullanıcıyı bul - sadece dropdown'dan seçilmişse
+    const selectedUser = customer ? usersList?.find(user => user.username === customer) : null;
+    
     const payload = {
       dt: dateTime ? new Date(dateTime).toISOString() : null,
       status: status || null,
+      customer_id: selectedUser ? selectedUser.id : null,
     };
 
     console.log("Yenilənmiş satış məlumatı:", payload);
+    console.log("Seçilmiş müşteri:", customer);
+    console.log("Seçilmiş müşteri ID:", selectedUser?.id);
 
     await dispatch(updateSaleCommon(payload, saleUpdateModalCommonObj?.id, navigate));
     await dispatch(closeSaleUpdateModalFunc());
@@ -48,6 +119,46 @@ const SaleUpdateModalCommon = () => {
         <div className="modal_inner_container income_add_payment_modal_container">
           <div className="left_box">
             <IoMdClose className="close_icon" onClick={() => dispatch(closeSaleUpdateModalFunc())} />
+
+            {/* Müşteri Seçimi */}
+            <div className="form_group">
+              <label>Müştəri</label>
+              <div className="custom_select_wrapper" ref={dropdownRef}>
+                <input
+                  type="text"
+                  value={searchTerm}
+                  onChange={handleInputChange}
+                  onFocus={handleInputFocus}
+                  placeholder="Müştəri axtar..."
+                  className="select_search_input"
+                />
+                {isDropdownOpen && (
+                  <div className="custom_select_dropdown">
+                    {filteredUsers && filteredUsers.length > 0 ? (
+                      filteredUsers.map(user => (
+                        <div
+                          key={user.id}
+                          className={`dropdown_item ${user.username === customer ? 'selected' : ''}`}
+                          onClick={() => handleCustomerSelect(user)}
+                        >
+                          <span className="username">{user.username}</span>
+                          <span className="user_info">
+                            {user.first_name} {user.last_name} - {user.phone_number}
+                          </span>
+                        </div>
+                      ))
+                    ) : (
+                      <div className="dropdown_item no_results">Nəticə tapılmadı</div>
+                    )}
+                  </div>
+                )}
+              </div>
+              {customer && (
+                <div style={{ marginTop: '5px', fontSize: '12px', color: '#666' }}>
+                  Seçilmiş müşteri: <strong>{customer}</strong>
+                </div>
+              )}
+            </div>
 
             <div className="form_group">
               <label>Tarix və saat</label>
