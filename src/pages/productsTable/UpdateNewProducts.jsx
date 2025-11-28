@@ -76,7 +76,7 @@ const UpdateNewProducts = () => {
                 purchasePrice: productUpdateObj.purchase_price || '',
                 salePrice: productUpdateObj.price || '',
                 discountPrice: productUpdateObj.discount_price || '',
-                degree: productUpdateObj.degree.replaceAll('"',"") || ''
+                degree: productUpdateObj?.degree?.replaceAll('"',"") || ''
             });
             setPreviewUrl(productUpdateObj.image || null);
         }

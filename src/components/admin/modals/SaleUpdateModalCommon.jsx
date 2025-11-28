@@ -24,10 +24,9 @@ const SaleUpdateModalCommon = () => {
 
   useEffect(() => {
     if (saleUpdateModalCommonObj) {
-      const formattedDate = saleUpdateModalCommonObj.sale_datetime
-        ? new Date(saleUpdateModalCommonObj.sale_datetime).toISOString().slice(0, 16)
-        : '';
-      setDateTime(formattedDate);
+       const date = new Date(saleUpdateModalCommonObj?.sale_datetime);
+        // console.log(date.toLocaleString('az-AZ'));
+      setDateTime(date.toLocaleString('az-AZ'));
       setStatus(saleUpdateModalCommonObj.sale_status || '');
       
       // Mevcut müşteri bilgisini ayarla

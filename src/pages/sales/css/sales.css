@@ -35,3 +35,11 @@ td select{
 .quantity_input.error_input {
   border: 2px solid var(--red);
 }
+
+
+/* Global CSS faylına əlavə edin */
+.brand-btn.active {
+  background-color: #007bff !important;
+  color: white !important;
+  border-color: #007bff !important;
+}

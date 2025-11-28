@@ -126,6 +126,8 @@ const SalesTableEnd = () => {
 
     const formatDateTime = (datetime) => {
         const date = new Date(datetime);
+        console.log(date.toLocaleString('az-AZ'));
+        
         return date.toLocaleString('az-AZ');
     };
 
@@ -133,7 +135,16 @@ const SalesTableEnd = () => {
         dispatch(saleDeleteModalFunc(id));
     }
 
-    const updateSale = (x) => dispatch(saleUpdateModalFuncCommon(x));
+    const updateSale = (x) => {
+        console.log(x);
+        console.log('ijgg');
+
+         const date = new Date(x?.sale_datetime);
+        console.log(date.toLocaleString('az-AZ'));
+        
+        dispatch(saleUpdateModalFuncCommon(x));
+
+    }
 
     const plusUpdateSale = async (item) => {
         navigate("/sales-products-select");

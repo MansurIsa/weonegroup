@@ -16,6 +16,7 @@ const SalesProductsSelect = () => {
   const { stockList, count } = useSelector((state) => state.stock);
   const { usersList, customerFactureList } = useSelector((state) => state.login);
   const { plusSalesObj } = useSelector((state) => state.sales);
+  const { brandList } = useSelector((state) => state.products);
 
   console.log(stockList);
   
@@ -23,11 +24,12 @@ const SalesProductsSelect = () => {
   const [quantityValues, setQuantityValues] = useState({});
   const [priceValues, setPriceValues] = useState({});
   const [statusValues, setStatusValues] = useState({});
-  const [initialStockValues, setInitialStockValues] = useState({}); // ✅ Yeni əlavə
+  const [initialStockValues, setInitialStockValues] = useState({});
   const [selectedCustomerId, setSelectedCustomerId] = useState("");
   const [selectedDateTime, setSelectedDateTime] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
+  const [activeBrandId, setActiveBrandId] = useState(null); // ✅ null olaraq başlat
   const searchTimeout = useRef(null);
   const itemsPerPage = 10;
 
@@ -37,13 +39,11 @@ const SalesProductsSelect = () => {
     dispatch(getUsersList());
     fetchStock(1, "");
     
-    // ✅ İlk yükləndikdə cari tarixi 24 saatlıq formata təyin et
     const now = new Date();
     const formattedDateTime = formatToDateTimeLocal(now);
     setSelectedDateTime(formattedDateTime);
   }, [dispatch]);
 
-  // ✅ 24 saatlıq formata çevirən funksiya
   const formatToDateTimeLocal = (date) => {
     const year = date.getFullYear();
     const month = String(date.getMonth() + 1).padStart(2, '0');
@@ -54,7 +54,6 @@ const SalesProductsSelect = () => {
     return `${year}-${month}-${day}T${hours}:${minutes}`;
   };
 
-  // ✅ DateTime-local dəyərini 24 saatlıq formata çevirən funksiya
   const formatDateTimeForDisplay = (dateTimeString) => {
     if (!dateTimeString) return "";
     
@@ -68,10 +67,24 @@ const SalesProductsSelect = () => {
     return `${day}/${month}/${year} ${hours}:${minutes}`;
   };
 
+  // ✅ FRONTEND FILTER
   const fetchStock = (page = 1, search = "") => {
     dispatch(getStockList(page, search));
     setCurrentPage(page);
   };
+
+  // ✅ Frontend-də filterlə
+  const filteredStockList = stockList?.filter(item => {
+    const product = item.product;
+    
+    // Əgər heç bir marka seçilməyibsə, hamısını göstər
+    if (activeBrandId === null) {
+      return true;
+    }
+    
+    // Seçilmiş markaya görə filterlə
+    return product?.brand?.name === activeBrandId;
+  });
 
   const handleStockSearch = (e) => {
     const value = e.target.value;
@@ -82,7 +95,12 @@ const SalesProductsSelect = () => {
     }, 500);
   };
 
-  // ✅ Yeni funksiyalar
+  // ✅ Marka filter funksiyası
+  const handleBrandFilter = (brandName) => {
+    setActiveBrandId(brandName);
+    setCurrentPage(1);
+  };
+
   const calculateTotalStock = (productId) => {
     return initialStockValues[productId] || 0;
   };
@@ -97,53 +115,51 @@ const SalesProductsSelect = () => {
     return +quantity > totalStock;
   };
 
- const toggleRow = (productId, product, stockAmount) => {
-  const isSelected = selectedProductIds.includes(productId);
+  const toggleRow = (productId, product, stockAmount) => {
+    const isSelected = selectedProductIds.includes(productId);
 
-  if (isSelected) {
-    setSelectedProductIds((prev) => prev.filter((id) => id !== productId));
-    setQuantityValues((prev) => {
-      const copy = { ...prev };
-      delete copy[productId];
-      return copy;
-    });
-    setPriceValues((prev) => {
-      const copy = { ...prev };
-      delete copy[productId];
-      return copy;
-    });
-    setStatusValues((prev) => {
-      const copy = { ...prev };
-      delete copy[productId];
-      return copy;
-    });
-    setInitialStockValues((prev) => {
-      const copy = { ...prev };
-      delete copy[productId];
-      return copy;
-    });
-  } else {
-    const currentQuantity = 0;  // Default quantity should be 0 when selected
+    if (isSelected) {
+      setSelectedProductIds((prev) => prev.filter((id) => id !== productId));
+      setQuantityValues((prev) => {
+        const copy = { ...prev };
+        delete copy[productId];
+        return copy;
+      });
+      setPriceValues((prev) => {
+        const copy = { ...prev };
+        delete copy[productId];
+        return copy;
+      });
+      setStatusValues((prev) => {
+        const copy = { ...prev };
+        delete copy[productId];
+        return copy;
+      });
+      setInitialStockValues((prev) => {
+        const copy = { ...prev };
+        delete copy[productId];
+        return copy;
+      });
+    } else {
+      const currentQuantity = 0;
 
-    setSelectedProductIds((prev) => [...prev, productId]);
-    setQuantityValues((prev) => ({ ...prev, [productId]: currentQuantity }));
-    setPriceValues((prev) => ({ ...prev, [productId]: product?.price }));
-    setStatusValues((prev) => ({ ...prev, [productId]: "G" }));
-    setInitialStockValues((prev) => ({
-      ...prev,
-      [productId]: stockAmount + currentQuantity,
-    }));
-  }
-};
+      setSelectedProductIds((prev) => [...prev, productId]);
+      setQuantityValues((prev) => ({ ...prev, [productId]: currentQuantity }));
+      setPriceValues((prev) => ({ ...prev, [productId]: product?.price }));
+      setStatusValues((prev) => ({ ...prev, [productId]: "G" }));
+      setInitialStockValues((prev) => ({
+        ...prev,
+        [productId]: stockAmount + currentQuantity,
+      }));
+    }
+  };
 
-
-const handleQuantityChange = (productId, value) => {
-  const numericValue = value.replace(/^0+/, "");  // Yalnız sıfırları silirik
-  if (numericValue === "" || (!isNaN(numericValue) && +numericValue >= 0)) {
-    setQuantityValues((prev) => ({ ...prev, [productId]: numericValue }));
-  }
-};
-
+  const handleQuantityChange = (productId, value) => {
+    const numericValue = value.replace(/^0+/, "");
+    if (numericValue === "" || (!isNaN(numericValue) && +numericValue >= 0)) {
+      setQuantityValues((prev) => ({ ...prev, [productId]: numericValue }));
+    }
+  };
 
   const handlePriceChange = (productId, value) => {
     const val = +value;
@@ -225,7 +241,6 @@ const handleQuantityChange = (productId, value) => {
       setSelectedCustomerId(customerFactureList.customer?.toString() || "");
       const firstDatetime = customerFactureList.salelist_sales[0]?.datetime;
       if (firstDatetime) {
-        // ✅ Backend-dən gələn tarixi datetime-local formatına çevir
         const date = new Date(firstDatetime);
         const formattedDate = formatToDateTimeLocal(date);
         setSelectedDateTime(formattedDate);
@@ -292,18 +307,38 @@ const handleQuantityChange = (productId, value) => {
               onChange={handleDateChange} 
               className="datetime-input"
             /> 
-            {/* ✅ Formatlanmış tarixi göstərmək üçün (opsional) */}
             {selectedDateTime && (
               <div className="formatted-date">
                 Seçilmiş tarix: {formatDateTimeForDisplay(selectedDateTime)}
               </div>
             )}
           </div> 
-        </div> 
+        </div>
+
+        {/* ✅ MARKA FİLTERİ BÖLMƏSİ - Verilən strukturla */}
+        <div className="admin_container brand_list_buttons">
+          <button
+            onClick={() => handleBrandFilter(null)}
+            className={activeBrandId === null ? 'active' : ''}
+          >
+            Bütün markalar
+          </button>
+
+          {brandList?.map((data) => (
+            <button
+              key={data.id}
+              onClick={() => handleBrandFilter(data.name)}
+              className={activeBrandId === data.name ? 'active' : ''}
+            >
+              {data.name}
+            </button>
+          ))}
+        </div>
+
         <div className="admin_header_search project_container"> 
           <input 
             type="text" 
-            placeholder="Axtar..." 
+            placeholder="Məhsul adı, artikl və ya marka axtar..." 
             value={searchTerm} 
             onChange={handleStockSearch} 
           /> 
@@ -325,17 +360,14 @@ const handleQuantityChange = (productId, value) => {
               </tr> 
             </thead> 
             <tbody> 
-              {stockList?.map((item) => { 
+              {filteredStockList?.map((item) => { 
                 const product = item.product; 
                 const productId = product.id; 
                 const isSelected = selectedProductIds.includes(productId); 
                 const quantity = quantityValues[productId] || ""; 
                 const status = statusValues[productId] || "G";
                 
-                // Stok yoxlaması - border üçün
                 const hasStockError = hasInsufficientStock(productId, quantity, status);
-                
-                // Ümumi stoku göstərmək üçün
                 const totalStock = calculateTotalStock(productId, quantity);
 
                 return ( 
@@ -351,7 +383,7 @@ const handleQuantityChange = (productId, value) => {
                     <td> 
                       {product?.articles?.map((a) => a.name).join(", ") || "-"} 
                     </td> 
-                    <td>{product?.store?.name || "-"}</td> 
+                    <td>{product?.brand?.name || "-"}</td> 
                     <td>
                       {item.amount} 
                       {isSelected && (
@@ -406,18 +438,28 @@ const handleQuantityChange = (productId, value) => {
               })} 
             </tbody> 
           </table> 
+
+          {/* ✅ Filterlənmiş məhsul olmadıqda mesaj göstər */}
+          {filteredStockList?.length === 0 && (
+            <div className="no-products-message">
+              {activeBrandId === null 
+                ? "Heç bir məhsul tapılmadı" 
+                : "Seçilmiş markaya uyğun məhsul tapılmadı"}
+            </div>
+          )}
+
           {count > itemsPerPage && ( 
             <ReactPaginate 
               previousLabel={
-            <svg width="8" height="14" viewBox="0 0 8 14" fill="none">
-              <path d="M7 1L1 7L7 13" stroke="#9F9FA0" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
-          }
-          nextLabel={
-            <svg width="8" height="14" viewBox="0 0 8 14" fill="none">
-              <path d="M1 1L7 7L1 13" stroke="#202020" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
-          }
+                <svg width="8" height="14" viewBox="0 0 8 14" fill="none">
+                  <path d="M7 1L1 7L7 13" stroke="#9F9FA0" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              }
+              nextLabel={
+                <svg width="8" height="14" viewBox="0 0 8 14" fill="none">
+                  <path d="M1 1L7 7L1 13" stroke="#202020" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              }
               pageCount={Math.ceil(count / itemsPerPage)} 
               onPageChange={handlePageClick} 
               containerClassName={"dashboard_end_pagination"} 
