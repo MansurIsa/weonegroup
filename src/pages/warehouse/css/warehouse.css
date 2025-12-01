@@ -90,11 +90,13 @@
     /* flex: 1; */
     /* background: white; */
     border-radius: 8px;
+    overflow-x: auto !important;
 }
 
 .warehouse_table {
     width: 100%;
     border-collapse: collapse;
+    
 }
 
 .warehouse_table thead th {

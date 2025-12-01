@@ -350,7 +350,8 @@ const SalesProductsSelect = () => {
                 <th className="number_table"></th> 
                 <th>Məhsul Adı</th> 
                 <th>Artikl</th> 
-                <th>Brend</th> 
+                <th>Marka</th> 
+                <th>Brend</th>
                 <th>Qalan Say</th> 
                 <th>Maya Dəyəri</th> 
                 <th>Satış Qiyməti</th> 
@@ -384,6 +385,7 @@ const SalesProductsSelect = () => {
                       {product?.articles?.map((a) => a.name).join(", ") || "-"} 
                     </td> 
                     <td>{product?.brand?.name || "-"}</td> 
+                    <td>{product?.store?.name || "-"}</td> 
                     <td>
                       {item.amount} 
                       {isSelected && (
