@@ -41,6 +41,7 @@ const CustomerMovementEnd = ({ movementList = [] }) => {
             <th>Ödədiyi məbləğ</th>
             <th>Ümumi gəlir</th>
             <th>Qalıq borc</th>
+            <th>Hərəkət</th>
           </tr>
         </thead>
         <tbody>
@@ -89,20 +90,21 @@ const CustomerMovementEnd = ({ movementList = [] }) => {
                     )}
                   </td>
                   <td>
-                    {item.payment_amount !== null && item.payment_amount !== undefined
+                    {item.payment_amount !== null && item.payment_amount !== undefined && item.payment_amount!==0
                       ? `${item.payment_amount} ₼`
                       : "-"}
                   </td>
                   <td>
-                    {item.total_amount !== null && item.total_amount !== undefined
+                    {item.total_amount !== null && item.total_amount !== undefined && item.total_amount!==0
                       ? `${item.total_amount} ₼`
                       : "-"}
                   </td>
                   <td>
-                    {item.remaining_amount !== null && item.remaining_amount !== undefined
+                    {item.remaining_amount !== null && item.remaining_amount !== undefined && item.remaining_amount!==0
                       ? `${item.remaining_amount} ₼`
                       : "-"}
                   </td>
+                  <td>{item?.action}</td>
                 </tr>
               );
             })
