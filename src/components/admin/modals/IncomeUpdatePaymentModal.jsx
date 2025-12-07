@@ -18,6 +18,8 @@ const IncomeUpdatePaymentModal = () => {
 
   const { usersList,customerRetriveObj } = useSelector(state => state.login);
   const { incomeUpdatePaymentObj } = useSelector(state => state.income);
+  console.log(incomeUpdatePaymentObj);
+  
 
   // İlkin dəyərləri doldur
   // IncomeUpdatePaymentModal.js - useEffect hissəsində
@@ -74,14 +76,16 @@ useEffect(()=>{
               onClick={() => dispatch(closeIncomeAddPaymentModal())}
             />
 
-            <div className="form_group">
+            {/* <div className="form_group">
               <CustomCustomerSelect
                 customers={usersList?.filter(user => !user.is_staff)}
                 value={selectedCustomer}
                 onChange={setSelectedCustomer}
                 onSearch={handleCustomerSearch}
               />
-            </div>
+            </div> */}
+           <p>Musteri: {incomeUpdatePaymentObj?.customer?.username}</p> 
+          
 
              {
               selectedCustomer?

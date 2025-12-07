@@ -403,6 +403,7 @@ const SalesProductsSelect = () => {
                           onChange={(e) => 
                             handlePriceChange(productId, e.target.value) 
                           } 
+                          onWheel={(e) => e.target.blur()}
                           className="price_input" 
                         /> 
                       ) : ( 
@@ -418,6 +419,7 @@ const SalesProductsSelect = () => {
                           onChange={(e) => 
                             handleQuantityChange(productId, e.target.value) 
                           } 
+                          onWheel={(e) => e.target.blur()}
                           className={`quantity_input ${hasStockError ? "input-error" : ""}`} 
                         /> 
                       )} 

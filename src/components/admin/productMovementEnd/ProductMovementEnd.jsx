@@ -45,6 +45,8 @@ const ProductMovementEnd = ({ movementList = [] }) => {
                         <th>Gələn məhsul sayı</th>
                         <th>Satılan məhsul sayı</th>
                         <th>Qalan məhsul sayı</th>
+                        <th>Geri Qaytarılan məhsul sayı</th>
+                        <th>Hərəkət</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -63,6 +65,8 @@ const ProductMovementEnd = ({ movementList = [] }) => {
                             <td>{item.incoming_product_number ?? "-"}</td>
                             <td>{item.sold_product_number ?? "-"}</td>
                             <td>{item.remaining_product_number ?? "-"}</td>
+                            <td>{item.return_product_number ?? "-"}</td>
+                            <td>{item?.action}</td>
                         </tr>
                     ))}
                 </tbody>

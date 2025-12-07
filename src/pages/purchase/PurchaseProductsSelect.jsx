@@ -172,7 +172,7 @@ const PurchaseProductsSelect = () => {
                     </div>
 
                     {/* Status sahəsi əlavə edildi */}
-                    <div className="form_group">
+                    {/* <div className="form_group">
                         <label>Status</label>
                         <select
                             value={generalInfo.status}
@@ -182,7 +182,7 @@ const PurchaseProductsSelect = () => {
                             <option value="G">Gözləyir</option>
                             <option value="A">Anbarda</option>
                         </select>
-                    </div>
+                    </div> */}
 
                     <div className="form_group">
                         <label>Valyuta</label>

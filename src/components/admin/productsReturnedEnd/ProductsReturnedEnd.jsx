@@ -19,9 +19,11 @@ const ProductsReturnedEnd = ({ returnBackList = [], count = 0, fetchReturnBacks,
   const dispatch = useDispatch();
 
   const handlePageClick = (event) => {
-    const selectedPage = event.selected + 1;
-    setCurrentPage(event.selected); // frontend üçün aktiv səhifəni saxlayır
-    fetchReturnBacks(selectedPage, searchTerm); // backend çağırışı
+    const zeroBasedPage = event.selected; // ReactPaginate 0-based verir
+    const apiPage = zeroBasedPage + 1; // API üçün 1-based edirik
+    
+    setCurrentPage(zeroBasedPage); // ReactPaginate üçün 0-based saxlayırıq
+    fetchReturnBacks(apiPage, searchTerm); // API-ə 1-based göndəririk
   };
 
   const updateProductReturn = (item) => {
@@ -33,6 +35,7 @@ const ProductsReturnedEnd = ({ returnBackList = [], count = 0, fetchReturnBacks,
   };
 
   const pageCount = Math.ceil(count / ITEMS_PER_PAGE);
+  const currentZeroBasedPage = currentPage; // Artıq currentPage 0-based olacaq
 
   return (
     <div className='admin_container dashboard_end_container'>
@@ -80,6 +83,7 @@ const ProductsReturnedEnd = ({ returnBackList = [], count = 0, fetchReturnBacks,
           previousLabel={<svg width="8" height="14" viewBox="0 0 8 14" fill="none"><path d="M7 1L1 7L7 13" stroke="#9F9FA0" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /></svg>}
           nextLabel={<svg width="8" height="14" viewBox="0 0 8 14" fill="none"><path d="M1 1L7 7L1 13" stroke="#202020" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /></svg>}
           pageCount={pageCount}
+          forcePage={currentZeroBasedPage} // 0-based current page
           onPageChange={handlePageClick}
           containerClassName={'dashboard_end_pagination'}
           pageClassName={'dashboard_end_page'}

@@ -24,6 +24,8 @@ const ProductReturnUpdateModal = () => {
   useEffect(() => {
     dispatch(getSaleListReturned({ page: 1, search: '' }));
   }, [dispatch]);
+  console.log(productReturnUpdateObj);
+  
 
   // 🔹 Mövcud obyektin məlumatlarını inputlara doldur
   useEffect(() => {
@@ -59,11 +61,12 @@ const ProductReturnUpdateModal = () => {
             <IoMdClose className='close_icon' onClick={() => dispatch(handleCloseModal())} />
 
             {/* ✅ Burada artıq saleListReturned istifadə olunur */}
-            <CustomSalesSelect
+            {/* <CustomSalesSelect
               sales={saleListReturned}
               value={selectedSaleId}
               onChange={setSelectedSaleId}
-            />
+            /> */}
+            <p>Satış: {productReturnUpdateObj?.sale?.customer?.username}</p>
 
             <div className="form_group">
               <label>Tarix</label>

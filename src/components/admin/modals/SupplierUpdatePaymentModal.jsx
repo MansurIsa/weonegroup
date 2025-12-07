@@ -22,6 +22,8 @@ const SupplierUpdatePaymentModal = () => {
 
   const currencySymbols = { M: '₼', D: '$', R: '₽' };
   const currencyLabels = { M: 'manat', D: 'dollar', R: 'rubl' };
+  console.log(supplierUpdatePaymentObj);
+  
 
   useEffect(() => {
     dispatch(getUsersList(1, ''));
@@ -69,13 +71,14 @@ const SupplierUpdatePaymentModal = () => {
 
             {/* ✅ Tədarükçü */}
             <div className="form_group">
-              {/* <label>Tədarükçü/Müştəri</label> */}
-              <CustomCustomerSelect
+              <label>Tədarükçü/Müştəri</label>
+              {supplierUpdatePaymentObj?.supplier?.username}
+              {/* <CustomCustomerSelect
                 customers={usersList?.filter(user => user.is_supplier)}
                 value={selectedCustomer}
                 onChange={setSelectedCustomer}
                 onSearch={handleCustomerSearch}
-              />
+              /> */}
             </div>
 
             {/* Tarix */}

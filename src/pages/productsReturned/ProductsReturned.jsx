@@ -13,7 +13,7 @@ import ProductReturnDeleteModal from '../../components/admin/modals/ProductRetur
 const ProductsReturned = () => {
   const dispatch = useDispatch();
   const [searchTerm, setSearchTerm] = useState('');
-  const [currentPage, setCurrentPage] = useState(1);
+  const [currentPage, setCurrentPage] = useState(0);
 
   const {
     returnBackList,
@@ -23,17 +23,20 @@ const ProductsReturned = () => {
     productReturnDeleteModal
   } = useSelector(state => state.productTable);
 
+  console.log(returnBackList);
+
+
   const fetchReturnBacks = (page = 1, search = '') => {
     dispatch(getReturnBackList({ page, search }));
   };
 
-  useEffect(() => {
-    fetchReturnBacks(currentPage, searchTerm);
+useEffect(() => {
+    fetchReturnBacks(currentPage + 1, searchTerm); // currentPage 0-based olduğu üçün +1 edirik
   }, [dispatch, currentPage, searchTerm]);
 
   const handleSearch = (query) => {
     setSearchTerm(query);
-    setCurrentPage(1); // search zamanı səhifəni 1-ə qaytarırıq
+    setCurrentPage(0); // search zamanı səhifəni 0-a qaytarırıq (1-ci səhifə)
   };
 
   const handleClick = () => {
@@ -54,6 +57,8 @@ const ProductsReturned = () => {
         count={count}
         fetchReturnBacks={fetchReturnBacks}
         searchTerm={searchTerm}
+        currentPage={currentPage}
+        setCurrentPage={setCurrentPage}
       />
       {productReturnedModal && <ProductReturnedModal />}
       {productReturnUpdateModal && <ProductReturnUpdateModal />}
