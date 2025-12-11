@@ -89,7 +89,7 @@ const PurchaseEnd = ({ purchaseList, supplierPurchaseObj }) => {
                         return (
                             <tr key={index}>
                                 <td className="print_column print_column_number" style={{ width: "50px" }}>{index + 1}</td>
-                                <td className="print_column">{product.name}</td>
+                                <td className="print_column">{product?.name} {product?.degree}</td>
                                 {/* <td className="print_column">{articleNames}</td> */}
                                 <td className='table_article_scroll'>
                                     <span className="screen-only">
