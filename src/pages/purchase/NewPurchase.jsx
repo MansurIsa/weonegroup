@@ -76,6 +76,7 @@ const NewPurchase = () => {
         updated[index].quantity = product.amount > 0 ? '1' : ''; // Əgər varsa 1, yoxsa boş
         
         setProductsData(updated);
+        
     };
 
     const handleRemoveProduct = (index) => {

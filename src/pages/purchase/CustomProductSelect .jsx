@@ -10,6 +10,7 @@ const CustomProductSelect = ({ value, onChange, preselectedProduct }) => {
   const dropdownRef = useRef();
   const dispatch = useDispatch();
   const { productsList } = useSelector((state) => state.products);
+  
 
   // preselectedProduct dəyişdikdə məlumatları doldur
   useEffect(() => {
@@ -48,6 +49,7 @@ const CustomProductSelect = ({ value, onChange, preselectedProduct }) => {
 
     return () => clearTimeout(delayDebounce);
   }, [searchTerm, dispatch, isTyping]);
+  
 
   // Click outside dropdown
   useEffect(() => {
@@ -70,6 +72,7 @@ const CustomProductSelect = ({ value, onChange, preselectedProduct }) => {
 
   const handleInputChange = (e) => {
     const newValue = e.target.value;
+    
     setSearchTerm(newValue);
     setIsTyping(true);
     
@@ -113,7 +116,7 @@ const CustomProductSelect = ({ value, onChange, preselectedProduct }) => {
                 className={`custom-select-option ${selectedProduct?.id === product.id ? 'selected' : ''}`}
                 onClick={() => handleSelect(product)}
               >
-                {product.name} ({product?.store?.name})
+                {product.name} {product?.degree} ({product?.store?.name})
               </div>
             ))
           ) : (

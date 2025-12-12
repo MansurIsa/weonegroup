@@ -380,7 +380,7 @@ const SalesProductsSelect = () => {
                         onChange={() => toggleRow(productId, product, item.amount)} 
                       /> 
                     </td> 
-                    <td>{product?.name}</td> 
+                    <td>{product?.name} {product?.degree}</td> 
                     <td> 
                       {product?.articles?.map((a) => a.name).join(", ") || "-"} 
                     </td> 
