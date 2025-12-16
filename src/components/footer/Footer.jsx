@@ -13,9 +13,9 @@ const Footer = () => {
           <FooterLeft />
           <FooterRight />
         </div>
-        <p className='copyright'>
+        {/* <p className='copyright'>
           © 2025 | Bütün hüquqlar qorunur | <a href="https://neyrosoft.az" target="_blank" rel="noopener noreferrer">neyrosoft.az</a>
-        </p>
+        </p> */}
 
       </div>
 
