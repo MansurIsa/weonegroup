@@ -10,6 +10,7 @@ import Img2 from "../../../assets/images/banner2.jpg"
 import Img3 from "../../../assets/images/banner3.jpg"
 import Img4 from "../../../assets/images/banner4.jpg"
 import Img5 from "../../../assets/images/banner5.jpg"
+import Img6 from "../../../assets/images/banner.png"
 import Video1 from "../../../assets/images/VID-20251122-WA0001.mp4"
 import { useEffect } from "react";
 import { getBannerList, getSettingsList } from "../../../actions/homeAction/homeAction";
@@ -17,26 +18,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import Marquee from "react-fast-marquee";
 
-// let bannerList = [
-//     {
-//         id: 1,
-//         img: Img,
-//         title: "Performans Üçün Yaradılıb",
-//         desc: "Avtomobilinizin ehtiyacı olan yüksək keyfiyyətli hissələri WeOne ilə əldə edin."
-//     },
-//     {
-//         id: 2,
-//         img: Img,
-//         title: "Performans Üçün Yaradılıb",
-//         desc: "Avtomobilinizin ehtiyacı olan yüksək keyfiyyətli hissələri WeOne ilə əldə edin."
-//     },
-//     {
-//         id: 3,
-//         img: Img,
-//         title: "Performans Üçün Yaradılıb",
-//         desc: "Avtomobilinizin ehtiyacı olan yüksək keyfiyyətli hissələri WeOne ilə əldə edin."
-//     }
-// ]
+
 
 const HomeBanner = () => {
 
@@ -77,22 +59,22 @@ const HomeBanner = () => {
                         </div>
                     </SwiperSlide>
                 ))} */}
-<SwiperSlide className="home_banner_bg_img home_banner_video" data-hash="slide-video">
-    <video
-        src={Video1}
-        autoPlay
-        muted
-        loop
-        playsInline
-        className="home_banner_video_tag"
-    ></video>
+                <SwiperSlide className="home_banner_bg_img home_banner_video" data-hash="slide-video">
+                    <video
+                        src={Video1}
+                        autoPlay
+                        muted
+                        loop
+                        playsInline
+                        className="home_banner_video_tag"
+                    ></video>
 
-    {/* <div className="home_banner_yellow_video">
+                    {/* <div className="home_banner_yellow_video">
         <h1>Keyfiyyət hər kadrda hiss olunur</h1>
         <p>WeOneGroup — avtomobiliniz üçün ən güvənilən hissələri təqdim edir.</p>
         <button onClick={targetPr}>Məhsullara bax</button>
     </div> */}
-</SwiperSlide>
+                </SwiperSlide>
 
                 <SwiperSlide className="home_banner_bg_img home_banner_bg_img1" data-hash="slide1" style={{ background: `url(${Img1})`, backgroundSize: "cover", backgroundPosition: "left", backgroundRepeat: "no-repeat" }}>
                     <div className="home_banner_yellow1">
@@ -102,8 +84,8 @@ const HomeBanner = () => {
                         {/* <button onClick={targetPr}>Məhsullara bax</button> */}
                     </div>
                 </SwiperSlide>
-              
-                <SwiperSlide className="home_banner_bg_img" data-hash="slide3" style={{ background: `url(${Img3})`, backgroundSize: "cover", backgroundPosition: "right", backgroundRepeat: "no-repeat" }}>
+
+                <SwiperSlide className="home_banner_bg_img" data-hash="slide2" style={{ background: `url(${Img3})`, backgroundSize: "cover", backgroundPosition: "right", backgroundRepeat: "no-repeat" }}>
                     <div className="home_banner_yellow3">
                         <h1>Keyfiyyətli Hissələr, Daha Güclü Maşın</h1>
                         <p>WeOneGroup ilə avtomobilinizin performansını artıran düzgün hissələri asanlıqla tapın.</p>
@@ -116,6 +98,9 @@ const HomeBanner = () => {
                         <p>Etibarlı, uzunömürlü və orijinal ehtiyat hissələri ilə sürüş təcrübənizi bir başqa səviyyəyə qaldırın. WeOneGroup-un geniş məhsul çeşidi ilə ehtiyacınız olan hər şeyi tək ünvanda tapın.</p>
                         <button onClick={targetPr}>Məhsullara bax</button>
                     </div>
+                </SwiperSlide>
+                <SwiperSlide className="home_banner_bg_img home_banner_bg_img2" data-hash="slide4" style={{ background: `url(${Img6})`, backgroundSize: "cover", backgroundPosition: "right", backgroundRepeat: "no-repeat" }}>
+                   
                 </SwiperSlide>
             </Swiper>
         </div>
