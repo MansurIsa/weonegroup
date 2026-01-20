@@ -120,10 +120,37 @@ const ProductDetailContainer = ({ productObj, userObj }) => {
                     </div>
                     <div className='price_inc_dec_pr'>
                         {accessToken && (
-                            <p className='product_detail_container_right_price'>
-                                {userObj?.status === "S" ? `${productObj?.price === null ? 0 : productObj?.price} AZN` :
-                                    userObj?.status === "E" ? `${productObj?.discount_price === null ? 0 : productObj?.discount_price} AZN` : ''}
-                            </p>
+                           <p className="product_detail_container_right_price">
+  {userObj?.status === "E" ? (
+    <>
+      <span
+        style={{
+          textDecoration: "line-through",
+          color: "red",
+          marginRight: "8px",
+          fontSize: "14px"
+        }}
+      >
+        {productObj?.price ?? 0} AZN
+      </span>
+
+      <span
+        style={{
+          color: "#000",
+          fontWeight: "600",
+          fontSize: "18px"
+        }}
+      >
+        {productObj?.discount_price ?? 0} AZN
+      </span>
+    </>
+  ) : userObj?.status === "S" ? (
+    <span>
+      {productObj?.price ?? 0} AZN
+    </span>
+  ) : null}
+</p>
+
                         )}
                         <div className="inc_dec_pr">
                             <button type="button" onClick={handleDecrement}>-</button>

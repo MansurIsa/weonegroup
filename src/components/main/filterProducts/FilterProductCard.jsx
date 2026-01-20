@@ -96,7 +96,11 @@ const FilterProductCard = ({ data, newPr }) => {
             {accessToken && userObj?.status === "S" && <span>{data?.price} AZN</span>}
 
             {accessToken && userObj?.status === "E" && (
-              <span>{data?.discount_price} AZN</span>
+              <>
+                <span style={{textDecoration: "line-through", color: "red"}}>{data?.price} AZN</span>
+                <span>{data?.discount_price} AZN</span>
+              </>
+
             )}
           </div>
         </div>
