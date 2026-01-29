@@ -164,6 +164,13 @@ const UpdateNewProducts = () => {
     const handleSubmit = (e) => {
         e.preventDefault();
 
+         const sanitizedContents = formData.contents.map(content =>
+    typeof content === 'string'
+      ? content.replace(/'/g, '`')
+      : content
+  );
+
+
         const form = new FormData();
 
         // Articles: bütün adlar
@@ -190,7 +197,7 @@ const UpdateNewProducts = () => {
 
 
         form.append('titles', JSON.stringify(allTitles));             // bütün titles
-        form.append('contents', JSON.stringify(allContents));         // bütün contents
+        form.append('contents', JSON.stringify(sanitizedContents));         // bütün contents
         form.append('about_ids', JSON.stringify(existingAboutIds));   // yalnız mövcud ID-lər
 
         form.append('category', +formData.category);

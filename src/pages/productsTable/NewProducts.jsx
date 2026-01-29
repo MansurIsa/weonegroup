@@ -93,7 +93,15 @@ const NewProducts = () => {
   };
 
   const handleSubmit = (e) => {
+
+
     e.preventDefault();
+
+
+    const sanitizedContents = formData.contents.map(content =>
+    content.replace(/'/g, '`')
+  );
+
     const form = new FormData();
     form.append('name', formData.name);
     form.append('articles', JSON.stringify(formData.articles));
@@ -101,7 +109,7 @@ const NewProducts = () => {
     form.append('brand', +formData.brand);
     form.append('store', +formData.store);
     form.append('titles', JSON.stringify(formData.titles));
-    form.append('contents', JSON.stringify(formData.contents));
+    form.append('contents', JSON.stringify(sanitizedContents));
     form.append('degree', JSON.stringify(formData.degree));
 
     if (formData.image) {
