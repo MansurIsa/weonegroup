@@ -137,6 +137,28 @@ const Cart = () => {
     dispatch(basketItemDelete(id));
   };
 
+
+
+  const handleSelectAll = () => {
+  if (isAllSelected) {
+    // hamısını sil
+    setSelectedItems([]);
+  } else {
+    // yalnız stokda olanları seç
+    setSelectedItems(validItemIds);
+  }
+};
+
+
+const validItemIds = basketItem
+  ?.filter(item => item.product.amount > 0)
+  .map(item => item.id) || [];
+
+const isAllSelected =
+  validItemIds.length > 0 &&
+  validItemIds.every(id => selectedItems.includes(id));
+
+
   return (
     <MainLayout>
       <Toaster position="top-right" />
@@ -151,6 +173,43 @@ const Cart = () => {
           ) : (
             <div className="cart_container project_container">
               <h1>Səbətim ({basketItem?.length} məhsul)</h1>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '15px' }}>
+  <input
+    type="checkbox"
+    checked={isAllSelected}
+    onChange={handleSelectAll}
+    style={{ display: 'none' }}
+    id="select-all-checkbox"
+  />
+
+  <label
+    htmlFor="select-all-checkbox"
+    style={{
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      width: '20px',
+      height: '20px',
+      border: '2px solid #333',
+      borderRadius: '4px',
+      cursor: 'pointer',
+      backgroundColor: isAllSelected ? '#4caf50' : 'transparent',
+      color: 'white'
+    }}
+  >
+    {isAllSelected && (
+      <svg width="12" height="10" viewBox="0 0 12 10">
+        <polyline
+          points="1 5.5 4 9 11 1"
+          style={{ fill: 'none', stroke: 'white', strokeWidth: 2 }}
+        />
+      </svg>
+    )}
+  </label>
+
+  <span>Hamısını seç</span>
+</div>
+
               <div className="cart_left_right_container">
                 <div className="cart_left_container">
                   {basketItem?.map(item => {

@@ -93,7 +93,7 @@ const ProductsTableModal = () => {
                           onChange={() => handleRowSelect(index)}
                         />
                       </td>
-                      <td>{item.name}</td>
+                      <td>{item?.name} ({item?.store?.name})</td>
                       <td>{item.articles?.map(a => a.name).join(', ')}</td>
                     </tr>
                   ))}
