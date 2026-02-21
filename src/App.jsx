@@ -107,8 +107,8 @@ const App = () => {
   const routes = [
     { path: "/", element: <Home />, isProtected: false },
     { path: "/about", element: <About />, isProtected: false },
-    { path: "/products", element: <Products />, isProtected: false },
-     { path: "/products/:id", element: <ProductsDetail />, isProtected: false },
+    { path: "/products", element: <Products />, isProtected: true },
+     { path: "/products/:id", element: <ProductsDetail />, isProtected: true },
     { path: "/contact", element: <Contact />, isProtected: false },
     { path: "/services", element: <Services />, isProtected: false },
     { path: "/cart", element: <Cart />, isProtected: false },

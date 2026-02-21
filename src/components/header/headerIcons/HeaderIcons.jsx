@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { getUserObj } from '../../../actions/loginAction/loginAction'
 import { IoMdLogOut } from 'react-icons/io'
 import { logoutFunc } from '../../../redux/slices/loginSlices'
+import { getBasketItemList } from '../../../actions/basketAction/basketAction'
 
 const HeaderIcons = ({ toggleMenu }) => {
 
@@ -12,6 +13,7 @@ const HeaderIcons = ({ toggleMenu }) => {
 
     useEffect(() => {
         dispatch(getUserObj())
+        dispatch(getBasketItemList());
     }, [dispatch])
 
     const { userObj } = useSelector(state => state.login)
@@ -20,6 +22,10 @@ const HeaderIcons = ({ toggleMenu }) => {
         localStorage.removeItem("accessToken")
         dispatch(logoutFunc()); 
     }
+
+    const accessToken = localStorage.getItem("accessToken");
+
+     const { basketItem } = useSelector((state) => state.basket);
     return (
         <div className='header_icons_container'>
             <svg onClick={toggleMenu} className='burger_icon' width="30" height="30" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -34,6 +40,11 @@ const HeaderIcons = ({ toggleMenu }) => {
                     <path d="M14.5801 18.5C15.1324 18.5 15.5801 18.0523 15.5801 17.5C15.5801 16.9477 15.1324 16.5 14.5801 16.5C14.0278 16.5 13.5801 16.9477 13.5801 17.5C13.5801 18.0523 14.0278 18.5 14.5801 18.5Z" fill="#32312F" />
                     <path d="M6.58008 18.5C7.13236 18.5 7.58008 18.0523 7.58008 17.5C7.58008 16.9477 7.13236 16.5 6.58008 16.5C6.02779 16.5 5.58008 16.9477 5.58008 17.5C5.58008 18.0523 6.02779 18.5 6.58008 18.5Z" fill="#32312F" />
                 </svg>
+
+                {
+                    accessToken? <span>{basketItem?.length}</span>: null
+                }
+                
 
             </Link>
             {

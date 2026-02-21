@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { addProductToCart } from "../../../actions/productsAction/productsAction";
+import { getBasketItemList } from "../../../actions/basketAction/basketAction";
 
 const FilterProductCard = ({ data, newPr }) => {
   const accessToken = localStorage.getItem("accessToken");
@@ -24,6 +25,7 @@ const FilterProductCard = ({ data, newPr }) => {
           navigate
         )
       );
+      dispatch(getBasketItemList());
     } else {
       navigate("/login");
     }

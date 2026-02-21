@@ -186,6 +186,12 @@ input[type="checkbox"] {
     color: var(--red);
 }
 
+ .cart_product_name_brand h2 span{
+        font-size: 1.6rem;
+        /* font-weight: 600; */
+        color: var(--green);
+    }
+
 @media screen and (max-width: 1250px) {
     .cart_container {
         padding-top: 64px !important;

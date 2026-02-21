@@ -60,46 +60,46 @@ const Cart = () => {
     .reduce((sum, item) => sum + getPrice(item) * item.quantity, 0) || 0;
 
   const handleConfirmOrder = () => {
-  if (selectedItems.length === 0) return;
+    if (selectedItems.length === 0) return;
 
-  const selectedProducts = basketItem.filter(item =>
-    selectedItems.includes(item.id)
-  );
-
-  // Stok yoxlaması
-  const insufficientStockItems = selectedProducts.filter(
-    item => item.quantity > item.product.amount
-  );
-
-  if (insufficientStockItems.length > 0) {
-    insufficientStockItems.forEach(item =>
-      toast.error(
-        `"${item.product.name}" üçün sifariş miqdarı stokdan çoxdur. Mövcud stok: ${item.product.amount}`
-      )
+    const selectedProducts = basketItem.filter(item =>
+      selectedItems.includes(item.id)
     );
-    return; // sifarişi dayandırır
-  }
 
-  // Mövcud məhsullarla sifariş davam edir
-  const productIds = selectedProducts.map(item => item.product.id);
-  const quantities = selectedProducts.map(item => item.quantity);
+    // Stok yoxlaması
+    const insufficientStockItems = selectedProducts.filter(
+      item => item.quantity > item.product.amount
+    );
 
-  const total = selectedProducts.reduce(
-    (sum, item) => sum + getPrice(item) * item.quantity,
-    0
-  );
+    if (insufficientStockItems.length > 0) {
+      insufficientStockItems.forEach(item =>
+        toast.error(
+          `"${item.product.name}" üçün sifariş miqdarı stokdan çoxdur. Mövcud stok: ${item.product.amount}`
+        )
+      );
+      return; // sifarişi dayandırır
+    }
 
-  const payload = {
-    products: productIds,
-    quantities: quantities,
-    amount: total
+    // Mövcud məhsullarla sifariş davam edir
+    const productIds = selectedProducts.map(item => item.product.id);
+    const quantities = selectedProducts.map(item => item.quantity);
+
+    const total = selectedProducts.reduce(
+      (sum, item) => sum + getPrice(item) * item.quantity,
+      0
+    );
+
+    const payload = {
+      products: productIds,
+      quantities: quantities,
+      amount: total
+    };
+
+    dispatch(orderCreate(payload));
+
+    const selectedBasketIds = selectedProducts.map(item => item.id);
+    dispatch(basketClear({ item_ids: selectedBasketIds }));
   };
-
-  dispatch(orderCreate(payload));
-
-  const selectedBasketIds = selectedProducts.map(item => item.id);
-  dispatch(basketClear({ item_ids: selectedBasketIds }));
-};
 
 
   const incCartEl = (item) => {
@@ -140,23 +140,23 @@ const Cart = () => {
 
 
   const handleSelectAll = () => {
-  if (isAllSelected) {
-    // hamısını sil
-    setSelectedItems([]);
-  } else {
-    // yalnız stokda olanları seç
-    setSelectedItems(validItemIds);
-  }
-};
+    if (isAllSelected) {
+      // hamısını sil
+      setSelectedItems([]);
+    } else {
+      // yalnız stokda olanları seç
+      setSelectedItems(validItemIds);
+    }
+  };
 
 
-const validItemIds = basketItem
-  ?.filter(item => item.product.amount > 0)
-  .map(item => item.id) || [];
+  const validItemIds = basketItem
+    ?.filter(item => item.product.amount > 0)
+    .map(item => item.id) || [];
 
-const isAllSelected =
-  validItemIds.length > 0 &&
-  validItemIds.every(id => selectedItems.includes(id));
+  const isAllSelected =
+    validItemIds.length > 0 &&
+    validItemIds.every(id => selectedItems.includes(id));
 
 
   return (
@@ -174,41 +174,41 @@ const isAllSelected =
             <div className="cart_container project_container">
               <h1>Səbətim ({basketItem?.length} məhsul)</h1>
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '15px' }}>
-  <input
-    type="checkbox"
-    checked={isAllSelected}
-    onChange={handleSelectAll}
-    style={{ display: 'none' }}
-    id="select-all-checkbox"
-  />
+                <input
+                  type="checkbox"
+                  checked={isAllSelected}
+                  onChange={handleSelectAll}
+                  style={{ display: 'none' }}
+                  id="select-all-checkbox"
+                />
 
-  <label
-    htmlFor="select-all-checkbox"
-    style={{
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      width: '20px',
-      height: '20px',
-      border: '2px solid #333',
-      borderRadius: '4px',
-      cursor: 'pointer',
-      backgroundColor: isAllSelected ? '#4caf50' : 'transparent',
-      color: 'white'
-    }}
-  >
-    {isAllSelected && (
-      <svg width="12" height="10" viewBox="0 0 12 10">
-        <polyline
-          points="1 5.5 4 9 11 1"
-          style={{ fill: 'none', stroke: 'white', strokeWidth: 2 }}
-        />
-      </svg>
-    )}
-  </label>
+                <label
+                  htmlFor="select-all-checkbox"
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    width: '20px',
+                    height: '20px',
+                    border: '2px solid #333',
+                    borderRadius: '4px',
+                    cursor: 'pointer',
+                    backgroundColor: isAllSelected ? '#4caf50' : 'transparent',
+                    color: 'white'
+                  }}
+                >
+                  {isAllSelected && (
+                    <svg width="12" height="10" viewBox="0 0 12 10">
+                      <polyline
+                        points="1 5.5 4 9 11 1"
+                        style={{ fill: 'none', stroke: 'white', strokeWidth: 2 }}
+                      />
+                    </svg>
+                  )}
+                </label>
 
-  <span>Hamısını seç</span>
-</div>
+                <span>Hamısını seç</span>
+              </div>
 
               <div className="cart_left_right_container">
                 <div className="cart_left_container">
@@ -274,7 +274,7 @@ const isAllSelected =
 
                             <img src={item.product.image} alt={item.product.name} style={{ width: '50px', height: '50px', objectFit: 'cover', borderRadius: '4px' }} />
                             <div className='cart_product_name_brand'>
-                              <h2>{item.product.name}</h2>
+                              <h2>{item.product.name} <span>({item?.product?.articles[0]?.name})</span></h2>
                               <p>{item.product.brand.name}</p>
                             </div>
                           </div>
