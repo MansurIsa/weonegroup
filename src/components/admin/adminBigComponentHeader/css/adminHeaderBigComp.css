@@ -28,3 +28,11 @@
     color: var(--white);
     border-radius: 8px;
 }
+
+@media screen and (max-width: 576px){
+    .admin_big_comp_header{
+        flex-direction: column;
+        gap: 20px;
+        align-items: flex-start;
+    }
+}

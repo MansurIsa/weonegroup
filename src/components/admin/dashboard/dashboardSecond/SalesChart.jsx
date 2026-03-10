@@ -72,13 +72,14 @@ const SalesChart = () => {
 
   return (
     <div className="sales_chart_container admin_container">
+       <h3>Satışın dinamikası</h3>
       <div className="chart_header">
-        <h3>Satışın dinamikası</h3>
+       
         <div className="chart_controls">
 
           {/* Superuser üçün Customer Select */}
           {userObj?.is_superuser && (
-            <div className="form_group">
+            // <div className="form_group">
               <CustomCustomerSelect
                 displayVal={false}
                 customers={usersList}
@@ -86,7 +87,7 @@ const SalesChart = () => {
                 onChange={(id) => setSelectedCustomer(id)}
                 onSearch={handleSearch}
               />
-            </div>
+            // </div>
           )}
 
           {/* Brand select */}
@@ -107,7 +108,6 @@ const SalesChart = () => {
           {/* Filter type: aylıq/illik */}
           <div className="dropdown">
             <span className="calendar_icon">
-              {/* SVG icon */}
               <svg
                 width="18"
                 height="18"

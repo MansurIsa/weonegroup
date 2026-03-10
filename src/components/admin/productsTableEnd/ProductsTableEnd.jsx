@@ -19,47 +19,50 @@ const ProductsTableEnd = ({ productsList }) => {
     };
 
     console.log(productsList);
-    
+
 
     return (
-        <div className='admin_container '>
-            <table className='custom_table'>
-                <thead>
-                    <tr>
-                        <th>Məhsul Adı</th>
-                        <th>Artikl</th>
-                        <th>Brend</th>
-                        <th>Miqdar</th>
-                        <th>Maya Dəyəri</th>
-                        <th>Alış Qiyməti</th>
-                        <th>Satış Qiyməti</th>
-                        <th>Endirimli Qiymət</th>
-                        <th>Düzəliş/Sil</th>
-                    </tr>
-                </thead>
-
-                <tbody>
-                    {productsList?.map((item, index) => (
-                        <tr key={index}>
-                            <td>{item?.name || "-"} {item?.degree || ""}</td>
-                            <td className='table_article_scroll'>
-                                {item?.articles?.map(a => a.name).join(', ') || "-"}
-                            </td>
-                            <td>{item?.store?.name || "-"}</td>
-                            <td>{item?.amount || "-"}</td>
-                            <td>{item?.cost_price ? item.cost_price + " ₼" : "-"}</td>
-                            <td>{item?.purchase_price} {currencyMap[item?.currency] || ""}</td>
-                            <td>{item?.price ? item.price + " ₼" : "-"}</td>
-                            <td>{item?.discount_price ? item.discount_price + " ₼" : "-"}</td>
-                            <td className='table_update'>
-                                <FaPenToSquare onClick={() => updateProducts(item)} />
-                                <AiTwotoneDelete onClick={() => deleteProducts(item?.id)} />
-                            </td>
+        <div className="admin_container">
+            <div className=' table_wrapper'>
+                <table className='custom_table'>
+                    <thead>
+                        <tr>
+                            <th>Məhsul Adı</th>
+                            <th>Artikl</th>
+                            <th>Brend</th>
+                            <th>Miqdar</th>
+                            <th>Maya Dəyəri</th>
+                            <th>Alış Qiyməti</th>
+                            <th>Satış Qiyməti</th>
+                            <th>Endirimli Qiymət</th>
+                            <th>Düzəliş/Sil</th>
                         </tr>
-                    ))}
-                </tbody>
-            </table>
+                    </thead>
+
+                    <tbody>
+                        {productsList?.map((item, index) => (
+                            <tr key={index}>
+                                <td>{item?.name || "-"} {item?.degree || ""}</td>
+                                <td className='table_article_scroll'>
+                                    {item?.articles?.map(a => a.name).join(', ') || "-"}
+                                </td>
+                                <td>{item?.store?.name || "-"}</td>
+                                <td>{item?.amount || "-"}</td>
+                                <td>{item?.cost_price ? item.cost_price + " ₼" : "-"}</td>
+                                <td>{item?.purchase_price} {currencyMap[item?.currency] || ""}</td>
+                                <td>{item?.price ? item.price + " ₼" : "-"}</td>
+                                <td>{item?.discount_price ? item.discount_price + " ₼" : "-"}</td>
+                                <td className='table_update'>
+                                    <FaPenToSquare onClick={() => updateProducts(item)} />
+                                    <AiTwotoneDelete onClick={() => deleteProducts(item?.id)} />
+                                </td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            </div>
         </div>
+
     );
 };
 

@@ -15,7 +15,7 @@ const CustomerTableEnd = ({ searchTerm = "" }) => {
   const { usersList, count } = useSelector(state => state.login); // count backend-dən gəlir
 
   const [currentPage, setCurrentPage] = useState(0);
-  const [modal,setModal]=useState(false)
+  const [modal, setModal] = useState(false)
 
   const ITEMS_PER_PAGE = 5;
   const pageCount = Math.ceil(count / ITEMS_PER_PAGE);
@@ -41,47 +41,48 @@ const CustomerTableEnd = ({ searchTerm = "" }) => {
     dispatch(getUsersList(1, searchTerm));
   }, [dispatch, searchTerm]);
 
-  const handleSalesCustomer=(id)=>{
+  const handleSalesCustomer = (id) => {
     console.log(id);
     dispatch(getCustomerRetrive(id))
     setModal(true)
   }
 
-  const closeModal=()=>{
+  const closeModal = () => {
     setModal(false)
   }
 
   return (
     <div className='admin_container dashboard_end_container'>
-      <table className='custom_table'>
-        <thead>
-          <tr>
-            <th className='number_table'></th>
-            <th>Ad Soyad</th>
-            <th>İstifadəçi adı</th>
-            <th>Əlaqə nömrəsi</th>
-            <th>Ünvan</th>
-            {/* <th>Bizə borc</th>
+      <div className="table_wrapper">
+        <table className='custom_table'>
+          <thead>
+            <tr>
+              <th className='number_table'></th>
+              <th>Ad Soyad</th>
+              <th>İstifadəçi adı</th>
+              <th>Əlaqə nömrəsi</th>
+              <th>Ünvan</th>
+              {/* <th>Bizə borc</th>
             <th>Bizim borc</th> */}
-            <th>Ödəniş status</th>
-            <th>Düzəliş/Sil</th>
-          </tr>
-        </thead>
-        <tbody>
-          {usersList?.map((item, index) => (
-            <tr key={index}>
-              <td className='number_table' onClick={() => handleSalesCustomer(item?.id)} style={{ cursor: "pointer" }}>
-                <svg width="16" height="16" viewBox="0 0 16 16" fill="none"
-                  xmlns="http://www.w3.org/2000/svg">
-                  <path d="M10 5H6V4H10V5ZM12 14H3V12H4V11H3V8.5H4V7.5H3V5H4V4H3V2H12V15C12.5523 15 13 14.5523 13 14V2C13 1.45 12.55 1 12 1H3C2.45 1 2 1.45 2 2V4H1V5H2V7.5H1V8.5H2V11H1V12H2V14C2 14.55 2.45 15 3 15H12V14ZM10 7.5H6V8.5H10V7.5Z"
-                    fill="#202020" />
-                </svg>
-              </td>
-              <td>{item.first_name || "-"} {item.last_name || "-"}</td>
-              <td>{item.username || "-"}</td>
-              <td>{item.phone_number || "-"}</td>
-              <td>{item.address || "-"}</td>
-              {/* <td>{item?.customer_debt_amount || 0} ₼</td>
+              <th>Ödəniş status</th>
+              <th>Düzəliş/Sil</th>
+            </tr>
+          </thead>
+          <tbody>
+            {usersList?.map((item, index) => (
+              <tr key={index}>
+                <td className='number_table' onClick={() => handleSalesCustomer(item?.id)} style={{ cursor: "pointer" }}>
+                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none"
+                    xmlns="http://www.w3.org/2000/svg">
+                    <path d="M10 5H6V4H10V5ZM12 14H3V12H4V11H3V8.5H4V7.5H3V5H4V4H3V2H12V15C12.5523 15 13 14.5523 13 14V2C13 1.45 12.55 1 12 1H3C2.45 1 2 1.45 2 2V4H1V5H2V7.5H1V8.5H2V11H1V12H2V14C2 14.55 2.45 15 3 15H12V14ZM10 7.5H6V8.5H10V7.5Z"
+                      fill="#202020" />
+                  </svg>
+                </td>
+                <td>{item.first_name || "-"} {item.last_name || "-"}</td>
+                <td>{item.username || "-"}</td>
+                <td>{item.phone_number || "-"}</td>
+                <td>{item.address || "-"}</td>
+                {/* <td>{item?.customer_debt_amount || 0} ₼</td>
               <td>
                 {item?.is_supplier && Array.isArray(item?.our_debt_amount) ? (() => {
                   const [manat, dollar, rubl] = item.our_debt_amount;
@@ -92,19 +93,21 @@ const CustomerTableEnd = ({ searchTerm = "" }) => {
                   return debts.length > 0 ? debts.join(' | ') : '0 ₼';
                 })() : `${item?.our_debt_amount || 0} ₼`}
               </td> */}
-              <td>
-                {item.status === "S" ? "Satış Qiyməti"
-                  : item.status === "E" ? "Endirimli Qiyməti"
-                    : "—"}
-              </td>
-              <td className='table_update'>
-                <FaPenToSquare onClick={() => updateCustomer(item)} />
-                <AiTwotoneDelete onClick={() => deleteCustomer(item?.id)} />
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+                <td>
+                  {item.status === "S" ? "Satış Qiyməti"
+                    : item.status === "E" ? "Endirimli Qiyməti"
+                      : "—"}
+                </td>
+                <td className='table_update'>
+                  <FaPenToSquare onClick={() => updateCustomer(item)} />
+                  <AiTwotoneDelete onClick={() => deleteCustomer(item?.id)} />
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
 
       {pageCount > 1 && (
         <ReactPaginate
@@ -124,7 +127,7 @@ const CustomerTableEnd = ({ searchTerm = "" }) => {
           activeClassName={'dashboard_end_active'}
         />
       )}
-      {modal && <CustomerRetriveModal closeModal={closeModal}/>}
+      {modal && <CustomerRetriveModal closeModal={closeModal} />}
     </div>
   );
 };

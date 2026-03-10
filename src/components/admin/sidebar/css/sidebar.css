@@ -101,3 +101,36 @@
         width: 200px;
     }
 }
+
+
+.sidebar_mobile_header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
+
+.sidebar_close{
+    display:none;
+    font-size:22px;
+    cursor:pointer;
+}
+
+/* MOBILE */
+
+@media screen and (max-width:576px){
+
+.sidebar_container{
+    transform:translateX(-100%);
+    transition:0.3s;
+    z-index:1000;
+}
+
+.sidebar_container.open{
+    transform:translateX(0);
+}
+
+.sidebar_close{
+    display:block;
+}
+
+}

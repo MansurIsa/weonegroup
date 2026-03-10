@@ -37,31 +37,34 @@ const ExpenseTableEnd = ({ expenseList = [], count = 0, fetchExpenses, searchTer
 
   return (
     <div className='admin_container dashboard_end_container'>
-      <table className='custom_table'>
-        <thead>
-          <tr>
-            <th>N</th>
-            <th>Xərcin adı</th>
-            <th>Məbləğ</th>
-            <th>Tarix</th>
-            <th>Düzəliş/Sil</th>
-          </tr>
-        </thead>
-        <tbody>
-          {expenseList?.map((item, index) => (
-            <tr key={item.id}>
-              <td>{(currentPage * ITEMS_PER_PAGE) + index + 1}</td>
-              <td>{item.name || '—'}</td>
-              <td>{item.amount} ₼</td>
-              <td>{formatDate(item.date)}</td>
-              <td className='table_update'>
-                <FaPenToSquare onClick={() => updateExpense(item)} />
-                <AiTwotoneDelete onClick={() => deleteExpense(item.id)} />
-              </td>
+      <div className="table_wrapper">
+        <table className='custom_table'>
+          <thead>
+            <tr>
+              <th>N</th>
+              <th>Xərcin adı</th>
+              <th>Məbləğ</th>
+              <th>Tarix</th>
+              <th>Düzəliş/Sil</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {expenseList?.map((item, index) => (
+              <tr key={item.id}>
+                <td>{(currentPage * ITEMS_PER_PAGE) + index + 1}</td>
+                <td>{item.name || '—'}</td>
+                <td>{item.amount} ₼</td>
+                <td>{formatDate(item.date)}</td>
+                <td className='table_update'>
+                  <FaPenToSquare onClick={() => updateExpense(item)} />
+                  <AiTwotoneDelete onClick={() => deleteExpense(item.id)} />
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
 
       {pageCount > 1 && (
         <ReactPaginate

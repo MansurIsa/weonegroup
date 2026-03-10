@@ -1,6 +1,6 @@
 .modal_content {
 
-    min-width: 800px;
+    min-width: 60%;
     max-height: 90vh;
     overflow: scroll;
 }

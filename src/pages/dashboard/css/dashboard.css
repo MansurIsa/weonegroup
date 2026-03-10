@@ -1,6 +1,14 @@
 .month_year_select{
-    display: flex;
+    display: grid;
+    grid-template-columns: repeat(auto-fill,minmax(300px,1fr));
 }
 .month_year_select select{
     max-width: 300px !important;
+}
+.form_group{
+    max-width: 300px;
+    /* background-color: red; */
+}
+.form_group select{
+     max-width: 300px !important;
 }

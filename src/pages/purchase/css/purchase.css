@@ -31,7 +31,7 @@
     display: flex;
     flex-direction: column;
     gap: 12px;
-    min-width: 404px;
+    max-width: 404px;
 }
 
 .form_group input,
@@ -128,7 +128,7 @@
 }
 
 .custom-select-container input {
-  width: 100%;
+  max-width: 300px;
   padding: 14px 16px;
   border: 1px solid #ccc;
   border-radius: 6px;
@@ -149,6 +149,7 @@
   border-radius: 6px;
   margin-top: 4px;
   box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  max-width: 300px;
 }
 
 .custom-select-option {
@@ -194,4 +195,14 @@
   .number_table{
     width: 60px !important;
     min-width: 60px !important;
+  }
+ @media screen and (max-width: 700px){
+   .form_grid {
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+}
+  }
+  @media screen and (max-width: 576px){
+    .date_range{
+        flex-direction: column;
+    }
   }

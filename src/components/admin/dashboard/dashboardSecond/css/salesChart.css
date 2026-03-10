@@ -1,5 +1,5 @@
 .sales_chart_container {
-    height: 430px;
+    /* height: 430px; */
     background-color: var(--white);
     border-radius: 12px;
     padding-bottom: 70px;
@@ -12,20 +12,22 @@
     padding: 10px 20px;
 }
 
-.chart_header h3 {
+.sales_chart_container h3 {
     font-family: Poppins;
     font-weight: 500;
     font-size: 1.8rem;
     line-height: 140%;
     letter-spacing: 0%;
     color: var(--gray11);
+    padding: 20px;
 
 }
 
 .chart_controls {
-    display: flex;
+    display: grid;
+    grid-template-columns: repeat(auto-fill,minmax(300px,1fr));
+    width: 100%;
     align-items: center;
-    gap: 20px;
 }
 
 .legend {
@@ -69,6 +71,7 @@
     border-radius: 4px;
     font-size: 14px;
     background-color: var(--gray);
+    max-width: 100px;
 
 }
 

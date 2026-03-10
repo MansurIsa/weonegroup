@@ -18,3 +18,9 @@
 .sales_products_factura_btns button:last-child{
     background-color: var(--mainFirst);
 }
+
+@media screen and (max-width: 768px){
+    .sales_products_factura_btns{
+    flex-direction: column;
+}
+}

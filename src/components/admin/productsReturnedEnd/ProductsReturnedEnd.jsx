@@ -21,7 +21,7 @@ const ProductsReturnedEnd = ({ returnBackList = [], count = 0, fetchReturnBacks,
   const handlePageClick = (event) => {
     const zeroBasedPage = event.selected; // ReactPaginate 0-based verir
     const apiPage = zeroBasedPage + 1; // API üçün 1-based edirik
-    
+
     setCurrentPage(zeroBasedPage); // ReactPaginate üçün 0-based saxlayırıq
     fetchReturnBacks(apiPage, searchTerm); // API-ə 1-based göndəririk
   };
@@ -39,44 +39,47 @@ const ProductsReturnedEnd = ({ returnBackList = [], count = 0, fetchReturnBacks,
 
   return (
     <div className='admin_container dashboard_end_container'>
-      <table className='custom_table'>
-        <thead>
-          <tr>
-            <th>Müştəri</th>
-            <th>Məhsul Adı</th>
-            <th>Artikl</th>
-            <th>Qaytarılma Tarixi</th>
-            <th>Səbəb</th>
-            <th>Miqdar</th>
-            <th>Dəyəri</th>
-            <th>Düzəliş/Sil</th>
-          </tr>
-        </thead>
-        <tbody>
-          {returnBackList.map((item) => {
-            const product = item?.sale?.product || {};
-            const customer = item?.sale?.customer || {};
-            const articles = product.articles?.map(a => a.name).join(', ') || '-';
-            const dateFormatted = formatDate(item.date);
+      <div className="table_wrapper">
+        <table className='custom_table'>
+          <thead>
+            <tr>
+              <th>Müştəri</th>
+              <th>Məhsul Adı</th>
+              <th>Artikl</th>
+              <th>Qaytarılma Tarixi</th>
+              <th>Səbəb</th>
+              <th>Miqdar</th>
+              <th>Dəyəri</th>
+              <th>Düzəliş/Sil</th>
+            </tr>
+          </thead>
+          <tbody>
+            {returnBackList.map((item) => {
+              const product = item?.sale?.product || {};
+              const customer = item?.sale?.customer || {};
+              const articles = product.articles?.map(a => a.name).join(', ') || '-';
+              const dateFormatted = formatDate(item.date);
 
-            return (
-              <tr key={item.id}>
-                <td>{customer.first_name} {customer.last_name}</td>
-                <td>{product.name || '—'}</td>
-                <td className='table_article_scroll'>{articles}</td>
-                <td>{dateFormatted}</td>
-                <td>{item.reason || '—'}</td>
-                <td>{item.amount || 0}</td>
-                <td>{item?.sale?.price + `₼` || '—'}</td>
-                <td className='table_update'>
-                  <FaPenToSquare onClick={() => updateProductReturn(item)} />
-                  <AiTwotoneDelete onClick={() => deleteProductReturn(item?.id)} />
-                </td>
-              </tr>
-            );
-          })}
-        </tbody>
-      </table>
+              return (
+                <tr key={item.id}>
+                  <td>{customer.first_name} {customer.last_name}</td>
+                  <td>{product.name || '—'}</td>
+                  <td className='table_article_scroll'>{articles}</td>
+                  <td>{dateFormatted}</td>
+                  <td>{item.reason || '—'}</td>
+                  <td>{item.amount || 0}</td>
+                  <td>{item?.sale?.price + `₼` || '—'}</td>
+                  <td className='table_update'>
+                    <FaPenToSquare onClick={() => updateProductReturn(item)} />
+                    <AiTwotoneDelete onClick={() => deleteProductReturn(item?.id)} />
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+
 
       {pageCount > 1 && (
         <ReactPaginate

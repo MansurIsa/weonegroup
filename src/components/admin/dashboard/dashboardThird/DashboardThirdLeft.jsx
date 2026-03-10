@@ -23,7 +23,7 @@ const DashboardThirdLeft = () => {
   const pageCount = Math.ceil(count1 / pageSize);
 
   return (
-    <div className="admin_container dashboard_end_container">
+    <div className="admin_container dashboard_end_container  table_wrapper">
       <AdminBigComponentHeader adminHeader={"Ən çox borclu müştərilər"}/>
 
       {/* Table */}

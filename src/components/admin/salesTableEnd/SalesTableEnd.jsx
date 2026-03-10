@@ -127,7 +127,7 @@ const SalesTableEnd = () => {
     const formatDateTime = (datetime) => {
         const date = new Date(datetime);
         console.log(date.toLocaleString('az-AZ'));
-        
+
         return date.toLocaleString('az-AZ');
     };
 
@@ -139,9 +139,9 @@ const SalesTableEnd = () => {
         console.log(x);
         console.log('ijgg');
 
-         const date = new Date(x?.sale_datetime);
+        const date = new Date(x?.sale_datetime);
         console.log(date.toLocaleString('az-AZ'));
-        
+
         dispatch(saleUpdateModalFuncCommon(x));
 
     }
@@ -165,8 +165,8 @@ const SalesTableEnd = () => {
                     <input type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} />
                     {(startDate || endDate) && (
                         <button style={{ marginTop: "20px", marginLeft: "10px", backgroundColor: '#ff4444' }}
-                                className="submit_btn"
-                                onClick={handleClearDateFilter}>
+                            className="submit_btn"
+                            onClick={handleClearDateFilter}>
                             Təmizlə
                         </button>
                     )}
@@ -182,8 +182,8 @@ const SalesTableEnd = () => {
                     <input type="number" placeholder="Max" value={maxAmount} onChange={(e) => setMaxAmount(e.target.value)} />
                     {(minAmount || maxAmount) && (
                         <button style={{ marginTop: "20px", marginLeft: "10px", backgroundColor: '#ff4444' }}
-                                className="submit_btn"
-                                onClick={handleClearAmountFilter}>
+                            className="submit_btn"
+                            onClick={handleClearAmountFilter}>
                             Təmizlə
                         </button>
                     )}
@@ -195,51 +195,54 @@ const SalesTableEnd = () => {
                 <SearchInpMain onSearch={handleSearch} inputValue={searchQuery} />
                 {(startDate || endDate || minAmount || maxAmount || searchQuery) && (
                     <button style={{ backgroundColor: '#888', height: 'fit-content' }} className="submit_btn"
-                            onClick={handleClearAllFilters}>
+                        onClick={handleClearAllFilters}>
                         Bütün Filtrləri Təmizlə
                     </button>
                 )}
             </div>
 
             {/* Cədvəl */}
-            <table className='custom_table custom_table_sales'>
-                <thead>
-                    <tr>
-                        <th className='number_table'></th>
-                        <th>Müştəri</th>
-                        <th>Satıcı</th>
-                        <th>Ümumi Məbləğ</th>
-                        <th>Satış Tarixi</th>
-                        <th>Status</th>
-                        <th>Düzəliş/Sil</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {salesList?.map((item) => (
-                        <tr key={item.id}>
-                            <td className='number_table' onClick={() => handleSalesCustomer(item?.id, item?.customer_id)} style={{ cursor: "pointer" }}>
-                                <svg width="16" height="16" viewBox="0 0 16 16" fill="none"
-                                    xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M10 5H6V4H10V5ZM12 14H3V12H4V11H3V8.5H4V7.5H3V5H4V4H3V2H12V15C12.5523 15 13 14.5523 13 14V2C13 1.45 12.55 1 12 1H3C2.45 1 2 1.45 2 2V4H1V5H2V7.5H1V8.5H2V11H1V12H2V14C2 14.55 2.45 15 3 15H12V14ZM10 7.5H6V8.5H10V7.5Z"
-                                        fill="#202020" />
-                                </svg>
-                            </td>
-                            <td>{item.customer || "-"}</td>
-                            <td>{item.seller || "-"}</td>
-                            <td>{Math.round(item.total_amount * 100) / 100 ?? 0} ₼</td>
-                            <td>{formatDateTime(item.sale_datetime)}</td>
-                            <td style={{ color: item?.sale_status === "S" ? "green" : item?.sale_status === "G" ? "orange" : "inherit" }}>
-                                {item?.sale_status === "S" ? "Satılıb" : item?.sale_status === "G" ? "Gözləyir" : "-"}
-                            </td>
-                            <td className='table_update'>
-                                <FaPenToSquare onClick={() => updateSale(item)} />
-                                <AiTwotoneDelete onClick={() => deleteSale(item?.id)} />
-                                <FaPlus onClick={() => plusUpdateSale(item)} />
-                            </td>
+            <div className="table_wrapper">
+                <table className='custom_table custom_table_sales'>
+                    <thead>
+                        <tr>
+                            <th className='number_table'></th>
+                            <th>Müştəri</th>
+                            <th>Satıcı</th>
+                            <th>Ümumi Məbləğ</th>
+                            <th>Satış Tarixi</th>
+                            <th>Status</th>
+                            <th>Düzəliş/Sil</th>
                         </tr>
-                    ))}
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        {salesList?.map((item) => (
+                            <tr key={item.id}>
+                                <td className='number_table' onClick={() => handleSalesCustomer(item?.id, item?.customer_id)} style={{ cursor: "pointer" }}>
+                                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none"
+                                        xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M10 5H6V4H10V5ZM12 14H3V12H4V11H3V8.5H4V7.5H3V5H4V4H3V2H12V15C12.5523 15 13 14.5523 13 14V2C13 1.45 12.55 1 12 1H3C2.45 1 2 1.45 2 2V4H1V5H2V7.5H1V8.5H2V11H1V12H2V14C2 14.55 2.45 15 3 15H12V14ZM10 7.5H6V8.5H10V7.5Z"
+                                            fill="#202020" />
+                                    </svg>
+                                </td>
+                                <td>{item.customer || "-"}</td>
+                                <td>{item.seller || "-"}</td>
+                                <td>{Math.round(item.total_amount * 100) / 100 ?? 0} ₼</td>
+                                <td>{formatDateTime(item.sale_datetime)}</td>
+                                <td style={{ color: item?.sale_status === "S" ? "green" : item?.sale_status === "G" ? "orange" : "inherit" }}>
+                                    {item?.sale_status === "S" ? "Satılıb" : item?.sale_status === "G" ? "Gözləyir" : "-"}
+                                </td>
+                                <td className='table_update'>
+                                    <FaPenToSquare onClick={() => updateSale(item)} />
+                                    <AiTwotoneDelete onClick={() => deleteSale(item?.id)} />
+                                    <FaPlus onClick={() => plusUpdateSale(item)} />
+                                </td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            </div>
+
 
             {/* Pagination */}
             {pageCount > 1 && (

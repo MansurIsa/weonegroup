@@ -39,31 +39,34 @@ const SupplierTableEnd = ({ paymentList = [], count = 0, fetchSuppliers, searchT
 
     return (
         <div className='admin_container dashboard_end_container'>
-            <table className='custom_table'>
-                <thead>
-                    <tr>
-                        <th>Ad Soyad</th>
-                        <th>İstifadəçi adı</th>
-                        <th>Məbləğ</th>
-                        <th>Ödəniş Tarixi</th>
-                        <th>Düzəliş/Sil</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {paymentList?.map((item, index) => (
-                        <tr key={item.id}>
-                            <td>{item.supplier?.first_name || '-'} {item.supplier?.last_name || '-'}</td>
-                            <td>{item.supplier?.username || '-'}</td>
-                            <td>{Math.round(item.amount*100)/100} {item?.currency === 'M' ? '₼' : item?.currency==='D' ? '$' : item?.currency==='R'? '₽': ""}</td>
-                            <td>{formatDateTime(item.datetime)}</td>
-                            <td className='table_update'>
-                                <FaPenToSquare onClick={() => updateSupplier(item)} />
-                                <AiTwotoneDelete onClick={() => deleteSupplier(item.id)} />
-                            </td>
+            <div className="table_wrapper">
+                <table className='custom_table'>
+                    <thead>
+                        <tr>
+                            <th>Ad Soyad</th>
+                            <th>İstifadəçi adı</th>
+                            <th>Məbləğ</th>
+                            <th>Ödəniş Tarixi</th>
+                            <th>Düzəliş/Sil</th>
                         </tr>
-                    ))}
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        {paymentList?.map((item, index) => (
+                            <tr key={item.id}>
+                                <td>{item.supplier?.first_name || '-'} {item.supplier?.last_name || '-'}</td>
+                                <td>{item.supplier?.username || '-'}</td>
+                                <td>{Math.round(item.amount * 100) / 100} {item?.currency === 'M' ? '₼' : item?.currency === 'D' ? '$' : item?.currency === 'R' ? '₽' : ""}</td>
+                                <td>{formatDateTime(item.datetime)}</td>
+                                <td className='table_update'>
+                                    <FaPenToSquare onClick={() => updateSupplier(item)} />
+                                    <AiTwotoneDelete onClick={() => deleteSupplier(item.id)} />
+                                </td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            </div>
+
 
             {pageCount > 1 && (
                 <ReactPaginate

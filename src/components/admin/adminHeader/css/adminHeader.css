@@ -23,13 +23,14 @@
 
 .admin_header_search {
     border: 1px solid var(--gray9);
-    min-width: 478px;
+    /* min-width: 478px; */
     display: flex;
     align-items: center;
     background-color: var(--white);
     border-radius: 12px;
     padding: 12px;
     gap: 8px;
+    min-width: 90%;
 }
 
 
@@ -97,4 +98,34 @@
 
 .admin_header_profile_icon{
     font-size: 3rem;
+}
+
+@media screen and (max-width: 600px){
+    .admin_header_profile h3 {
+   
+    font-size: 1.3rem;
+   
+}
+
+.admin_header_profile p {
+    font-size: 1.1rem;
+   
+}
+
+.admin_header_profile {
+   
+    gap: 10px;
+}
+
+.admin_header_profile img {
+    width: 30px;
+    height: 30px;
+    border-radius: 12px;
+    /* object-fit: cover; */
+}
+.admin_header_left h1 {
+    font-size: 1.6rem;
+  
+}
+
 }
