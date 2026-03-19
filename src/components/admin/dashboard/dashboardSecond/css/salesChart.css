@@ -85,3 +85,6 @@
 .calendar_icon {
     margin-right: 6px;
 }
+.chart_controls .form_group{
+    max-width: 300px !important;
+}

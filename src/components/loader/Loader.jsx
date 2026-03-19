@@ -1,81 +1,82 @@
 import React, { useEffect, useRef } from 'react';
-import gsap from 'gsap';
+// import gsap from 'gsap';
 import "./css/loader.css";
 import { useSelector } from 'react-redux';
+import Img from "../../assets/images/loaderimg.png"
 
 const Loader = () => {
   const { isLoading } = useSelector((state) => state.loader);
 
-  const carRef = useRef(null);
-  const wheelRefs = {
-    front: useRef(null),
-    back: useRef(null),
-  };
-  const smoke1 = useRef(null);
-  const smoke2 = useRef(null);
-  const loadingTextRef = useRef(null);
+  // const carRef = useRef(null);
+  // const wheelRefs = {
+  //   front: useRef(null),
+  //   back: useRef(null),
+  // };
+  // const smoke1 = useRef(null);
+  // const smoke2 = useRef(null);
+  // const loadingTextRef = useRef(null);
 
-  useEffect(() => {
-    if (!isLoading) return;
+  // useEffect(() => {
+  //   if (!isLoading) return;
 
-    // Maşın yuxarı-aşağı hərəkəti
-    gsap.to(carRef.current, {
-      y: -10,
-      repeat: -1,
-      yoyo: true,
-      duration: 0.5,
-      ease: 'power1.inOut',
-    });
+  //   // Maşın yuxarı-aşağı hərəkəti
+  //   gsap.to(carRef.current, {
+  //     y: -10,
+  //     repeat: -1,
+  //     yoyo: true,
+  //     duration: 0.5,
+  //     ease: 'power1.inOut',
+  //   });
 
-    // Təkərlər fırlanır
-    gsap.to([wheelRefs.front.current, wheelRefs.back.current], {
-      rotate: 360,
-      transformOrigin: 'center',
-      repeat: -1,
-      duration: 1,
-      ease: 'linear',
-    });
+  //   // Təkərlər fırlanır
+  //   gsap.to([wheelRefs.front.current, wheelRefs.back.current], {
+  //     rotate: 360,
+  //     transformOrigin: 'center',
+  //     repeat: -1,
+  //     duration: 1,
+  //     ease: 'linear',
+  //   });
 
-    // Tüstü
-    const createSmokeAnim = (smokeRef, delay = 0) => {
-      gsap.fromTo(
-        smokeRef.current,
-        {
-          opacity: 0.6,
-          y: 0,
-          scale: 0.5,
-        },
-        {
-          opacity: 0,
-          y: -60,
-          scale: 1.2,
-          repeat: -1,
-          duration: 2,
-          delay,
-          ease: 'power1.out',
-        }
-      );
-    };
+  //   // Tüstü
+  //   const createSmokeAnim = (smokeRef, delay = 0) => {
+  //     gsap.fromTo(
+  //       smokeRef.current,
+  //       {
+  //         opacity: 0.6,
+  //         y: 0,
+  //         scale: 0.5,
+  //       },
+  //       {
+  //         opacity: 0,
+  //         y: -60,
+  //         scale: 1.2,
+  //         repeat: -1,
+  //         duration: 2,
+  //         delay,
+  //         ease: 'power1.out',
+  //       }
+  //     );
+  //   };
 
-    createSmokeAnim(smoke1, 0);
-    createSmokeAnim(smoke2, 1);
+  //   createSmokeAnim(smoke1, 0);
+  //   createSmokeAnim(smoke2, 1);
 
-    // Loading text
-    gsap.to(loadingTextRef.current, {
-      scale: 1.1,
-      opacity: 0.7,
-      repeat: -1,
-      yoyo: true,
-      duration: 1,
-      ease: 'sine.inOut',
-    });
-  }, [isLoading]); // yalnız isLoading true olduqda effekt işə düşsün
+  //   // Loading text
+  //   gsap.to(loadingTextRef.current, {
+  //     scale: 1.1,
+  //     opacity: 0.7,
+  //     repeat: -1,
+  //     yoyo: true,
+  //     duration: 1,
+  //     ease: 'sine.inOut',
+  //   });
+  // }, [isLoading]); // yalnız isLoading true olduqda effekt işə düşsün
 
   if (!isLoading) return null;
 
   return (
     <div className='loader_container'>
-      <svg
+      {/* <svg
         ref={carRef}
         width="400"
         height="200"
@@ -104,7 +105,8 @@ const Loader = () => {
         }}
       >
         Loading...
-      </h2>
+      </h2> */}
+      <img src={Img} alt="" />
     </div>
   );
 };

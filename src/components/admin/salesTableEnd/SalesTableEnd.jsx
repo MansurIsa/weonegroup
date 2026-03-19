@@ -163,14 +163,15 @@ const SalesTableEnd = () => {
                     <input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} />
                     -
                     <input type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} />
-                    {(startDate || endDate) && (
-                        <button style={{ marginTop: "20px", marginLeft: "10px", backgroundColor: '#ff4444' }}
+                    
+                </div>
+                {(startDate || endDate) && (
+                        <button style={{width: "200px", marginTop: "20px", marginLeft: "10px", backgroundColor: '#ff4444' }}
                             className="submit_btn"
                             onClick={handleClearDateFilter}>
                             Təmizlə
                         </button>
                     )}
-                </div>
             </div>
 
             {/* Məbləğ */}
@@ -191,7 +192,7 @@ const SalesTableEnd = () => {
             </div>
 
             {/* Search */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '20px' }}>
+            <div style={{ display: 'flex', flexDirection: "column", alignItems: "flex-start", gap: '10px', marginBottom: '20px' }}>
                 <SearchInpMain onSearch={handleSearch} inputValue={searchQuery} />
                 {(startDate || endDate || minAmount || maxAmount || searchQuery) && (
                     <button style={{ backgroundColor: '#888', height: 'fit-content' }} className="submit_btn"
