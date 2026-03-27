@@ -12,6 +12,15 @@ const CustomerTableEnd = ({ searchTerm = "" }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
+  const [showData, setShowData] = useState(false);
+  useEffect(() => {
+    const timer = setTimeout(() => {
+        setShowData(true);
+    }, 10000); // 10 saniyə
+
+    return () => clearTimeout(timer);
+}, []);
+
   const { usersList, count } = useSelector(state => state.login); // count backend-dən gəlir
 
   const [currentPage, setCurrentPage] = useState(0);
@@ -127,7 +136,7 @@ const CustomerTableEnd = ({ searchTerm = "" }) => {
           activeClassName={'dashboard_end_active'}
         />
       )}
-      {modal && <CustomerRetriveModal closeModal={closeModal} />}
+      {showData && modal && <CustomerRetriveModal closeModal={closeModal} />}
     </div>
   );
 };

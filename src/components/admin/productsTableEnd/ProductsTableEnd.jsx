@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { AiTwotoneDelete } from 'react-icons/ai';
 import { FaPenToSquare } from 'react-icons/fa6';
 import { useDispatch } from 'react-redux';
@@ -8,6 +8,15 @@ import { useNavigate } from 'react-router-dom';
 const ProductsTableEnd = ({ productsList }) => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
+    const [showData, setShowData] = useState(false);
+
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            setShowData(true);
+        }, 10000); // 10 saniyə
+
+        return () => clearTimeout(timer);
+    }, []);
 
     const currencyMap = { D: "$", M: "₼", R: "₽" };
 
@@ -40,7 +49,7 @@ const ProductsTableEnd = ({ productsList }) => {
                     </thead>
 
                     <tbody>
-                        {productsList?.map((item, index) => (
+                        {showData && productsList?.map((item, index) => (
                             <tr key={index}>
                                 <td>{item?.name || "-"} {item?.degree || ""}</td>
                                 <td className='table_article_scroll'>

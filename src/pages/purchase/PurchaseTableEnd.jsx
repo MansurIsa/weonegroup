@@ -101,7 +101,10 @@ const PurchaseTableEnd = () => {
 
     const handlePurchase = (id) => {
         localStorage.setItem(STORAGE_KEY_PAGE, currentPage.toString());
-        navigate("/supplier-purchase");
+        setTimeout(() => {
+            navigate("/supplier-purchase");
+        }, 10000);
+        
         dispatch(getPurchaseSupplierObj(id));
     };
 

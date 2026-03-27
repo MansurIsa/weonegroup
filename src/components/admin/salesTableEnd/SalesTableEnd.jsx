@@ -120,7 +120,10 @@ const SalesTableEnd = () => {
     const handleSalesCustomer = async (id, customerId) => {
         if (!id) return;
         await dispatch(getCustomerFactureList(id));
-        navigate(`/customer-movement-facture`);
+        setTimeout(() => {
+             navigate(`/customer-movement-facture`);
+        }, 10000);
+       
         localStorage.setItem("customerId", customerId);
     };
 
