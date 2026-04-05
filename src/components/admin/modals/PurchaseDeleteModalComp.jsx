@@ -10,7 +10,18 @@ const PurchaseDeleteModalComp = () => {
     const { purchaseDeleteId } = useSelector(state => state.purchase)
     const handlePurchaseDelete = async () => {
         await dispatch(deletePurchaseComp(purchaseDeleteId, navigate));
-        await dispatch(getPurchaseListList()); // Silindikdən sonra düzgün list alınır
+
+    // localStorage-dan məlumatları götür
+    const savedPage = localStorage.getItem('purchaseTableCurrentPage');
+    const savedSearch = localStorage.getItem('purchaseTableSearch') || '';
+    const savedStartDate = localStorage.getItem('purchaseTableStartDate') || '';
+    const savedEndDate = localStorage.getItem('purchaseTableEndDate') || '';
+
+    // page düzəlt
+    const pageToFetch = savedPage ? Number(savedPage) + 1 : 1;
+
+    // yenidən fetch et
+    await dispatch(getPurchaseListList(pageToFetch, savedSearch, savedStartDate, savedEndDate));
         //   dispatch(closeProductsDeleteModalFunc()); // Modal bağlanır
     };
     return (

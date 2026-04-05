@@ -93,24 +93,51 @@ const SaleUpdateModalCommon = () => {
     };
   }, [customer, searchTerm]);
 
+  
+const STORAGE_KEY = 'salesTableCurrentPage';
+const DATE_RANGE_STORAGE_KEY = 'salesTableDateRange';
+const AMOUNT_RANGE_STORAGE_KEY = 'salesTableAmountRange';
+const SEARCH_STORAGE_KEY = 'salesTableSearchQuery';
+
   const handleSubmit = async () => {
-    // Seçilen kullanıcıyı bul - sadece dropdown'dan seçilmişse
-    const selectedUser = customer ? usersList?.find(user => user.username === customer) : null;
-    
-    const payload = {
-      dt: dateTime ? new Date(dateTime).toISOString() : null,
-      status: status || null,
-      customer_id: selectedUser ? selectedUser.id : null,
-    };
-
-    console.log("Yenilənmiş satış məlumatı:", payload);
-    console.log("Seçilmiş müşteri:", customer);
-    console.log("Seçilmiş müşteri ID:", selectedUser?.id);
-
-    await dispatch(updateSaleCommon(payload, saleUpdateModalCommonObj?.id, navigate));
-    await dispatch(closeSaleUpdateModalFunc());
-    await dispatch(getSalesList());
+  const selectedUser = customer ? usersList?.find(user => user.username === customer) : null;
+  
+  const payload = {
+    dt: dateTime ? new Date(dateTime).toISOString() : null,
+    status: status || null,
+    customer_id: selectedUser ? selectedUser.id : null,
   };
+
+  await dispatch(updateSaleCommon(payload, saleUpdateModalCommonObj?.id, navigate));
+  await dispatch(closeSaleUpdateModalFunc());
+
+  // localStorage-dan oxu
+  const savedPage = localStorage.getItem(STORAGE_KEY);
+  const savedSearch = localStorage.getItem(SEARCH_STORAGE_KEY) || '';
+
+  // date range object kimi saxlanırsa parse et
+  const savedDateRange = JSON.parse(localStorage.getItem(DATE_RANGE_STORAGE_KEY)) || {};
+  const startDate = savedDateRange.startDate || '';
+  const endDate = savedDateRange.endDate || '';
+
+  // amount range də varsa
+  const savedAmountRange = JSON.parse(localStorage.getItem(AMOUNT_RANGE_STORAGE_KEY)) || {};
+  const minAmount = savedAmountRange.min || '';
+  const maxAmount = savedAmountRange.max || '';
+
+  const currentPageFromStorage = savedPage ? Number(savedPage) : 0;
+
+  await dispatch(
+  getSalesList(
+    currentPageFromStorage ,
+    savedSearch,
+    startDate,
+    endDate,
+    minAmount,
+    maxAmount
+  )
+);
+};
 
   return (
     <div className="modal_overlay" onClick={() => dispatch(closeSaleUpdateModalFunc())}>

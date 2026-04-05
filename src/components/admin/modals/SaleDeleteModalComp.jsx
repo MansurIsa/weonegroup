@@ -10,9 +10,37 @@ const SaleDeleteModalComp = () => {
     const dispatch = useDispatch()
     const navigate = useNavigate()
     const { saleDeleteId } = useSelector(state => state.sales)
+
+    const STORAGE_KEY = 'salesTableCurrentPage';
+const DATE_RANGE_STORAGE_KEY = 'salesTableDateRange';
+const AMOUNT_RANGE_STORAGE_KEY = 'salesTableAmountRange';
+const SEARCH_STORAGE_KEY = 'salesTableSearchQuery';
     const handleSalesDelete = async () => {
         await dispatch(deleteSalesComp(saleDeleteId, navigate));
-        await dispatch(getSalesList()); // Silindikdən sonra düzgün list alınır
+        const savedPage = localStorage.getItem(STORAGE_KEY);
+    const savedSearch = localStorage.getItem(SEARCH_STORAGE_KEY) || '';
+
+    const savedDateRange = JSON.parse(localStorage.getItem(DATE_RANGE_STORAGE_KEY)) || {};
+    const startDate = savedDateRange.startDate || '';
+    const endDate = savedDateRange.endDate || '';
+
+    const savedAmountRange = JSON.parse(localStorage.getItem(AMOUNT_RANGE_STORAGE_KEY)) || {};
+    const minAmount = savedAmountRange.min || '';
+    const maxAmount = savedAmountRange.max || '';
+
+    const currentPageFromStorage = savedPage ? Number(savedPage) : 0;
+
+    await dispatch(
+        getSalesList(
+            currentPageFromStorage,
+            savedSearch,
+            startDate,
+            endDate,
+            minAmount,
+            maxAmount
+        )
+    );
+
         //   dispatch(closeProductsDeleteModalFunc()); // Modal bağlanır
     };
     return (

@@ -95,25 +95,31 @@ const PurchaseUpdateModalCommon = () => {
     };
   }, [supplier]); // searchTerm dependency'sini kaldırdık
 
-  const handleSubmit = async () => {
-    // Seçilen kullanıcıyı bul - sadece dropdown'dan seçilmişse
-    const selectedUser = supplier ? usersList?.find(user => user.username === supplier) : null;
-    
-    const payload = {
-      date: date || null,
-      currency: currency || null,
-      status: status || null,
-      supplier_id: selectedUser ? selectedUser.id : null,
-    };
-
-    console.log("Yenilənmiş alış məlumatı:", payload);
-    console.log("Seçilmiş tedarükçü:", supplier);
-    console.log("Seçilmiş tedarükçü ID:", selectedUser?.id);
-
-    await dispatch(updatePurchaseCommon(payload, purchaseUpdateModalCommonObj?.id, navigate));
-    await dispatch(closePurchaseUpdateModalFunc());
-    await dispatch(getPurchaseListList());
+ const handleSubmit = async () => {
+  const selectedUser = supplier ? usersList?.find(user => user.username === supplier) : null;
+  
+  const payload = {
+    date: date || null,
+    currency: currency || null,
+    status: status || null,
+    supplier_id: selectedUser ? selectedUser.id : null,
   };
+
+  await dispatch(updatePurchaseCommon(payload, purchaseUpdateModalCommonObj?.id, navigate));
+  await dispatch(closePurchaseUpdateModalFunc());
+  
+  // Bütün parametrləri localStorage-dan oxu
+  const savedPage = localStorage.getItem('purchaseTableCurrentPage');
+  const savedSearch = localStorage.getItem('purchaseTableSearch') || '';
+  const savedStartDate = localStorage.getItem('purchaseTableStartDate') || '';
+  const savedEndDate = localStorage.getItem('purchaseTableEndDate') || '';
+  
+  // Əgər savedPage yoxdursa default 0 istifadə et
+  const pageToFetch = savedPage ? Number(savedPage) + 1 : 1;
+  
+  // Məlumatları yenilə
+  await dispatch(getPurchaseListList(pageToFetch, savedSearch, savedStartDate, savedEndDate));
+};
 
   return (
     <div className="modal_overlay" onClick={() => dispatch(closePurchaseUpdateModalFunc())}>
