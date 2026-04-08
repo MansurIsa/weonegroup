@@ -274,7 +274,10 @@ const Cart = () => {
 
                             <img src={item.product.image} alt={item.product.name} style={{ width: '50px', height: '50px', objectFit: 'cover', borderRadius: '4px' }} />
                             <div className='cart_product_name_brand'>
-                              <h2>{item.product.name} <span>({item?.product?.articles[0]?.name})</span></h2>
+                              <h2 style={{ maxWidth: "300px", overflowWrap: "break-word" }}>
+                                {item.product.name}{" "}
+                                <span>({item?.product?.articles[0]?.name})</span>
+                              </h2>
                               <p>{item.product.brand.name}</p>
                             </div>
                           </div>
