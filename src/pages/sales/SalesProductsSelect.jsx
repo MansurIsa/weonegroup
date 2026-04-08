@@ -1,14 +1,14 @@
-import React, { useEffect, useState, useRef } from "react"; 
-import AdminLayout from "../../layouts/adminLayout/AdminLayout"; 
-import { useNavigate } from "react-router-dom"; 
-import { useDispatch, useSelector } from "react-redux"; 
-import { getBrandList, getCategoryList } from "../../actions/productsAction/productsAction"; 
-import { getStockList } from "../../actions/stockActions/stockActions"; 
-import { getUsersList } from "../../actions/loginAction/loginAction"; 
-import { addSale } from "../../actions/salesAction/salesAction"; 
-import toast from "react-hot-toast"; 
-import CustomCustomerSelect from "../../components/admin/salesTableHead/CustomCustomerSelect"; 
-import ReactPaginate from "react-paginate"; 
+import React, { useEffect, useState, useRef } from "react";
+import AdminLayout from "../../layouts/adminLayout/AdminLayout";
+import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { getBrandList, getCategoryList } from "../../actions/productsAction/productsAction";
+import { getStockList } from "../../actions/stockActions/stockActions";
+import { getUsersList } from "../../actions/loginAction/loginAction";
+import { addSale } from "../../actions/salesAction/salesAction";
+import toast from "react-hot-toast";
+import CustomCustomerSelect from "../../components/admin/salesTableHead/CustomCustomerSelect";
+import ReactPaginate from "react-paginate";
 
 const SalesProductsSelect = () => {
   const dispatch = useDispatch();
@@ -18,8 +18,6 @@ const SalesProductsSelect = () => {
   const { plusSalesObj } = useSelector((state) => state.sales);
   const { brandList } = useSelector((state) => state.products);
 
-  console.log(stockList);
-  
   const [selectedProductIds, setSelectedProductIds] = useState([]);
   const [quantityValues, setQuantityValues] = useState({});
   const [priceValues, setPriceValues] = useState({});
@@ -29,7 +27,7 @@ const SalesProductsSelect = () => {
   const [selectedDateTime, setSelectedDateTime] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
-  const [activeBrandId, setActiveBrandId] = useState(null); // ✅ null olaraq başlat
+  const [activeBrandId, setActiveBrandId] = useState(null);
   const searchTimeout = useRef(null);
   const itemsPerPage = 10;
 
@@ -37,12 +35,29 @@ const SalesProductsSelect = () => {
     dispatch(getBrandList());
     dispatch(getCategoryList());
     dispatch(getUsersList());
-    fetchStock(1, "");
     
     const now = new Date();
     const formattedDateTime = formatToDateTimeLocal(now);
     setSelectedDateTime(formattedDateTime);
   }, [dispatch]);
+
+  // Axtarış və marka filtrini birlikdə API-ə göndər
+  const fetchStock = (page = 1, search = "", brand = null) => {
+    let searchQuery = search;
+    
+    // Əgər marka seçilibsə, onu da axtarış sətrinə əlavə et
+    if (brand && brand !== null) {
+      searchQuery = search ? `${search} ${brand}` : brand;
+    }
+    
+    dispatch(getStockList(page, searchQuery));
+    setCurrentPage(page);
+  };
+
+  // searchTerm və ya activeBrandId dəyişdikdə avtomatik fetch et
+  useEffect(() => {
+    fetchStock(1, searchTerm, activeBrandId);
+  }, [searchTerm, activeBrandId]);
 
   const formatToDateTimeLocal = (date) => {
     const year = date.getFullYear();
@@ -50,55 +65,34 @@ const SalesProductsSelect = () => {
     const day = String(date.getDate()).padStart(2, '0');
     const hours = String(date.getHours()).padStart(2, '0');
     const minutes = String(date.getMinutes()).padStart(2, '0');
-    
     return `${year}-${month}-${day}T${hours}:${minutes}`;
   };
 
   const formatDateTimeForDisplay = (dateTimeString) => {
     if (!dateTimeString) return "";
-    
     const date = new Date(dateTimeString);
     const day = String(date.getDate()).padStart(2, '0');
     const month = String(date.getMonth() + 1).padStart(2, '0');
     const year = date.getFullYear();
     const hours = String(date.getHours()).padStart(2, '0');
     const minutes = String(date.getMinutes()).padStart(2, '0');
-    
     return `${day}/${month}/${year} ${hours}:${minutes}`;
   };
-
-  // ✅ FRONTEND FILTER
-  const fetchStock = (page = 1, search = "") => {
-    dispatch(getStockList(page, search));
-    setCurrentPage(page);
-  };
-
-  // ✅ Frontend-də filterlə
-  const filteredStockList = stockList?.filter(item => {
-    const product = item.product;
-    
-    // Əgər heç bir marka seçilməyibsə, hamısını göstər
-    if (activeBrandId === null) {
-      return true;
-    }
-    
-    // Seçilmiş markaya görə filterlə
-    return product?.brand?.name === activeBrandId;
-  });
 
   const handleStockSearch = (e) => {
     const value = e.target.value;
     setSearchTerm(value);
+    // Debounce - istəyə bağlı
     if (searchTimeout.current) clearTimeout(searchTimeout.current);
     searchTimeout.current = setTimeout(() => {
-      fetchStock(1, value);
-    }, 500);
+      // searchTerm dəyişdiyi üçün useEffect avtomatik fetch edəcək
+    }, 300);
   };
 
-  // ✅ Marka filter funksiyası
   const handleBrandFilter = (brandName) => {
     setActiveBrandId(brandName);
     setCurrentPage(1);
+    // activeBrandId dəyişdiyi üçün useEffect avtomatik fetch edəcək
   };
 
   const calculateTotalStock = (productId) => {
@@ -142,7 +136,6 @@ const SalesProductsSelect = () => {
       });
     } else {
       const currentQuantity = 0;
-
       setSelectedProductIds((prev) => [...prev, productId]);
       setQuantityValues((prev) => ({ ...prev, [productId]: currentQuantity }));
       setPriceValues((prev) => ({ ...prev, [productId]: product?.price }));
@@ -182,12 +175,12 @@ const SalesProductsSelect = () => {
     const invalidProducts = [];
 
     const selectedItems = selectedProductIds.map((productId) => {
-      const stockItem = stockList.find((item) => item.product.id === productId);
+      const stockItem = stockList?.find((item) => item.product.id === productId);
       const product = stockItem?.product;
       const quantity = +quantityValues[productId] || 0;
       const status = statusValues[productId] || "G";
-
       const totalStock = calculateTotalStock(productId);
+      
       if (status === "S" && quantity > totalStock) {
         hasError = true;
         invalidProducts.push({
@@ -227,17 +220,13 @@ const SalesProductsSelect = () => {
 
   const handlePageClick = (event) => {
     const selectedPage = event.selected + 1;
-    fetchStock(selectedPage, searchTerm);
+    fetchStock(selectedPage, searchTerm, activeBrandId);
   };
 
   const returnSales = () => navigate("/sales");
 
   useEffect(() => {
-    if (
-      plusSalesObj &&
-      Object.keys(plusSalesObj).length > 0 &&
-      customerFactureList?.salelist_sales?.length > 0
-    ) {
+    if (plusSalesObj && Object.keys(plusSalesObj).length > 0 && customerFactureList?.salelist_sales?.length > 0) {
       setSelectedCustomerId(customerFactureList.customer?.toString() || "");
       const firstDatetime = customerFactureList.salelist_sales[0]?.datetime;
       if (firstDatetime) {
@@ -255,7 +244,7 @@ const SalesProductsSelect = () => {
         quantities[s.product.id] = s.amount;
         prices[s.product.id] = s.price;
         statuses[s.product.id] = s.status;
-        const stockItem = stockList.find((item) => item.product.id === s.product.id);
+        const stockItem = stockList?.find((item) => item.product.id === s.product.id);
         if (stockItem) {
           initialStocks[s.product.id] = stockItem.amount + s.amount;
         }
@@ -269,53 +258,51 @@ const SalesProductsSelect = () => {
     }
   }, [plusSalesObj, customerFactureList, stockList]);
 
-  useEffect(() => { 
-    if (selectedCustomerId && usersList.length > 0 && !plusSalesObj?.id) { 
-      const exists = usersList.some( 
-        (u) => u.id.toString() === selectedCustomerId.toString() 
-      ); 
-      if (!exists) { 
-        dispatch(getUsersList(1, "")); 
-      } 
-    } 
-  }, [selectedCustomerId, dispatch, plusSalesObj?.id]); 
+  useEffect(() => {
+    if (selectedCustomerId && usersList.length > 0 && !plusSalesObj?.id) {
+      const exists = usersList.some((u) => u.id.toString() === selectedCustomerId.toString());
+      if (!exists) {
+        dispatch(getUsersList(1, ""));
+      }
+    }
+  }, [selectedCustomerId, dispatch, plusSalesObj?.id]);
 
-  const customer = usersList.find( 
-    (u) => u.id.toString() === selectedCustomerId?.toString() 
-  ); 
+  const customer = usersList.find((u) => u.id.toString() === selectedCustomerId?.toString());
 
-  return ( 
-    <AdminLayout adminHeaderHide={true}> 
-      <div className="admin_container warehouse_page"> 
-        <div className="return_btn"> 
-          <button onClick={returnSales}>Geri dön</button> 
-        </div> 
-        <div className="left_box left_box_mb"> 
-          {!plusSalesObj?.id ? ( 
-            <CustomCustomerSelect 
-              customers={usersList.filter((u) => !u.is_staff)} 
-              value={selectedCustomerId} 
-              onChange={setSelectedCustomerId} 
-              onSearch={(search) => dispatch(getUsersList(1, search))} 
-            /> 
-          ) : null} 
-          <div className="form_group form_group_sales_table_head"> 
-            <label>Satış tarixi</label> 
-            <input 
-              type="datetime-local" 
-              value={selectedDateTime} 
-              onChange={handleDateChange} 
+  return (
+    <AdminLayout adminHeaderHide={true}>
+      <div className="admin_container warehouse_page">
+        <div className="return_btn">
+          <button onClick={returnSales}>Geri dön</button>
+        </div>
+        
+        <div className="left_box left_box_mb">
+          {!plusSalesObj?.id ? (
+            <CustomCustomerSelect
+              customers={usersList.filter((u) => !u.is_staff)}
+              value={selectedCustomerId}
+              onChange={setSelectedCustomerId}
+              onSearch={(search) => dispatch(getUsersList(1, search))}
+            />
+          ) : null}
+          
+          <div className="form_group form_group_sales_table_head">
+            <label>Satış tarixi</label>
+            <input
+              type="datetime-local"
+              value={selectedDateTime}
+              onChange={handleDateChange}
               className="datetime-input"
-            /> 
+            />
             {selectedDateTime && (
               <div className="formatted-date">
                 Seçilmiş tarix: {formatDateTimeForDisplay(selectedDateTime)}
               </div>
             )}
-          </div> 
+          </div>
         </div>
 
-        {/* ✅ MARKA FİLTERİ BÖLMƏSİ - Verilən strukturla */}
+        {/* MARKA FİLTERİ BÖLMƏSİ */}
         <div className="admin_container brand_list_buttons">
           <button
             onClick={() => handleBrandFilter(null)}
@@ -335,125 +322,125 @@ const SalesProductsSelect = () => {
           ))}
         </div>
 
-        <div className="admin_header_search project_container"> 
-          <input 
-            type="text" 
-            placeholder="Məhsul adı, artikl və ya marka axtar..." 
-            value={searchTerm} 
-            onChange={handleStockSearch} 
-          /> 
-        </div> 
-        <div className="warehouse_table_wrapper"> 
-          <table className="warehouse_table"> 
-            <thead> 
-              <tr> 
-                <th className="number_table"></th> 
-                <th>Məhsul Adı</th> 
-                <th>Artikl</th> 
-                <th>Marka</th> 
-                <th>Brend</th>
-                <th>Qalan Say</th> 
-                <th>Maya Dəyəri</th> 
-                <th>Satış Qiyməti</th> 
-                <th>Endirimli Qiymət</th> 
-                <th>Miqdar</th> 
-                <th>Status</th> 
-              </tr> 
-            </thead> 
-            <tbody> 
-              {filteredStockList?.map((item) => { 
-                const product = item.product; 
-                const productId = product.id; 
-                const isSelected = selectedProductIds.includes(productId); 
-                const quantity = quantityValues[productId] || ""; 
-                const status = statusValues[productId] || "G";
-                
-                const hasStockError = hasInsufficientStock(productId, quantity, status);
-                const totalStock = calculateTotalStock(productId, quantity);
+        {/* AXTARIŞ INPUTU */}
+        <div className="admin_header_search project_container">
+          <input
+            type="text"
+            placeholder="Məhsul adı, artikl və ya marka axtar..."
+            value={searchTerm}
+            onChange={handleStockSearch}
+          />
+        </div>
 
-                return ( 
-                  <tr key={productId}> 
-                    <td className="number_table"> 
-                      <input 
-                        type="checkbox" 
-                        checked={isSelected} 
-                        onChange={() => toggleRow(productId, product, item.amount)} 
-                      /> 
-                    </td> 
-                    <td>{product?.name} {product?.degree}</td> 
-                    <td> 
-                      {product?.articles?.map((a) => a.name).join(", ") || "-"} 
-                    </td> 
-                    <td>{product?.brand?.name || "-"}</td> 
-                    <td>{product?.store?.name || "-"}</td> 
+        <div className="warehouse_table_wrapper">
+          <table className="warehouse_table">
+            <thead>
+              <tr>
+                <th className="number_table"></th>
+                <th>Məhsul Adı</th>
+                <th>Artikl</th>
+                <th>Marka</th>
+                <th>Brend</th>
+                <th>Qalan Say</th>
+                <th>Maya Dəyəri</th>
+                <th>Satış Qiyməti</th>
+                <th>Endirimli Qiymət</th>
+                <th>Miqdar</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              {stockList?.map((item) => {
+                const product = item.product;
+                const productId = product.id;
+                const isSelected = selectedProductIds.includes(productId);
+                const quantity = quantityValues[productId] || "";
+                const status = statusValues[productId] || "G";
+                const hasStockError = hasInsufficientStock(productId, quantity, status);
+                const totalStock = calculateTotalStock(productId);
+
+                return (
+                  <tr key={productId}>
+                    <td className="number_table">
+                      <input
+                        type="checkbox"
+                        checked={isSelected}
+                        onChange={() => toggleRow(productId, product, item.amount)}
+                      />
+                    </td>
+                    <td>{product?.name} {product?.degree}</td>
                     <td>
-                      {item.amount} 
+                      {product?.articles?.map((a) => a.name).join(", ") || "-"}
+                    </td>
+                    <td>{product?.brand?.name || "-"}</td>
+                    <td>{product?.store?.name || "-"}</td>
+                    <td>
+                      {item.amount}
                       {isSelected && (
-                        <div style={{fontSize: '12px', color: '#666', marginTop: '4px'}}>
+                        <div style={{ fontSize: '12px', color: '#666', marginTop: '4px' }}>
                           (Ümumi: {totalStock})
                         </div>
                       )}
-                    </td> 
-                    <td>{product?.cost_price} ₼</td> 
-                    <td> 
-                      {isSelected ? ( 
-                        <input 
-                          type="number" 
-                          value={priceValues[productId] ?? product?.price} 
-                          onChange={(e) => 
-                            handlePriceChange(productId, e.target.value) 
-                          } 
+                    </td>
+                    <td>{product?.cost_price} ₼</td>
+                    <td>
+                      {isSelected ? (
+                        <input
+                          type="number"
+                          value={priceValues[productId] ?? product?.price}
+                          onChange={(e) => handlePriceChange(productId, e.target.value)}
                           onWheel={(e) => e.target.blur()}
-                          className="price_input" 
-                        /> 
-                      ) : ( 
-                        `${product?.price} ₼` 
-                      )} 
-                    </td> 
-                    <td>{product?.discount_price ?? "-"} ₼</td> 
-                    <td> 
-                      {isSelected && ( 
-                        <input 
-                          type="number" 
-                          value={quantity} 
-                          onChange={(e) => 
-                            handleQuantityChange(productId, e.target.value) 
-                          } 
+                          className="price_input"
+                        />
+                      ) : (
+                        `${product?.price} ₼`
+                      )}
+                    </td>
+                    <td>{product?.discount_price ?? "-"} ₼</td>
+                    <td>
+                      {isSelected && (
+                        <input
+                          type="number"
+                          value={quantity}
+                          onChange={(e) => handleQuantityChange(productId, e.target.value)}
                           onWheel={(e) => e.target.blur()}
-                          className={`quantity_input ${hasStockError ? "input-error" : ""}`} 
-                        /> 
-                      )} 
-                    </td> 
-                    <td> 
-                      {isSelected && ( 
-                        <select 
-                          value={status} 
-                          onChange={(e) => 
-                            handleStatusChange(productId, e.target.value) 
-                          } 
-                        > 
-                          <option value="G">Gözləyir</option> 
-                          <option value="S">Satılıb</option> 
-                        </select> 
-                      )} 
-                    </td> 
-                  </tr> 
-                ); 
-              })} 
-            </tbody> 
-          </table> 
+                          className={`quantity_input ${hasStockError ? "input-error" : ""}`}
+                        />
+                      )}
+                    </td>
+                    <td>
+                      {isSelected && (
+                        <select
+                          value={status}
+                          onChange={(e) => handleStatusChange(productId, e.target.value)}
+                        >
+                          <option value="G">Gözləyir</option>
+                          <option value="S">Satılıb</option>
+                        </select>
+                      )}
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
 
-          {/* ✅ Filterlənmiş məhsul olmadıqda mesaj göstər */}
-          {filteredStockList?.length === 0 && (
+          {/* MƏHSUL TAPILMADI MESAJI */}
+          {stockList?.length === 0 && (
             <div className="no-products-message">
-              {activeBrandId === null 
-                ? "Heç bir məhsul tapılmadı" 
-                : "Seçilmiş markaya uyğun məhsul tapılmadı"}
+              {activeBrandId && searchTerm 
+                ? `"${searchTerm}" və "${activeBrandId}" markasına uyğun məhsul tapılmadı`
+                : activeBrandId 
+                ? `"${activeBrandId}" markasına uyğun məhsul tapılmadı`
+                : searchTerm 
+                ? `"${searchTerm}" axtarışına uyğun məhsul tapılmadı`
+                : "Heç bir məhsul tapılmadı"}
             </div>
           )}
 
-          {count > itemsPerPage && ( 
-            <ReactPaginate 
+          {/* PAGINATION */}
+          {count > itemsPerPage && (
+            <ReactPaginate
               previousLabel={
                 <svg width="8" height="14" viewBox="0 0 8 14" fill="none">
                   <path d="M7 1L1 7L7 13" stroke="#9F9FA0" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
@@ -464,25 +451,28 @@ const SalesProductsSelect = () => {
                   <path d="M1 1L7 7L1 13" stroke="#202020" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>
               }
-              pageCount={Math.ceil(count / itemsPerPage)} 
-              onPageChange={handlePageClick} 
-              containerClassName={"dashboard_end_pagination"} 
-              pageClassName={"dashboard_end_page"} 
-              pageLinkClassName={"dashboard_end_page_link"} 
-              previousClassName={"dashboard_end_arrow"} 
-              nextClassName={"dashboard_end_arrow"} 
-              activeClassName={"dashboard_end_active"} 
-            /> 
-          )} 
-          <div className="warehouse_submit"> 
-            <button className="save_btn" onClick={handleSave}> 
-              Yadda saxla 
-            </button> 
-          </div> 
-        </div> 
-      </div> 
-    </AdminLayout> 
-  ); 
-}; 
+              pageCount={Math.ceil(count / itemsPerPage)}
+              onPageChange={handlePageClick}
+              forcePage={currentPage - 1}
+              containerClassName={"dashboard_end_pagination"}
+              pageClassName={"dashboard_end_page"}
+              pageLinkClassName={"dashboard_end_page_link"}
+              previousClassName={"dashboard_end_arrow"}
+              nextClassName={"dashboard_end_arrow"}
+              activeClassName={"dashboard_end_active"}
+            />
+          )}
+
+          {/* YADDA SAXLA BUTTONU */}
+          <div className="warehouse_submit">
+            <button className="save_btn" onClick={handleSave}>
+              Yadda saxla
+            </button>
+          </div>
+        </div>
+      </div>
+    </AdminLayout>
+  );
+};
 
 export default SalesProductsSelect;
