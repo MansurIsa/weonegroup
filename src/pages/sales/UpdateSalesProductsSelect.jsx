@@ -1,77 +1,38 @@
 import React, { useEffect, useState } from 'react';
 import AdminLayout from '../../layouts/adminLayout/AdminLayout';
 import { useNavigate } from 'react-router-dom';
-import { getStockList } from '../../actions/stockActions/stockActions';
 import { useDispatch, useSelector } from 'react-redux';
 import toast from 'react-hot-toast';
-import { getUsersList } from '../../actions/loginAction/loginAction';
 import { updateSale } from '../../actions/salesAction/salesAction';
 
 const UpdateSalesProductsSelect = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const { stockList } = useSelector(state => state.stock);
   const { saleUpdateObj } = useSelector(state => state.sales);
 
   const [selectedCustomerId, setSelectedCustomerId] = useState('');
   const [selectedDateTime, setSelectedDateTime] = useState('');
-  const [quantityValues, setQuantityValues] = useState({});
-  const [priceValues, setPriceValues] = useState({});
-  const [statusValues, setStatusValues] = useState({});
-  const [errorIndexes, setErrorIndexes] = useState([]);
+  const [quantity, setQuantity] = useState('');
+  const [price, setPrice] = useState('');
+  const [status, setStatus] = useState('G');
+  const [hasError, setHasError] = useState(false);
 
-  useEffect(() => {
-    if (saleUpdateObj?.product?.name) {
-      dispatch(getStockList(1, saleUpdateObj.product.name));
-    }
-  }, [dispatch, saleUpdateObj]);
+  const product = saleUpdateObj?.product;
 
   useEffect(() => {
     if (saleUpdateObj) {
       setSelectedCustomerId(saleUpdateObj.customer?.id?.toString() || '');
       setSelectedDateTime(saleUpdateObj.datetime?.substring(0, 16) || '');
+      setQuantity(saleUpdateObj.amount?.toString() || '');
+      setPrice(saleUpdateObj.price || product?.price);
+      setStatus(saleUpdateObj.status || 'G');
     }
   }, [saleUpdateObj]);
-
-  const filtered = stockList?.filter(p => p.product?.id === saleUpdateObj?.product?.id) || [];
-
-  useEffect(() => {
-    if (!saleUpdateObj || filtered.length === 0) return;
-    const index = 0;
-    setQuantityValues({ [index]: saleUpdateObj.amount.toString() });
-    setPriceValues({ [index]: saleUpdateObj.price });
-    setStatusValues({ [index]: saleUpdateObj.status });
-    setErrorIndexes([]);
-  }, [saleUpdateObj, filtered.length]);
-
-  const handleDateChange = e => setSelectedDateTime(e.target.value);
-
-  const handleQuantityChange = (index, value) => {
-    const numericValue = value.replace(/^0+(?=\d)/, '');
-    if (numericValue === '' || /^\d*$/.test(numericValue)) {
-      setQuantityValues(prev => ({ ...prev, [index]: numericValue }));
-      setErrorIndexes(prev => prev.filter(i => i !== index));
-    }
-  };
-
-  const handlePriceChange = (index, value) => {
-    const val = Number(value);
-    if (val >= 0) {
-      setPriceValues(prev => ({ ...prev, [index]: val }));
-    }
-  };
-
-  const handleStatusChange = (index, value) => {
-    setStatusValues(prev => ({ ...prev, [index]: value }));
-    setErrorIndexes(prev => prev.filter(i => i !== index));
-  };
 
   const returnSales = () => navigate("/customer-movement-facture");
 
   const handleSave = async () => {
-    setErrorIndexes([]);
-
     if (!selectedCustomerId) {
       toast.error("Müştəri tapılmadı.");
       return;
@@ -82,37 +43,29 @@ const UpdateSalesProductsSelect = () => {
       return;
     }
 
-    const index = 0;
-    const item = filtered[index];
-    const product = item?.product;
-
     if (!product) {
       toast.error("Məhsul tapılmadı.");
       return;
     }
 
-    const quantityStr = quantityValues[index] ?? '';
-    const quantity = Number(quantityStr);
+    const qty = Number(quantity);
 
-    if (!quantityStr || quantity <= 0) {
+    if (!quantity || qty <= 0) {
       toast.error("Miqdar sıfırdan böyük olmalıdır.");
       return;
     }
 
-    const price = priceValues[index] ?? product.price;
-    const status = statusValues[index] ?? 'G';
-
-    if (status === 'S' && quantity > item.amount) {
-      setErrorIndexes([index]);
-      toast.error(`Satış statusunda olan məhsulun miqdarı anbardakı ${item.amount} ədəd sayından çox ola bilməz.`);
+    if (status === 'S' && qty > product.amount) {
+      setHasError(true);
+      toast.error(`Satış statusunda olan məhsulun miqdarı anbardakı ${product.amount} ədəd sayından çox ola bilməz.`);
       return;
     }
 
     const payload = {
       customer: selectedCustomerId,
       product: product.id,
-      amount: quantity,
-      price,
+      amount: qty,
+      price: price || product.price,
       datetime: selectedDateTime,
       status,
     };
@@ -124,12 +77,12 @@ const UpdateSalesProductsSelect = () => {
   return (
     <AdminLayout adminHeaderHide={true}>
       <div className="admin_container warehouse_page">
+        
         <div className="return_btn">
           <button onClick={returnSales}>Geri dön</button>
         </div>
 
         <div className="left_box left_box_mb">
-          {/* Müştəri inputu göstərilmir */}
           <input type="hidden" value={selectedCustomerId} />
 
           <div className="form_group form_group_sales_table_head">
@@ -137,7 +90,7 @@ const UpdateSalesProductsSelect = () => {
             <input
               type="datetime-local"
               value={selectedDateTime}
-              onChange={handleDateChange}
+              onChange={e => setSelectedDateTime(e.target.value)}
             />
           </div>
         </div>
@@ -157,54 +110,78 @@ const UpdateSalesProductsSelect = () => {
                 <th>Status</th>
               </tr>
             </thead>
+
             <tbody>
-              {filtered.map((item, index) => {
-                const product = item.product;
-                return (
-                  <tr key={index}>
-                    <td><input type="checkbox" checked readOnly /></td>
-                    <td className='table_article_scroll'>{product?.name}</td>
-                    <td className='table_article_scroll'>{product?.articles?.map(a => a.name).join(', ')}</td>
-                    <td>{item.amount}</td>
-                    <td>{product?.cost_price} ₼</td>
-                    <td>
-                      <input
-                        type="number"
-                        className="price_input"
-                        value={priceValues[index] ?? product?.price}
-                        onChange={e => handlePriceChange(index, e.target.value)}
-                      />
-                    </td>
-                    <td>{product?.discount_price ?? '-'} ₼</td>
-                    <td>
-                      <input
-                        type="text"
-                        inputMode="numeric"
-                        pattern="[0-9]*"
-                        className={`quantity_input ${errorIndexes.includes(index) ? 'error_input' : ''}`}
-                        value={quantityValues[index] ?? ''}
-                        onChange={e => handleQuantityChange(index, e.target.value)}
-                      />
-                    </td>
-                    <td>
-                      <select
-                        value={statusValues[index] ?? 'G'}
-                        onChange={e => handleStatusChange(index, e.target.value)}
-                      >
-                        <option value="G">Gözləyir</option>
-                        <option value="S">Satılıb</option>
-                      </select>
-                    </td>
-                  </tr>
-                );
-              })}
+              <tr>
+                <td>
+                  <input type="checkbox" checked readOnly />
+                </td>
+
+                <td className='table_article_scroll'>
+                  {product?.name}
+                </td>
+
+                <td className='table_article_scroll'>
+                  {product?.articles?.map(a => a.name).join(', ')}
+                </td>
+
+                <td>{product?.amount}</td>
+
+                <td>{product?.cost_price} ₼</td>
+
+                <td>
+                  <input
+                    type="number"
+                    className="price_input"
+                    value={price}
+                    onChange={e => setPrice(e.target.value)}
+                  />
+                </td>
+
+                <td>
+                  {product?.discount_price ?? '-'} ₼
+                </td>
+
+                <td>
+                  <input
+                    type="text"
+                    inputMode="numeric"
+                    pattern="[0-9]*"
+                    className={`quantity_input ${hasError ? 'error_input' : ''}`}
+                    value={quantity}
+                    onChange={e => {
+                      const val = e.target.value.replace(/^0+(?=\d)/, '');
+                      if (val === '' || /^\d*$/.test(val)) {
+                        setQuantity(val);
+                        setHasError(false);
+                      }
+                    }}
+                  />
+                </td>
+
+                <td>
+                  <select
+                    value={status}
+                    onChange={e => {
+                      setStatus(e.target.value);
+                      setHasError(false);
+                    }}
+                  >
+                    <option value="G">Gözləyir</option>
+                    <option value="S">Satılıb</option>
+                  </select>
+                </td>
+              </tr>
             </tbody>
           </table>
 
           <div className="warehouse_submit">
-            <button className="save_btn" onClick={handleSave}>Yadda saxla</button>
+            <button className="save_btn" onClick={handleSave}>
+              Yadda saxla
+            </button>
           </div>
         </div>
+
       </div>
     </AdminLayout>
   );

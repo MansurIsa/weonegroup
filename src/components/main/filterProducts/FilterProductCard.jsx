@@ -53,6 +53,8 @@ const FilterProductCard = ({ data, newPr }) => {
     navigate(`/products/${data?.id}`);
   };
 
+  console.log(data);
+  
   return (
     <div className="filter_product_card">
       {/* Click ilə açılan hissə */}
@@ -91,7 +93,7 @@ const FilterProductCard = ({ data, newPr }) => {
           <h3>{data?.name} {data?.degree}</h3>
           <p>{data?.brand_name}</p>
           <span className="article_pr_name">
-            Məhsul kodu: {data?.article_names?.join(", ")}
+            Məhsul kodu: {data?.article_names[0]}
           </span>
 
           <div>

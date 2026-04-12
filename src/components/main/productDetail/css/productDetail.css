@@ -141,6 +141,19 @@
     margin-top: 20px;
     justify-content: space-between;
 }
+.article_grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 4px 12px;
+  margin-top: 15px;
+}
+.article_grid span{
+    color: var(--red2);
+    font-weight: 600;
+}
+.article_pr_name{
+    margin-bottom: 30px;
+}
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(-5px); }
   to { opacity: 1; transform: translateY(0); }

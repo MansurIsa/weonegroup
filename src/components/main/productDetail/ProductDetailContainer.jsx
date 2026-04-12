@@ -102,9 +102,14 @@ const ProductDetailContainer = ({ productObj, userObj }) => {
                             <p>{productObj?.store?.name}</p>
                         </div>
                     </div>
-                    <span className='article_pr_name'>
-                        Məhsul kodu: {productObj?.articles?.map(x => x?.name).join(", ")}
-                    </span>
+                    <div className="article_pr_name">
+                        Məhsul kodu:
+                        <div className="article_grid">
+                            {productObj?.articles?.map((x, i) => (
+                                <span key={i}>{x?.name}</span>
+                            ))}
+                        </div>
+                    </div>
 
                     <div className="product_detail_about_wrapper">
                         {productObj?.product_abouts?.map((item, index) => (
@@ -120,36 +125,36 @@ const ProductDetailContainer = ({ productObj, userObj }) => {
                     </div>
                     <div className='price_inc_dec_pr'>
                         {accessToken && (
-                           <p className="product_detail_container_right_price">
-  {userObj?.status === "E" ? (
-    <>
-      <span
-        style={{
-          textDecoration: "line-through",
-          color: "red",
-          marginRight: "8px",
-          fontSize: "14px"
-        }}
-      >
-        {productObj?.price ?? 0} AZN
-      </span>
+                            <p className="product_detail_container_right_price">
+                                {userObj?.status === "E" ? (
+                                    <>
+                                        <span
+                                            style={{
+                                                textDecoration: "line-through",
+                                                color: "red",
+                                                marginRight: "8px",
+                                                fontSize: "14px"
+                                            }}
+                                        >
+                                            {productObj?.price ?? 0} AZN
+                                        </span>
 
-      <span
-        style={{
-          color: "#000",
-          fontWeight: "600",
-          fontSize: "18px"
-        }}
-      >
-        {productObj?.discount_price ?? 0} AZN
-      </span>
-    </>
-  ) : userObj?.status === "S" ? (
-    <span>
-      {productObj?.price ?? 0} AZN
-    </span>
-  ) : null}
-</p>
+                                        <span
+                                            style={{
+                                                color: "#000",
+                                                fontWeight: "600",
+                                                fontSize: "18px"
+                                            }}
+                                        >
+                                            {productObj?.discount_price ?? 0} AZN
+                                        </span>
+                                    </>
+                                ) : userObj?.status === "S" ? (
+                                    <span>
+                                        {productObj?.price ?? 0} AZN
+                                    </span>
+                                ) : null}
+                            </p>
 
                         )}
                         <div className="inc_dec_pr">
