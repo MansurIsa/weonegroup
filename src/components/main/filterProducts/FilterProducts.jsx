@@ -8,6 +8,7 @@ import {
   getProductsListTest,
   getStoreList,
   getRecentProductsList,
+  searchAnotherProducts,
 } from "../../../actions/productsAction/productsAction";
 import { getUserObj } from "../../../actions/loginAction/loginAction";
 import ReactPaginate from "react-paginate";
@@ -81,6 +82,8 @@ const FilterProducts = () => {
     productsListTest,
     count2,
   } = useSelector((state) => state.products);
+   const {userObj}=useSelector(state=>state.login);
+
 
   // Close dropdowns when clicking outside
   useEffect(() => {
@@ -184,10 +187,14 @@ const FilterProducts = () => {
     dispatch(getStoreList());
   }, [dispatch]);
 
+
+  const [isFetched, setIsFetched] = useState(false);
+
   // YENİ: Optimized products loading
   useEffect(() => {
     const loadProducts = async () => {
       setLoading(true);
+      setIsFetched(false);
       
       try {
         const apiPage = currentPage + 1; // API üçün 1-based
@@ -218,6 +225,7 @@ const FilterProducts = () => {
         console.error("Error loading products:", error);
       } finally {
         setLoading(false);
+        setIsFetched(true);
       }
     };
 
@@ -325,6 +333,33 @@ const FilterProducts = () => {
   console.log("Active Category:", activeCategory);
   console.log("Active Brand:", activeBrand);
   console.log("Active Store:", activeStore);
+ 
+  
+  
+   const lastSearchedRef = useRef("");
+
+useEffect(() => {
+  const isEmpty =
+    isFetched && // 🔥 ƏN VACİB ŞƏRT
+    !loading &&
+    debouncedSearch &&
+    normalProducts?.length === 0;
+
+  if (
+    isEmpty &&
+    userObj?.id &&
+    lastSearchedRef.current !== debouncedSearch
+  ) {
+    lastSearchedRef.current = debouncedSearch;
+
+    dispatch(
+      searchAnotherProducts({
+        search: debouncedSearch,
+        user: userObj?.id,
+      })
+    );
+  }
+}, [normalProducts, loading, debouncedSearch, userObj, isFetched, dispatch]);
 
   return (
     <div className="filter_products_parent_container">

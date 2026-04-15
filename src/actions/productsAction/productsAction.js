@@ -248,3 +248,25 @@ export const updateArticle = (id,data) => async (dispatch) => {
       dispatch(stopLoading());
     });;
 };
+
+
+
+export const searchAnotherProducts = (data,navigate) => async (dispatch) => {
+  dispatch(startLoading());
+  return await axios.post(`${baseUrl}core/wanted-product-create/`,data,{
+    headers: {
+          Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+        }
+  })
+    .then((resp) => {
+        console.log(resp);
+        // toast.success("Məhsul səbətə əlavə edildi");
+        // navigate("/cart")
+    })
+    .catch((err) => {
+      console.log(err);
+      //  toast.error("Xəta baş verdi. Zəhmət olmasa yenidən yoxlayın ❌");
+    }).finally(() => {
+      dispatch(stopLoading());
+    });;
+};
