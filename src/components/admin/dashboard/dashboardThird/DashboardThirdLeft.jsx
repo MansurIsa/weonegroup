@@ -22,6 +22,14 @@ const DashboardThirdLeft = () => {
 
   const pageCount = Math.ceil(count1 / pageSize);
 
+  console.log(mostDebtObj);
+
+
+  const filteredData = mostDebtObj?.filter(
+  (item) => Math.abs(item?.debt) > 0.0001
+);
+  
+
   return (
     <div className="admin_container dashboard_end_container  table_wrapper">
       <AdminBigComponentHeader adminHeader={"Ən çox borclu müştərilər"}/>
@@ -36,8 +44,8 @@ const DashboardThirdLeft = () => {
           </tr>
         </thead>
         <tbody>
-          {mostDebtObj?.length > 0 ? (
-            mostDebtObj.map((item, index) => (
+          {filteredData?.length > 0 ? (
+            filteredData.map((item, index) => (
               <tr key={index}>
                 <td>{item.name}</td>
                 <td>{Math.round(item?.debt * 100) / 100} ₼ </td>

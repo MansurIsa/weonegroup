@@ -56,6 +56,9 @@ const DashboardEnd = () => {
 
   const pageCount = Math.ceil(count / ITEMS_PER_PAGE);
 
+  console.log(stockOutList);
+  
+
   return (
     <div className="admin_container dashboard_end_container">
       
@@ -74,7 +77,7 @@ const DashboardEnd = () => {
               <th>Kateqoriya</th>
               <th>Brend</th>
               <th>Qalıq</th>
-              <th>Tarix</th>
+              {/* <th>Tarix</th> */}
               <th>Status</th>
             </tr>
           </thead>
@@ -102,7 +105,7 @@ const DashboardEnd = () => {
                   <td>{item.category?.name}</td>
                   <td>{item.store?.name}</td>
                   <td>{item.amount}</td>
-                  <td>{item.date}</td>
+                  {/* <td>{item.date}</td> */}
                   <td className={`status ${statusClass}`}>{statusText}</td>
                 </tr>
               );
