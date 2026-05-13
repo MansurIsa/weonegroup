@@ -154,10 +154,23 @@ const SalesProductsSelect = () => {
     }
   };
 
+  // const handlePriceChange = (productId, value) => {
+  //   const val = +value;
+  //   if (val >= 0) setPriceValues((prev) => ({ ...prev, [productId]: val }));
+  // };
+
   const handlePriceChange = (productId, value) => {
-    const val = +value;
-    if (val >= 0) setPriceValues((prev) => ({ ...prev, [productId]: val }));
-  };
+  // boş input icazəli olmalıdır
+  if (value === "") {
+    setPriceValues((prev) => ({ ...prev, [productId]: "" }));
+    return;
+  }
+
+  // yalnız rəqəm icazə
+  if (!isNaN(value)) {
+    setPriceValues((prev) => ({ ...prev, [productId]: value }));
+  }
+};
 
   const handleStatusChange = (productId, value) => {
     setStatusValues((prev) => ({ ...prev, [productId]: value }));

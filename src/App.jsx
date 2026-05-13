@@ -104,6 +104,22 @@ const App = () => {
     dispatch(getUserObj());
   }, [dispatch]);
 
+  //******** yuxardaki useeffecti sil asagdaki kommentli kodu aç ******** */
+  //   const [authLoaded, setAuthLoaded] = useState(false);
+
+  // useEffect(() => {
+  //   const loadUser = async () => {
+  //     await dispatch(getUserObj());
+  //     setAuthLoaded(true);
+  //   };
+
+  //   loadUser();
+  // }, [dispatch]);
+
+  // if (!authLoaded) {
+  //   return <Loader />;
+  // }
+
   const routes = [
     { path: "/", element: <Home />, isProtected: false },
     { path: "/about", element: <About />, isProtected: false },
