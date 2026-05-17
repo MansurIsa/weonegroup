@@ -269,7 +269,7 @@ const SalesProductsSelect = () => {
       setStatusValues(statuses);
       setInitialStockValues(initialStocks);
     }
-  }, [plusSalesObj, customerFactureList, stockList]);
+  }, [plusSalesObj, customerFactureList]);
 
   useEffect(() => {
     if (selectedCustomerId && usersList.length > 0 && !plusSalesObj?.id) {
