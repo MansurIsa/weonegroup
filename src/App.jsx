@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Route, Routes, Navigate } from "react-router-dom";
 import { useDispatch, useSelector } from 'react-redux';
 import { getUserObj } from './actions/loginAction/loginAction';
@@ -100,25 +100,25 @@ const App = () => {
   const dispatch = useDispatch();
   const { userObj } = useSelector(state => state.login);
 
-  useEffect(() => {
-    dispatch(getUserObj());
-  }, [dispatch]);
-
-  //******** yuxardaki useeffecti sil asagdaki kommentli kodu aç ******** */
-  //   const [authLoaded, setAuthLoaded] = useState(false);
-
   // useEffect(() => {
-  //   const loadUser = async () => {
-  //     await dispatch(getUserObj());
-  //     setAuthLoaded(true);
-  //   };
-
-  //   loadUser();
+  //   dispatch(getUserObj());
   // }, [dispatch]);
 
-  // if (!authLoaded) {
-  //   return <Loader />;
-  // }
+  //******** yuxardaki useeffecti sil asagdaki kommentli kodu aç ******** */
+    const [authLoaded, setAuthLoaded] = useState(false);
+
+  useEffect(() => {
+    const loadUser = async () => {
+      await dispatch(getUserObj());
+      setAuthLoaded(true);
+    };
+
+    loadUser();
+  }, [dispatch]);
+
+  if (!authLoaded) {
+    return <Loader />;
+  }
 
   const routes = [
     { path: "/", element: <Home />, isProtected: false },

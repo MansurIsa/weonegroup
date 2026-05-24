@@ -56,7 +56,23 @@ export const getSaleListReturned = ({ page = 1, search = '' }) => async (dispatc
     });;
 };
 
+const fieldNames = {
+  products: "Məhsullar",
+  amounts: "Miqdar",
+  prices: "Qiymət",
+  datetimes: "Tarix",
+  statuses: "Status"
+};
 
+const getReadableError = (field, message) => {
+  const fieldLabel = fieldNames[field] || field;
+
+  if (message.includes("boş ola bilməz")) {
+    return `${fieldLabel} seçilməlidir`;
+  }
+
+  return `${fieldLabel}: ${message}`;
+};
 
 export const addSale = (data,navigate) => async (dispatch) => {
   dispatch(startLoading());
@@ -71,8 +87,20 @@ export const addSale = (data,navigate) => async (dispatch) => {
         navigate("/sales")
     })
     .catch((err) => {
-      console.log(err);
-       toast.error("Xəta baş verdi. Zəhmət olmasa yenidən yoxlayın ❌");
+      // console.log(err);
+      //  toast.error("Xəta baş verdi. Zəhmət olmasa yenidən yoxlayın ❌");
+      if (err.response && err.response.data) {
+    const errors = err.response.data;
+
+    Object.entries(errors).forEach(([field, messages]) => {
+      if (Array.isArray(messages)) {
+        messages.forEach(msg => toast.error(getReadableError(field, msg)));
+      }
+    });
+
+  } else {
+    toast.error("Xəta baş verdi ❌");
+  }
     }).finally(() => {
       dispatch(stopLoading());
     });;

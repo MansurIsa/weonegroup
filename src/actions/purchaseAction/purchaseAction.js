@@ -41,6 +41,35 @@ export const getPurchaseList = ({ page = 1, search = '' }) => async (dispatch) =
 //     });;
 // };
 
+const fieldNames = {
+  supplier: "Təchizatçı",
+  date: "Tarix",
+  currency: "Valyuta",
+  purchase_prices: "Alış qiyməti",
+  cost_prices: "Maya dəyəri",
+  prices: "Satış qiyməti",
+  discount_prices: "Endirimli qiymət"
+};
+
+const getReadableError = (field, message) => {
+  const fieldLabel = fieldNames[field] || field;
+
+  // Backend mesajını daha sadə et
+  if (message.includes("null ola bilməz")) {
+    return `${fieldLabel} boş ola bilməz`;
+  }
+
+  if (message.includes("boş ola bilməz")) {
+    return `${fieldLabel} seçilməlidir`;
+  }
+
+  if (message.includes("Date dəyəri səhvdir")) {
+    return `Tarix düzgün deyil (YYYY-MM-DD formatında olmalıdır)`;
+  }
+
+  return `${fieldLabel}: ${message}`;
+};
+
 
 export const addPurchase = (data,navigate) => async (dispatch) => {
   dispatch(startLoading());
@@ -56,7 +85,23 @@ export const addPurchase = (data,navigate) => async (dispatch) => {
     })
     .catch((err) => {
       console.log(err);
-       toast.error("Xəta baş verdi. Zəhmət olmasa yenidən yoxlayın ❌");
+      //  toast.error("Xəta baş verdi. Zəhmət olmasa yenidən yoxlayın ❌");
+       if (err.response && err.response.data) {
+    const errors = err.response.data;
+
+    Object.entries(errors).forEach(([field, messages]) => {
+      if (Array.isArray(messages)) {
+        messages.forEach(msg => toast.error(getReadableError(field, msg)));
+      } else if (typeof messages === "object") {
+        Object.entries(messages).forEach(([key, val]) => {
+          val.forEach(msg => toast.error(getReadableError(field, msg)));
+        });
+      }
+    });
+
+  } else {
+    toast.error("Xəta baş verdi ❌");
+  }
     }).finally(() => {
       dispatch(stopLoading());
     });;
