@@ -4,7 +4,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { closeSaleUpdateModalFunc } from '../../../redux/slices/admin/salesSlice';
 import { getSalesList, updateSaleCommon } from '../../../actions/salesAction/salesAction';
-import { getUsersList } from '../../../actions/loginAction/loginAction';
+import { getCustomerFactureList, getUsersList } from '../../../actions/loginAction/loginAction';
+
 
 const SaleUpdateModalCommon = () => {
   const dispatch = useDispatch();
@@ -13,6 +14,7 @@ const SaleUpdateModalCommon = () => {
 
   const { saleUpdateModalCommonObj } = useSelector(state => state.sales);
   const { usersList } = useSelector(state => state.login);
+  const { customerFactureList } = useSelector(state => state.login);
 
   console.log(saleUpdateModalCommonObj);
 
@@ -40,6 +42,7 @@ const SaleUpdateModalCommon = () => {
   // Kullanıcı listesini çek
   useEffect(() => {
     dispatch(getUsersList(1, ""));
+    dispatch(getCustomerFactureList(saleUpdateModalCommonObj?.id));
   }, [dispatch]);
 
   // Arama işlemi
@@ -99,9 +102,46 @@ const DATE_RANGE_STORAGE_KEY = 'salesTableDateRange';
 const AMOUNT_RANGE_STORAGE_KEY = 'salesTableAmountRange';
 const SEARCH_STORAGE_KEY = 'salesTableSearchQuery';
 
+
+console.log(customerFactureList);
+
   const handleSubmit = async () => {
-  const selectedUser = customer ? usersList?.find(user => user.username === customer) : null;
+  // const selectedUser = customer ? usersList?.find(user => user.username === customer) : null;
   
+  // const payload = {
+  //   dt: dateTime ? new Date(dateTime).toISOString() : null,
+  //   status: status || null,
+  //   customer_id: selectedUser ? selectedUser.id : null,
+  // };
+
+  // await dispatch(updateSaleCommon(payload, saleUpdateModalCommonObj?.id, navigate));
+  // await dispatch(closeSaleUpdateModalFunc());
+
+  const invalidProducts = customerFactureList?.salelist_sales?.filter(item => {
+    if (status === "S") {
+      return item.amount > item.product.amount;
+    }
+    return false;
+  });
+
+  let shouldContinue = true;
+
+  if (invalidProducts && invalidProducts.length > 0) {
+    const errorMessage = invalidProducts
+      .map(item => 
+        `${item.product.name} məhsulunun stock-u ${item.product.amount}-dır, sənin istədiyin say isə ${item.amount}-dır`
+      )
+      .join("\n");
+
+    shouldContinue = window.confirm(
+      `Stock çatmır:\n${errorMessage}\n\nDavam edilsin?`
+    );
+  }
+
+  if (!shouldContinue) return;
+
+  const selectedUser = customer ? usersList?.find(user => user.username === customer) : null;
+
   const payload = {
     dt: dateTime ? new Date(dateTime).toISOString() : null,
     status: status || null,
@@ -138,6 +178,8 @@ const SEARCH_STORAGE_KEY = 'salesTableSearchQuery';
   )
 );
 };
+
+
 
   return (
     <div className="modal_overlay" onClick={() => dispatch(closeSaleUpdateModalFunc())}>
